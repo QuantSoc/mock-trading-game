@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Divider } from '@mui/material';
+import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -39,17 +40,29 @@ const LoginPage = () => {
   return (
     <Box
       sx={{
-        height: '90vh',
+        height: '100vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+        p: 3,
+        boxSizing: 'border-box',
       }}
     >
-      <Typography variant="h2" sx={{ mb: 3 }}>
-        Sign In
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <QuantsocIcon style={{ maxWidth: 150, padding: '0 20px' }} />
+        <Typography variant="h2">Competitions</Typography>
+      </Box>
+      <Divider sx={{ py: 1 }} />
+      <Typography variant="h3">Sign In</Typography>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -59,10 +72,13 @@ const LoginPage = () => {
           flexDirection: 'column',
           alignItems: 'center',
           maxWidth: 800,
+          minWidth: 300,
           borderRadius: 2,
           boxShadow: 5,
           rowGap: 2,
           p: 5,
+          m: 3,
+          boxSizing: 'border-box',
         }}
       >
         <TextField

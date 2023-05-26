@@ -1,6 +1,15 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  SvgIcon,
+  Divider,
+} from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+
+import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{2,23}$/;
@@ -79,17 +88,29 @@ const RegisterPage = () => {
   return (
     <Box
       sx={{
-        height: '90vh',
+        height: '100vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
+        p: 3,
+        boxSizing: 'border-box',
       }}
     >
-      <Typography variant="h2" sx={{ mb: 3 }}>
-        Register for BigBrain
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <QuantsocIcon style={{ maxWidth: 150, padding: '0 20px' }} />
+        <Typography variant="h2">Competitions</Typography>
+      </Box>
+      <Divider sx={{ py: 1 }} />
+      <Typography variant="h3">Register</Typography>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -97,12 +118,16 @@ const RegisterPage = () => {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'center',
           maxWidth: 800,
+          minWidth: 300,
           borderRadius: 2,
           boxShadow: 5,
           rowGap: 2,
           p: 5,
+          m: 5,
+          boxSizing: 'border-box',
         }}
       >
         <TextField
