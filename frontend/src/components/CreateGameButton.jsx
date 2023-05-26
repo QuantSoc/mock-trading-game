@@ -49,7 +49,7 @@ const CreateGameButton = ({ callback }) => {
           <Typography variant="h6">Enter a name for your new quiz.</Typography>
           <TextField
             label="Game name"
-            placeholder={`QuantSoc Trading Event 📆 ${new Date().toDateString()}`}
+            placeholder={`SQT 📆 ${new Date().toDateString()}`}
             fullWidth
             required
             variant="standard"
