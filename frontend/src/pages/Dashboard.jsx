@@ -30,17 +30,33 @@ const Dashboard = () => {
   }, [userGames]);
 
   return (
-    <Box>
+    <Box
+      sx={{
+        height: '92.5vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        py: 5,
+        boxSizing: 'border-box',
+      }}
+    >
       <CreateGameButton callback={setIsNewGame} />
 
       <Grid
         container
-        columns={{ xs: 2, sm: 8, md: 12 }}
+        columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
         spacing={3}
         sx={{ p: 5 }}
       >
         {userGames.map((game, index) => (
-          <Grid item={true} xs={2} sm={4} md={4} key={index}>
+          <Grid
+            item={true}
+            xs={2}
+            sm={4}
+            md={4}
+            key={index}
+            sx={{ display: 'flex', justifyContent: 'center' }}
+          >
             <GameCard key={game.id} gameId={game.id} />
           </Grid>
         ))}
