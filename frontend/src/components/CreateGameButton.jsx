@@ -4,7 +4,6 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { Modal } from '../components/index.js';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchAPIRequest } from '../helpers.js';
-
 const GAMENAME_REGEX = /^[a-zA-Z0-9-_ ]{5,60}$/;
 
 const CreateGameButton = ({ callback }) => {
@@ -94,6 +93,7 @@ const CreateGameButton = ({ callback }) => {
         <Button
           variant="contained"
           color="primary"
+          size="large"
           startIcon={<AddIcon />}
           // sx={{ width: 150, height: 65, whiteSpace: 'nowrap' }}
           onClick={toggleModal}
