@@ -32,7 +32,12 @@ const Modal = ({
         <DialogContent>{children}</DialogContent>
         <DialogActions>
           {actions}
-          <Button variant="contained" onClick={toggleModal} margin="dense">
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={toggleModal}
+            margin="dense"
+          >
             Close
           </Button>
         </DialogActions>
