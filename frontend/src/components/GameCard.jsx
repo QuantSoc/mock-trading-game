@@ -26,8 +26,14 @@ const GameCard = ({ gameId }) => {
   }, [gameId]);
 
   return (
-    <Card sx={{ maxWidth: 345, height: 360 }}>
-      <CardMedia component="img" alt="green iguana" height="140" image={logo} />
+    <Card sx={{ width: 345, height: 360, borderRadius: 2, boxShadow: 3 }}>
+      <CardMedia
+        component="img"
+        alt="green iguana"
+        height="140"
+        image={logo}
+        sx={{ objectFit: 'cover' }}
+      />
       <CardContent>
         <Typography
           gutterBottom
