@@ -20,7 +20,13 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <Box sx={{ height: '100vh', backgroundColor: '#f2f2f2' }}>
+    <Box
+      sx={{
+        minHeight: '92.5vh',
+        height: 'fit-content',
+        backgroundColor: '#f2f2f2',
+      }}
+    >
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <NavBar />
