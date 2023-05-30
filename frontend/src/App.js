@@ -1,7 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { NavBar, ProtectedRoute } from './components/index.js';
-import { Dashboard, LoginPage, RegisterPage } from './pages/index.js';
+import {
+  Dashboard,
+  LoginPage,
+  RegisterPage,
+  EditGamePage,
+} from './pages/index.js';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -14,18 +20,21 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <NavBar />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Dashboard />} />
-          </Route>
-        </Routes>
-      </ThemeProvider>
-    </BrowserRouter>
+    <Box sx={{ height: '100vh', backgroundColor: '#f2f2f2' }}>
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <NavBar />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/edit/:gameId" element={<EditGamePage />} />
+            </Route>
+          </Routes>
+        </ThemeProvider>
+      </BrowserRouter>
+    </Box>
   );
 };
 

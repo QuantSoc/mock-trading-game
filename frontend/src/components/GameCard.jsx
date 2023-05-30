@@ -7,12 +7,14 @@ import {
   Typography,
   Skeleton,
   Button,
+  Box,
 } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { fetchAPIRequest } from '../helpers.js';
 import logo from '../assets/quantsoc.jpg';
-import { CopyBtn, GameTriggerBtn } from './index.js';
+import { CopyBtn, GameTriggerBtn, RedirectBtn } from './index.js';
 
 const GameCard = ({ gameId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -51,40 +53,40 @@ const GameCard = ({ gameId }) => {
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
+            m: 0,
           }}
         >
           {cardData.name}
         </Typography>
-        {gameSession && (
-          <CopyBtn
-            copyTitle="Session"
-            copyContent={gameSession}
-            styling={{ float: 'right' }}
-          />
-        )}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography
+            sx={{
+              fontSize: 20,
+              display: 'flex',
+              alignItems: 'center',
+              m: 0,
+            }}
+            color="text.secondary"
+            gutterBottom
+          >
+            <AccessTimeIcon sx={{ mr: 0.5 }} />
+            {cardData?.rounds?.length}s
+          </Typography>
 
-        <Typography
-          sx={{
-            fontSize: 20,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-          color="text.secondary"
-          gutterBottom
-        >
-          <AccessTimeIcon sx={{ mr: 0.5 }} />
-          {cardData?.rounds?.length}s
-        </Typography>
+          {gameSession && (
+            <CopyBtn copyTitle="Session" copyContent={gameSession} />
+          )}
+        </Box>
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ height: 80, overflowY: 'auto', fontSize: 16 }}
+          sx={{ mt: 1, height: 80, overflowY: 'auto', fontSize: 16 }}
         >
           {cardData.desc}
         </Typography>
       </CardContent>
       <CardActions sx={{ alignItems: 'flex-end' }}>
-        <Button>Edit</Button>
+        <RedirectBtn destination={`/edit/${gameId}`} btnText="Edit" />
         <GameTriggerBtn
           gameId={gameId}
           gameSessionSetter={setGameSession}
