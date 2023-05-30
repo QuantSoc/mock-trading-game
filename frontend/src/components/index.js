@@ -4,3 +4,5 @@ export { default as Modal } from './Modal.jsx';
 export { default as CreateGameButton } from './CreateGameButton.jsx';
 export { default as GameCard } from './GameCard.jsx';
 export { default as NavBar } from './NavBar.jsx';
+export { default as GameTriggerBtn } from './GameTriggerBtn.jsx';
+export { default as CopyButton } from './CopyButton.jsx';

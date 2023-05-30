@@ -8,29 +8,38 @@ import {
   Skeleton,
   Button,
 } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 import { fetchAPIRequest } from '../helpers.js';
 import logo from '../assets/quantsoc.jpg';
+import { CopyButton, GameTriggerBtn } from './index.js';
 
 const GameCard = ({ gameId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [cardData, setCardData] = useState({});
+  const [isStart, setIsStart] = useState(false);
+  const [gameSession, setGameSession] = useState('');
 
   useEffect(() => {
     const fetchGame = async () => {
       const gameData = await fetchAPIRequest(`/games/${gameId}`, 'GET');
       setCardData(gameData);
+      if (gameData.active !== null) {
+        setIsStart(true);
+        setGameSession(gameData.active);
+      }
     };
 
     fetchGame();
   }, [gameId]);
 
   return (
-    <Card sx={{ width: 345, height: 360, borderRadius: 2, boxShadow: 3 }}>
+    <Card sx={{ width: 400, height: 400, borderRadius: 3, boxShadow: 3 }}>
       <CardMedia
         component="img"
         alt="green iguana"
-        height="140"
+        height="150"
         image={logo}
         sx={{ objectFit: 'cover' }}
       />
@@ -47,20 +56,42 @@ const GameCard = ({ gameId }) => {
         >
           {cardData.name}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
-          Rounds: {cardData?.rounds?.length}
+        {gameSession && (
+          <CopyButton
+            copyTitle="Session"
+            copyContent={gameSession}
+            styling={{ float: 'right' }}
+          />
+        )}
+
+        <Typography
+          sx={{
+            fontSize: 20,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          color="text.secondary"
+          gutterBottom
+        >
+          <AccessTimeIcon sx={{ mr: 0.5 }} />
+          {cardData?.rounds?.length}s
         </Typography>
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ height: 60, overflowY: 'auto' }}
+          sx={{ height: 80, overflowY: 'auto', fontSize: 16 }}
         >
           {cardData.desc}
         </Typography>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ alignItems: 'flex-end' }}>
         <Button>Edit</Button>
-        <Button color="success">Start Game</Button>
+        <GameTriggerBtn
+          gameId={gameId}
+          gameSessionSetter={setGameSession}
+          initIsStart={isStart}
+          initGameSession={gameSession}
+        />
         {/* {isLoading
             ? <Skeleton variant="rounded" width={50} />
             : <EditQuizBtn id={props.game} />
