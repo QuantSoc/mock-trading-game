@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchAPIRequest } from '../helpers';
-import { CreateGameButton, GameCard } from '../components/index.js';
+import { CreateGameBtn, GameCard } from '../components/index.js';
 import { Box, Grid } from '@mui/material';
 
 const Dashboard = () => {
@@ -40,7 +40,7 @@ const Dashboard = () => {
         boxSizing: 'border-box',
       }}
     >
-      <CreateGameButton callback={setIsNewGame} />
+      <CreateGameBtn callback={setIsNewGame} />
 
       <Grid
         container

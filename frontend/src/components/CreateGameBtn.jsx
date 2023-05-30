@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import useModal from '../hooks/useModal.jsx';
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { Modal } from '../components/index.js';
+import { Modal } from './index.js';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchAPIRequest } from '../helpers.js';
 const GAMENAME_REGEX = /^[a-zA-Z0-9-_ ]{5,60}$/;
 
-const CreateGameButton = ({ callback }) => {
+const CreateGameBtn = ({ callback }) => {
   const [gameName, setGameName] = useState('');
   const [isValidName, setValidName] = useState(false);
   const [isNameFocus, setNameFocus] = useState(false);
@@ -104,4 +104,4 @@ const CreateGameButton = ({ callback }) => {
     </>
   );
 };
-export default CreateGameButton;
+export default CreateGameBtn;
