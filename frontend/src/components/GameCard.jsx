@@ -8,12 +8,11 @@ import {
   Skeleton,
   Button,
 } from '@mui/material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 import { fetchAPIRequest } from '../helpers.js';
 import logo from '../assets/quantsoc.jpg';
-import { CopyButton, GameTriggerBtn } from './index.js';
+import { CopyBtn, GameTriggerBtn } from './index.js';
 
 const GameCard = ({ gameId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +56,7 @@ const GameCard = ({ gameId }) => {
           {cardData.name}
         </Typography>
         {gameSession && (
-          <CopyButton
+          <CopyBtn
             copyTitle="Session"
             copyContent={gameSession}
             styling={{ float: 'right' }}

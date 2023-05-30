@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Modal } from './index.js';
 import useModal from '../hooks/useModal.jsx';
-import { CopyButton } from './index.js';
+import { CopyBtn } from './index.js';
 
 import { Button, Box, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -53,7 +53,7 @@ const GameTriggerBtn = ({
               : 'Would you like to view the session results?'}
           </Typography>
           {isStart ? (
-            <CopyButton
+            <CopyBtn
               copyTitle="Session"
               copyContent={gameSession}
               isContained

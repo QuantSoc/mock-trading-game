@@ -5,4 +5,4 @@ export { default as CreateGameBtn } from './CreateGameBtn.jsx';
 export { default as GameCard } from './GameCard.jsx';
 export { default as NavBar } from './NavBar.jsx';
 export { default as GameTriggerBtn } from './GameTriggerBtn.jsx';
-export { default as CopyButton } from './CopyButton.jsx';
+export { default as CopyBtn } from './CopyBtn.jsx';
