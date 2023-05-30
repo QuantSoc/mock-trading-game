@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Snackbar } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-const CopyButton = ({ copyTitle, copyContent, styling, isContained }) => {
+const CopyBtn = ({ copyTitle, copyContent, styling, isContained }) => {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleClick = () => {
@@ -31,4 +31,4 @@ const CopyButton = ({ copyTitle, copyContent, styling, isContained }) => {
   );
 };
 
-export default CopyButton;
+export default CopyBtn;
