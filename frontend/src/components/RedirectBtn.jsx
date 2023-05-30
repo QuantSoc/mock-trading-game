@@ -25,7 +25,6 @@ const RedirectBtn = ({
         color={color}
         startIcon={isStartIcon && icon}
         endIcon={!isStartIcon && icon}
-        sx={{ width: 150, height: 65, whiteSpace: 'nowrap' }}
         onClick={handleClick}
       >
         {btnText}
