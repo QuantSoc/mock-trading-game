@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 
-const RedirectButton = ({
+const RedirectBtn = ({
   destination,
   btnText,
   variant,
@@ -33,4 +33,4 @@ const RedirectButton = ({
     </Box>
   );
 };
-export default RedirectButton;
+export default RedirectBtn;

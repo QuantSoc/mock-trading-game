@@ -1,5 +1,5 @@
 export { default as ProtectedRoute } from './ProtectedRoute.jsx';
-export { default as RedirectButton } from './RedirectButton.jsx';
+export { default as RedirectBtn } from './RedirectBtn.jsx';
 export { default as Modal } from './Modal.jsx';
 export { default as CreateGameBtn } from './CreateGameBtn.jsx';
 export { default as GameCard } from './GameCard.jsx';
