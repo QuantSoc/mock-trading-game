@@ -63,16 +63,16 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             sx={{
-              mr: 2,
+              mr: 5,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              fontFamily: 'Poppins',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
           >
-            COMPETITIONS
+            comps
           </Typography>
           {localStorage.getItem('token') && (
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
