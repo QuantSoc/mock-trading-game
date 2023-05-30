@@ -63,11 +63,12 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             sx={{
-              mr: 5,
+              mr: 3,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'Poppins',
               fontWeight: 700,
               letterSpacing: '.1rem',
+              fontSize: 30,
               color: 'inherit',
               textDecoration: 'none',
             }}
@@ -173,8 +174,8 @@ const ResponsiveAppBar = () => {
           {/* HERE -->  NavBar EXPANDED Buttons */}
           <SvgIcon
             sx={{
-              width: 45,
-              height: 45,
+              width: 40,
+              height: 40,
               display: { xs: 'flex', md: 'none' },
               marginRight: '10px',
             }}
@@ -188,14 +189,14 @@ const ResponsiveAppBar = () => {
               mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: 'Poppins',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
           >
-            BIGBRAIN
+            comps
           </Typography>
           {!localStorage.getItem('token') && (
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
