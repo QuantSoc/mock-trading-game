@@ -287,3 +287,24 @@ const getInactiveGameSessons = (gameId) => {
     )
     .map((seshId) => parseInt(seshId, 10));
 };
+
+export const submitPrices = (playerId, gameId, ask, bid) => sessionLock((resolve, reject) => {
+  if (ask === undefined || bid === undefined) {
+    return reject(new InputError('Prices must be provided'));
+  } else {
+    const session = getActiveSessionFromSessionId(sessionIdFromPlayerId(playerId));
+    if (session.position === -1) {
+      return reject(new InputError('Session has not started yet'));
+    } else if (session.answerAvailable) {
+      return reject(new InputError('Can\'t answer question once answer is available'));
+    } else {
+      session.players[playerId].answers[session.position] = {
+        questionStartedAt: session.isoTimeLastQuestionStarted,
+        answeredAt: new Date().toISOString(),
+        answerIds: answerList,
+        correct: JSON.stringify(quizQuestionGetCorrectAnswers(session.questions[session.position]).sort()) === JSON.stringify(answerList.sort()),
+      };
+      resolve();
+    }
+  }
+});

@@ -18,6 +18,7 @@ import {
   startGame,
   advanceGame,
   endGame,
+  submitPrices,
 } from './service';
 
 const app = express();
@@ -175,6 +176,20 @@ app.post(
     })
   )
 );
+
+/**************************************************************************
+                                  PLAY
+**************************************************************************/
+// may want to remove game/:gameId param in favour of a helper function
+app.put(
+  '/play/:playerId/game/:gameId/prices',
+  handleErrors(async (req, res) => { // no auth because temporary user?
+    const { playerId, gameId } = req.params;
+    const { ask, bid } = req.body;
+    await submitPrices(playerId, gameId, ask, bid);
+    return res.status(200).send({});
+}));
+
 
 /**************************************************************************
                                   SERVER
