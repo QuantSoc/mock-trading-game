@@ -197,10 +197,11 @@ export const getGame = (gameId) =>
     });
   });
 
-export const updateGame = (gameId, rounds, name) =>
+export const updateGame = (gameId, rounds, name, desc) =>
   gameLock((resolve, reject) => {
     rounds && (games[gameId].rounds = rounds);
     name && (games[gameId].name = name);
+    desc && (games[gameId].desc = desc);
     resolve();
   });
 
