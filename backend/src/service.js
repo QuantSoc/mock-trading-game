@@ -228,14 +228,25 @@ export const advanceGame = (gameId) =>
     if (!session.active) {
       return reject(new InputError("Game not started"));
     }
-    const totalMarkets = session.markets.length;
+    updatePortfolios(gameId, session.currQuestion);
+
+    const totalQuestions = session.questions.length;
     session.position += 1;
+    if (session.position >= session.questions[currQuestion].length) {
+      // go to start of next question
+      session.currQuestion += 1;
+      session.position = 0;
+    }
     session.answerAvailable = false;
     session.isoTimeLastQuestionStarted = new Date().toISOString();
-    if (session.position >= totalMarkets) {
+    if (session.currQuestion >= totalQuestions) {
       endGame(gameId);
     }
-    resolve(session.position);
+
+    resolve({ 
+      currQuestion: session.currQuestion,
+      position: session.position,
+    });
   });
 
 export const endGame = (gameId) =>
@@ -251,6 +262,7 @@ export const endGame = (gameId) =>
 
 const newSessionPayload = (gameId) => ({
   gameId,
+  currQuestion: -1,
   position: -1,
   // isoTimeLastQuestionStarted: null,
   teams: {},
@@ -290,23 +302,63 @@ const getInactiveGameSessons = (gameId) => {
     .map((seshId) => parseInt(seshId, 10));
 };
 
-export const submitPrices = (playerId, gameId, ask, bid) => sessionLock((resolve, reject) => {
+export const submitPrices = (teamId, gameId, ask, bid) => sessionLock((resolve, reject) => {
   if (ask === undefined || bid === undefined) {
     return reject(new InputError('Prices must be provided'));
   } else {
-    const session = getActiveSessionFromSessionId(sessionIdFromPlayerId(playerId));
-    if (session.position === -1) {
+    const session = getActiveGameSession(gameId);
+    if (session.position === -1 || session.currQuestion === -1) {
       return reject(new InputError('Session has not started yet'));
     } else if (session.answerAvailable) {
       return reject(new InputError('Can\'t answer question once answer is available'));
     } else {
-      session.players[playerId].answers[session.position] = {
+      session.teams[teamId].answers[session.currQuestion][session.position] = {
         questionStartedAt: session.isoTimeLastQuestionStarted,
         answeredAt: new Date().toISOString(),
-        answerIds: answerList,
-        correct: JSON.stringify(quizQuestionGetCorrectAnswers(session.questions[session.position]).sort()) === JSON.stringify(answerList.sort()),
+        ask: parseFloat(ask),
+        bid: parseFloat(bid),
       };
       resolve();
     }
   }
+});
+
+const updatePortfolios = (gameId, currQuestion) => sessionLock((resolve, reject) => {
+  // Question <=> Market (equivalent)
+  const session = getActiveGameSession(gameId);
+  for (const team of Object.keys(session.teams)) { // team <=> teamId
+    const portfolio = session.teams[team].portfolio;
+    const bid = session.teams[team].answers[currQuestion].bid;
+    // const ask = session.teams[team].answers[currQuestion].ask;
+
+    for (const team of Object.keys(session.teams)) {
+      const portfolio2 = session.teams[team].portfolio;
+      // const bid2 = session.teams[team].answers[currQuestion].bid;
+      const ask2 = session.teams[team].answers[currQuestion].ask;
+      if (bid >= ask2) {
+        portfolio.cash -= (bid + ask2) / 2;
+        portfolio.contracts[currQuestion] += 1;
+        portfolio2.cash += (bid + ask2) / 2;
+        portfolio2.contracts[currQuestion] -= 1;
+      }
+      // if (bid2 >= ask) {
+      //   portfolio2.cash -= (bid2 + ask) / 2;
+      //   portfolio2.contracts[currQuestion] += 1;
+      //   portfolio.cash += (bid2 + ask) / 2;
+      //   portfolio.contracts[currQuestion] -= 1;
+      // }
+    }
+  }
+
+});
+
+// TODO: evaluatePortfolios
+
+const newTeamPayload = (teamId, numMarkets) => ({
+  teamName,
+  portfolio: {
+    cash: 0,
+    contracts: new Array(numMarkets).fill(0), // index by question/market number. 
+                                              // contracts[1] = #contracts owned of the 2nd market
+  },
 });

@@ -159,7 +159,7 @@ app.post(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
       await assertGameOwner(email, gameId);
-      const stage = await advanceGame(gameId);
+      const stage = await advanceGame(gameId); // Note: right now, stage is a dictionary
       return res.status(200).send({ stage });
     })
   )
@@ -182,11 +182,11 @@ app.post(
 **************************************************************************/
 // may want to remove game/:gameId param in favour of a helper function
 app.put(
-  '/play/:playerId/game/:gameId/prices',
+  '/games/:gameId/play/:teamId/prices',
   handleErrors(async (req, res) => { // no auth because temporary user?
-    const { playerId, gameId } = req.params;
+    const { teamId, gameId } = req.params;
     const { ask, bid } = req.body;
-    await submitPrices(playerId, gameId, ask, bid);
+    await submitPrices(teamId, gameId, ask, bid);
     return res.status(200).send({});
 }));
 
