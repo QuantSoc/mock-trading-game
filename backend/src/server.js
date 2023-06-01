@@ -1,8 +1,8 @@
-import fs from 'fs';
-import express from 'express';
-import cors from 'cors';
+import fs from "fs";
+import express from "express";
+import cors from "cors";
 
-import { InputError, AuthError } from './error';
+import { InputError, AuthError } from "./error";
 import {
   parseEmailViaToken,
   login,
@@ -25,7 +25,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
 
 const handleErrors = (fn) => async (req, res) => {
   try {
@@ -39,7 +39,7 @@ const handleErrors = (fn) => async (req, res) => {
       res.status(403).send({ error: err.message });
     } else {
       console.log(err);
-      res.status(500).send({ error: 'System Error' });
+      res.status(500).send({ error: "System Error" });
     }
   }
 };
@@ -49,12 +49,12 @@ const handleErrors = (fn) => async (req, res) => {
 **************************************************************************/
 
 const checkAuth = (fn) => async (req, res) => {
-  const email = parseEmailViaToken(req.header('Authorization'));
+  const email = parseEmailViaToken(req.header("Authorization"));
   await fn(req, res, email);
 };
 
 app.post(
-  '/login',
+  "/login",
   handleErrors(async (req, res) => {
     const { email, password } = req.body;
     const token = await login(email, password);
@@ -63,7 +63,7 @@ app.post(
 );
 
 app.post(
-  '/register',
+  "/register",
   handleErrors(async (req, res) => {
     const { email, password, name } = req.body;
     const token = await register(email, password, name);
@@ -72,7 +72,7 @@ app.post(
 );
 
 app.post(
-  '/logout',
+  "/logout",
   handleErrors(
     // checkAuth finds the email and subsequently runs following async function
     checkAuth(async (req, res, email) => {
@@ -86,7 +86,7 @@ app.post(
                                      GAME
 **************************************************************************/
 app.get(
-  '/games',
+  "/games",
   handleErrors(
     checkAuth(async (req, res, email) => {
       return res.json({ games: await getUserOwnedGames(email) });
@@ -95,7 +95,7 @@ app.get(
 );
 
 app.post(
-  '/games/new',
+  "/games/new",
   handleErrors(
     checkAuth(async (req, res, email) => {
       return res.json({
@@ -106,7 +106,7 @@ app.post(
 );
 
 app.get(
-  '/games/:gameId',
+  "/games/:gameId",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
@@ -117,20 +117,20 @@ app.get(
 );
 
 app.put(
-  '/games/:gameId',
+  "/games/:gameId",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
-      const { rounds, name } = req.body;
+      const { markets, name, desc, media } = req.body;
       await assertGameOwner(email, gameId);
-      await updateGame(gameId, rounds, name);
+      await updateGame(gameId, markets, name, desc, media);
       return res.status(200).send({});
     })
   )
 );
 
 app.delete(
-  '/games/:gameId',
+  "/games/:gameId",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
@@ -142,7 +142,7 @@ app.delete(
 );
 
 app.post(
-  '/games/:gameId/start',
+  "/games/:gameId/start",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
@@ -154,7 +154,7 @@ app.post(
 );
 
 app.post(
-  '/games/:gameId/next',
+  "/games/:gameId/next",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
@@ -166,7 +166,7 @@ app.post(
 );
 
 app.post(
-  '/games/:gameId/end',
+  "/games/:gameId/end",
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
@@ -198,8 +198,8 @@ app.put(
 
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-const configData = JSON.parse(fs.readFileSync('../frontend/src/config.json'));
-const port = 'BACKEND_PORT' in configData ? configData.BACKEND_PORT : 5000;
+const configData = JSON.parse(fs.readFileSync("../frontend/src/config.json"));
+const port = "BACKEND_PORT" in configData ? configData.BACKEND_PORT : 5000;
 const server = app.listen(port, () => {
   console.log(`Backend is now listening on port ${port}!`);
   // console.log(`For API docs, navigate to http://localhost:${port}`);
