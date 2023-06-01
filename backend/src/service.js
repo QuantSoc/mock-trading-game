@@ -1,12 +1,12 @@
-import fs from 'fs';
-import jwt from 'jsonwebtoken';
-import AsyncLock from 'async-lock';
-import { InputError, AuthError } from './error';
+import fs from "fs";
+import jwt from "jsonwebtoken";
+import AsyncLock from "async-lock";
+import { InputError, AuthError } from "./error";
 
 const lock = new AsyncLock();
 
-const JWT_SECRET = 'abraCadabraDoo';
-const DATABSE = './database.json';
+const JWT_SECRET = "abraCadabraDoo";
+const DATABSE = "./database.json";
 
 /**************************************************************************
                                 SERVER STATE
@@ -18,7 +18,7 @@ let sessions = {};
 
 const update = (users, games, sessions) =>
   new Promise((resolve, reject) => {
-    lock.acquire('saveData', () => {
+    lock.acquire("saveData", () => {
       try {
         fs.writeFileSync(
           DATABSE,
@@ -26,7 +26,7 @@ const update = (users, games, sessions) =>
         );
         resolve();
       } catch {
-        reject(new Error('Database update failed'));
+        reject(new Error("Database update failed"));
       }
     });
   });
@@ -46,7 +46,7 @@ try {
   games = data.games;
   sessions = data.sessions;
 } catch {
-  console.log('Database not found, generating new one.');
+  console.log("Database not found, generating new one.");
   save();
 }
 
@@ -61,17 +61,17 @@ const copy = (x) => JSON.parse(JSON.stringify(x));
 // }
 export const userLock = (callback) =>
   new Promise((resolve, reject) => {
-    lock.acquire('userAuthLock', callback(resolve, reject));
+    lock.acquire("userAuthLock", callback(resolve, reject));
   });
 
 export const gameLock = (callback) =>
   new Promise((resolve, reject) => {
-    lock.acquire('gameLock', callback(resolve, reject));
+    lock.acquire("gameLock", callback(resolve, reject));
   });
 
 export const sessionLock = (callback) =>
   new Promise((resolve, reject) => {
-    lock.acquire('sessionLock', callback(resolve, reject));
+    lock.acquire("sessionLock", callback(resolve, reject));
   });
 
 const randomNumber = (max) =>
@@ -98,14 +98,14 @@ const newTeamId = () =>
 
 export const parseEmailViaToken = (authHeader) => {
   try {
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
     const { email } = jwt.verify(token, JWT_SECRET);
     if (!(email in users)) {
-      throw new AuthError('Invalid Token');
+      throw new AuthError("Invalid Token");
     }
     return email;
   } catch {
-    throw new AuthError('Invalid Token');
+    throw new AuthError("Invalid Token");
   }
 };
 
@@ -113,9 +113,9 @@ export const login = (email, password) =>
   userLock((resolve, reject) => {
     if (email in users && users[email].password === password) {
       users[email].isActive = true;
-      resolve(jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256' }));
+      resolve(jwt.sign({ email }, JWT_SECRET, { algorithm: "HS256" }));
     }
-    reject(new InputError('Invalid Credentials'));
+    reject(new InputError("Invalid Credentials"));
   });
 
 export const logout = (email) =>
@@ -127,13 +127,13 @@ export const logout = (email) =>
 export const register = (email, password, username) =>
   userLock((resolve, reject) => {
     email in users
-      ? reject(new InputError('Email already in use'))
+      ? reject(new InputError("Email already in use"))
       : (users[email] = {
           username,
           password,
           isActive: true,
         });
-    const token = jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256' });
+    const token = jwt.sign({ email }, JWT_SECRET, { algorithm: "HS256" });
     resolve(token);
   });
 
@@ -153,9 +153,9 @@ const newGamePayload = (name, desc, owner) => ({
 export const assertGameOwner = (email, gameId) =>
   gameLock((resolve, reject) => {
     if (!(gameId in games)) {
-      reject(new InputError('Game not found'));
+      reject(new InputError("Game not found"));
     } else if (games[gameId].owner !== email) {
-      reject(new InputError('You are not the owner of this game'));
+      reject(new InputError("You are not the owner of this game"));
     } else {
       resolve();
     }
@@ -180,7 +180,7 @@ export const getUserOwnedGames = (email) =>
 export const createGame = (name, desc, email) =>
   gameLock((resolve, reject) => {
     if (name === undefined) {
-      reject(new InputError('Please give this quiz a name'));
+      reject(new InputError("Please give this quiz a name"));
     } else {
       const newId = newGameId();
       games[newId] = newGamePayload(name, desc, email);
@@ -197,11 +197,12 @@ export const getGame = (gameId) =>
     });
   });
 
-export const updateGame = (gameId, rounds, name, desc) =>
+export const updateGame = (gameId, rounds, name, desc, media) =>
   gameLock((resolve, reject) => {
     rounds && (games[gameId].rounds = rounds);
     name && (games[gameId].name = name);
     desc && (games[gameId].desc = desc);
+    media && (games[gameId].media = media);
     resolve();
   });
 
@@ -213,7 +214,7 @@ export const deleteGame = (gameId) =>
 export const startGame = (gameId) =>
   gameLock((resolve, reject) => {
     if (gameHasActiveSession(gameId)) {
-      return reject(new InputError('Game already started'));
+      return reject(new InputError("Game already started"));
     } else {
       const id = newSessionId();
       sessions[id] = newSessionPayload(gameId);
@@ -225,7 +226,7 @@ export const advanceGame = (gameId) =>
   gameLock((resolve, reject) => {
     const session = getActiveGameSession(gameId);
     if (!session.active) {
-      return reject(new InputError('Game not started'));
+      return reject(new InputError("Game not started"));
     }
     const totalRounds = session.rounds.length;
     session.position += 1;
@@ -275,7 +276,7 @@ const getActiveGameSessionId = (gameId) => {
 
 const getActiveGameSession = (gameId) => {
   if (!gameHasActiveSession(gameId)) {
-    throw new InputError('Game session inactive');
+    throw new InputError("Game session inactive");
   }
   const sessionId = getActiveGameSessionId(gameId);
   return sessionId !== null ? sessions[sessionId] : null;
