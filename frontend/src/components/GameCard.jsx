@@ -41,7 +41,7 @@ const GameCard = ({ gameId }) => {
         component="img"
         alt="green iguana"
         height="150"
-        image={logo}
+        image={cardData.media ? cardData.media : logo}
         sx={{ objectFit: 'cover' }}
       />
       <CardContent>
