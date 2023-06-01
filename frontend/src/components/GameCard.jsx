@@ -70,7 +70,7 @@ const GameCard = ({ gameId }) => {
             gutterBottom
           >
             <AccessTimeIcon sx={{ mr: 0.5 }} />
-            {cardData?.rounds?.length}s
+            {cardData?.markets?.length}s
           </Typography>
 
           {gameSession && (
