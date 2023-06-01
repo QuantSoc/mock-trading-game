@@ -17,7 +17,7 @@ const EditGamePage = () => {
   const [oldGameDesc, setOldGameDesc] = useState("");
   const [gameDesc, setGameDesc] = useState("");
   const [gameRounds, setGameRounds] = useState([]);
-  const [gameThumbnail, setGameThumbnail] = useState(null);
+  const [gameMedia, setGameMedia] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ const EditGamePage = () => {
       rounds: gameRounds,
       name: gameName,
       desc: gameDesc,
+      media: gameMedia,
     });
   };
 
@@ -185,7 +186,12 @@ const EditGamePage = () => {
           <Typography variant="h5" sx={{ pb: 2 }}>
             Upload Thumbnail
           </Typography>
-          <ImageUploadBtn callback={setGameThumbnail} />
+          <ImageUploadBtn
+            callback={(imgUrl) => {
+              setGameMedia(imgUrl);
+              setIsSaved(false);
+            }}
+          />
           <Divider sx={{ my: 4 }} />
           <Typography variant="h5" sx={{ pb: 2 }}>
             Markets
