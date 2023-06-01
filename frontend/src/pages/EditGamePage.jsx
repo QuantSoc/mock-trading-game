@@ -27,14 +27,14 @@ const EditGamePage = () => {
       setGameName(gameData.name);
       setOldGameDesc(gameData.desc);
       setGameDesc(gameData.desc);
-      setGameRounds(gameData.rounds);
+      setGameRounds(gameData.markets);
     };
     fetchGame();
   }, [gameId]);
 
   const saveChanges = async () => {
     await fetchAPIRequest(`/games/${gameId}`, "PUT", {
-      rounds: gameRounds,
+      markets: gameRounds,
       name: gameName,
       desc: gameDesc,
       media: gameMedia,

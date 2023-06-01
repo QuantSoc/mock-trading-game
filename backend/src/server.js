@@ -120,9 +120,9 @@ app.put(
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
-      const { rounds, name, desc, media } = req.body;
+      const { markets, name, desc, media } = req.body;
       await assertGameOwner(email, gameId);
-      await updateGame(gameId, rounds, name, desc, media);
+      await updateGame(gameId, markets, name, desc, media);
       return res.status(200).send({});
     })
   )

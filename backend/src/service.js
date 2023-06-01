@@ -145,7 +145,7 @@ const newGamePayload = (name, desc, owner) => ({
   name,
   desc,
   owner,
-  rounds: [],
+  markets: [],
   active: null,
   createdAt: new Date().toISOString(),
 });
@@ -197,9 +197,9 @@ export const getGame = (gameId) =>
     });
   });
 
-export const updateGame = (gameId, rounds, name, desc, media) =>
+export const updateGame = (gameId, markets, name, desc, media) =>
   gameLock((resolve, reject) => {
-    rounds && (games[gameId].rounds = rounds);
+    markets && (games[gameId].markets = markets);
     name && (games[gameId].name = name);
     desc && (games[gameId].desc = desc);
     media && (games[gameId].media = media);
@@ -228,11 +228,11 @@ export const advanceGame = (gameId) =>
     if (!session.active) {
       return reject(new InputError("Game not started"));
     }
-    const totalRounds = session.rounds.length;
+    const totalMarkets = session.markets.length;
     session.position += 1;
     session.answerAvailable = false;
     session.isoTimeLastQuestionStarted = new Date().toISOString();
-    if (session.position >= totalRounds) {
+    if (session.position >= totalMarkets) {
       endGame(gameId);
     }
     resolve(session.position);
@@ -254,7 +254,7 @@ const newSessionPayload = (gameId) => ({
   position: -1,
   // isoTimeLastQuestionStarted: null,
   teams: {},
-  questions: copy(games[gameId].rounds),
+  questions: copy(games[gameId].markets),
   active: true,
   answerAvailable: false,
 });
