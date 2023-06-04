@@ -19,6 +19,8 @@ import {
   advanceGame,
   endGame,
   submitPrices,
+  submitTrueValue,
+  getPortfolio,
 } from './service';
 
 const app = express();
@@ -166,6 +168,19 @@ app.post(
 );
 
 app.post(
+  '/games/:gameId/market/:marketNumber/value',
+  handleErrors(
+    checkAuth(async (req, res, email) => {
+      const { gameId, marketNumber } = req.params;
+      const { value } = req.body;
+      await assertGameOwner(email, gameId);
+      await submitTrueValue(value, gameId, marketNumber);
+      return res.status(200).send({});
+    })
+  )
+)
+
+app.post(
   "/games/:gameId/end",
   handleErrors(
     checkAuth(async (req, res, email) => {
@@ -177,10 +192,11 @@ app.post(
   )
 );
 
+
 /**************************************************************************
                                   PLAY
 **************************************************************************/
-// may want to remove game/:gameId param in favour of a helper function
+// may want to remove game/:gameId param in favour of a helper function (would be slower tho)
 app.put(
   '/games/:gameId/play/:teamId/prices',
   handleErrors(async (req, res) => { // no auth because temporary user?
@@ -188,6 +204,14 @@ app.put(
     const { ask, bid } = req.body;
     await submitPrices(teamId, gameId, ask, bid);
     return res.status(200).send({});
+}));
+
+app.get(
+  '/games/:gameId/play/:teamId/portfolio',
+  handleErrors(async (req, res) => {
+    const { teamId, gameId } = req.params;
+    const portfolio = await getPortfolio(teamId, gameId);
+    return res.status(200).send({ portfolio });
 }));
 
 

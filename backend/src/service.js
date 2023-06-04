@@ -354,6 +354,37 @@ const updatePortfolios = (gameId, currQuestion) => sessionLock((resolve, reject)
 
 // TODO: evaluatePortfolios
 
+// TODO: getPortfolio
+export const getPortfolio = (teamId, gameId) => sessionLock((resolve, reject) => {
+  const session = getActiveGameSession(gameId);
+  if (session.position === -1 || session.currQuestion === -1) {
+    return reject(new InputError('Session has not started yet'));
+  } 
+  if (session.questions[session.currQuestion].trueValue === undefined) {
+    return reject(new InputError('True value not available yet'));
+  }
+  // TODO: if portfolio has not been updated yet, update it?? when/where should <-- this be done?
+  resolve(session.teams[teamId].portfolio);
+});
+
+// TODO: submitMarketValue
+export const submitTrueValue = (teamId, gameId, trueValue) => sessionLock((resolve, reject) => {
+  if (trueValue === undefined) { 
+    return reject(new InputError('true value must be provided'));
+  } else {
+    const session = getActiveGameSession(gameId);
+    if (session.position === -1 || session.currQuestion === -1) {
+      return reject(new InputError('Session has not started yet'));
+    } else if (session.answerAvailable) {
+      return reject(new InputError('Can\'t answer question once answer is available'));
+    } else {
+      session.questions[session.currQuestion][session.position].trueValue = parseFloat(trueValue);
+      resolve();
+    }
+  }
+});
+    
+
 const newTeamPayload = (teamId, numMarkets) => ({
   teamName,
   portfolio: {
