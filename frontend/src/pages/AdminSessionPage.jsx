@@ -87,7 +87,9 @@ const AdminSessionPage = () => {
 
     return (
       <Box>
-        <Typography variant="h5">Session Overview</Typography>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          Session Overview
+        </Typography>
         {markets}
       </Box>
     );
