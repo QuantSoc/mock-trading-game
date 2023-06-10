@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { fetchAPIRequest } from "../helpers";
-import { ImageUploadBtn } from "../components/index.js";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { fetchAPIRequest } from '../helpers';
+import { ImageUploadBtn } from '../components/index.js';
 
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import AddIcon from "@mui/icons-material/Add";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
-import DoneIcon from "@mui/icons-material/Done";
+import { Box, Button, Divider, TextField, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import DoneIcon from '@mui/icons-material/Done';
 
 const EditGamePage = () => {
   const { gameId } = useParams();
-  const [oldGameName, setOldGameName] = useState("");
-  const [gameName, setGameName] = useState("");
-  const [oldGameDesc, setOldGameDesc] = useState("");
-  const [gameDesc, setGameDesc] = useState("");
+  const [oldGameName, setOldGameName] = useState('');
+  const [gameName, setGameName] = useState('');
+  const [oldGameDesc, setOldGameDesc] = useState('');
+  const [gameDesc, setGameDesc] = useState('');
   const [gameRounds, setGameRounds] = useState([]);
   const [gameMedia, setGameMedia] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const fetchGame = async () => {
-      const gameData = await fetchAPIRequest(`/games/${gameId}`, "GET");
+      const gameData = await fetchAPIRequest(`/games/${gameId}`, 'GET');
       setOldGameName(gameData.name);
       setGameName(gameData.name);
       setOldGameDesc(gameData.desc);
@@ -33,7 +33,7 @@ const EditGamePage = () => {
   }, [gameId]);
 
   const saveChanges = async () => {
-    await fetchAPIRequest(`/games/${gameId}`, "PUT", {
+    await fetchAPIRequest(`/games/${gameId}`, 'PUT', {
       markets: gameRounds,
       name: gameName,
       desc: gameDesc,
@@ -47,18 +47,18 @@ const EditGamePage = () => {
         {markets.map((market, marketIndex) => {
           return (
             <Box
-              key={"market" + marketIndex}
+              key={'market' + marketIndex}
               sx={{
                 px: 2,
                 pt: 3,
                 pb: 2,
                 mb: 3,
-                border: "1px solid lightgray",
+                border: '1px solid lightgray',
                 borderRadius: 3,
               }}
             >
               <TextField
-                key={"marketNameTextbox" + marketIndex}
+                key={'marketNameTextbox' + marketIndex}
                 label="Market Name"
                 fullWidth
                 defaultValue={market.name}
@@ -71,22 +71,22 @@ const EditGamePage = () => {
               />
               {market.rounds.map((round, index) => {
                 return (
-                  <Box key={"roundBox" + index} sx={{ py: 2, pl: 4 }}>
-                    <Typography key={"roundNum" + index}>
+                  <Box key={'roundBox' + index} sx={{ py: 2, pl: 4 }}>
+                    <Typography key={'roundNum' + index}>
                       Round {index + 1}
                     </Typography>
                     <Box
-                      key={"roundDesc" + index}
-                      sx={{ display: "flex", pt: 1 }}
+                      key={'roundDesc' + index}
+                      sx={{ display: 'flex', pt: 1 }}
                     >
                       <TextField
-                        key={"roundDescTextbox" + index}
+                        key={'roundDescTextbox' + index}
                         label="Description"
                         fullWidth
-                        defaultValue={round.optionalDesc}
-                        placeholder={round.optionalDesc}
+                        defaultValue={round.hint}
+                        placeholder={round.hint}
                         onChange={(event) => {
-                          markets[marketIndex].rounds[index].optionalDesc =
+                          markets[marketIndex].rounds[index].hint =
                             event.target.value;
                           setGameRounds([...markets]);
                           setIsSaved(false);
@@ -97,11 +97,11 @@ const EditGamePage = () => {
                 );
               })}
               <Button
-                key={"marketAddRound" + marketIndex}
+                key={'marketAddRound' + marketIndex}
                 startIcon={<AddIcon />}
                 sx={{ ml: 4 }}
                 onClick={() => {
-                  markets[marketIndex].rounds.push({ optionalDesc: "" });
+                  markets[marketIndex].rounds.push({ hint: '' });
                   setGameRounds([...markets]);
                   setIsSaved(false);
                 }}
@@ -116,7 +116,7 @@ const EditGamePage = () => {
           // sx={{}}
           onClick={() => {
             markets.push({
-              name: "",
+              name: '',
               rounds: [],
             });
             setGameRounds([...markets]);
@@ -131,21 +131,21 @@ const EditGamePage = () => {
   return (
     <Box
       sx={{
-        width: "100%",
-        minHeight: "92.5vh",
-        height: "fit-content",
-        boxSizing: "border-box",
-        display: "flex",
-        justifyContent: "center",
+        width: '100%',
+        minHeight: '92.5vh',
+        height: 'fit-content',
+        boxSizing: 'border-box',
+        display: 'flex',
+        justifyContent: 'center',
         pt: 10,
         px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
         sx={{
-          backgroundColor: "#fff",
+          backgroundColor: '#fff',
           flexGrow: 1,
-          borderRadius: "20px 20px 0px 0px",
+          borderRadius: '20px 20px 0px 0px',
           boxShadow: 3,
           px: { xs: 2, sm: 5 },
           py: 7,
@@ -201,14 +201,14 @@ const EditGamePage = () => {
         </Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           <Button
             size="large"
             type="submit"
-            color={isSaved ? "success" : "primary"}
+            color={isSaved ? 'success' : 'primary'}
             variant="contained"
             startIcon={isSaved ? <DoneIcon /> : <SaveIcon />}
             sx={{ mt: 3 }}
@@ -217,7 +217,7 @@ const EditGamePage = () => {
               setIsSaved(true);
             }}
           >
-            {isSaved ? "Saved" : "Save My Changes"}
+            {isSaved ? 'Saved' : 'Save My Changes'}
           </Button>
         </Box>
       </Box>
