@@ -47,9 +47,15 @@ const GameTriggerBtn = ({
         modalTitle={isStart ? 'Game Started' : 'Game Complete'}
       >
         <Box>
+          <Typography variant="h2" textAlign="center">
+            {isStart && `${gameSession}`}
+          </Typography>
+          <Typography variant="h6">
+            {isStart && `Start the session at /admin/session/${gameSession}.`}
+          </Typography>
           <Typography variant="h6">
             {isStart
-              ? 'Please copy the session ID'
+              ? `Players can join at /join/${gameSession}. \r\n Please copy the session ID`
               : 'Would you like to view the session results?'}
           </Typography>
           {isStart ? (
