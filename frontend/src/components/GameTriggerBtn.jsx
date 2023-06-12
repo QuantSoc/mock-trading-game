@@ -61,7 +61,7 @@ const GameTriggerBtn = ({
           {isStart ? (
             <CopyBtn
               copyTitle="Session"
-              copyContent={gameSession}
+              copyContent={`localhost:3000/admin/game/${gameId}/${gameSession}`}
               isContained
               styling={{ my: 2 }}
             />

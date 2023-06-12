@@ -74,7 +74,10 @@ const GameCard = ({ gameId }) => {
           </Typography>
 
           {gameSession && (
-            <CopyBtn copyTitle="Session" copyContent={gameSession} />
+            <CopyBtn
+              copyTitle="Session"
+              copyContent={`localhost:3000/admin/game/${gameId}/${gameSession}`}
+            />
           )}
         </Box>
         <Typography
