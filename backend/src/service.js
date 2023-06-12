@@ -233,11 +233,11 @@ export const advanceGame = (gameId) =>
     if (!session.active) {
       return reject(new InputError('Game not started'));
     }
-    const totalMarkets = session.markets.length;
+    const questionsLength = session.questions.length;
     session.position += 1;
     session.answerAvailable = false;
     session.isoTimeLastQuestionStarted = new Date().toISOString();
-    if (session.position >= totalMarkets) {
+    if (session.position >= questionsLength) {
       endGame(gameId);
     }
     resolve(session.position);
@@ -274,6 +274,7 @@ const newTeamPayload = (name, questions) => {
         balance: 0,
         contracts: 0,
       });
+    question.type === 'round' && teamAnswers.push({});
     question.type === 'trade' &&
       teamAnswers.push({
         questionStartedAt: null,
@@ -433,10 +434,7 @@ export const setTeamBidAsk = (teamId, bid, ask) =>
       } else if (session.answerAvailable) {
         return reject(new InputError('Trading has already begun.'));
       } else {
-        const round = getGameRound(
-          Object.values(session.teams[teamId].teamAnswers),
-          session.position
-        );
+        const round = session.teams[teamId].teamAnswers[session.position];
 
         round.answeredAt = new Date().toISOString();
         round.bid = bid;
