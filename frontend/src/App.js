@@ -27,9 +27,10 @@ const App = () => {
         minHeight: '100vh',
         height: 'fit-content',
         backgroundColor: '#f2f2f2',
+        flex: '1 1 auto',
       }}
     >
-      <Box sx={{ height: 71.5 }} />
+      <Box sx={{ height: '7.5vh' }} />
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <NavBar />
@@ -41,7 +42,7 @@ const App = () => {
               <Route path="/edit/:gameId" element={<EditGamePage />} />
               <Route path="/join/:sessionId" element={<PlayGamePage />} />
               <Route
-                path="/admin/session/:sessionId"
+                path="/admin/game/:gameId/:sessionId"
                 element={<AdminSessionPage />}
               />
             </Route>
