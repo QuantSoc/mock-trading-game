@@ -22,6 +22,7 @@ import {
   setTeamBidAsk,
   sessionStatus,
   assertSessionOwner,
+  trade,
 } from './service';
 
 const app = express();
@@ -211,7 +212,25 @@ app.put(
     const { teamId } = req.params;
     const { bid, ask } = req.body;
     await setTeamBidAsk(teamId, bid, ask);
-    return res.status(200).send({});
+    return res.status(200).send({ status: 200 });
+  })
+);
+
+app.get(
+  '/session/:sessionId/status',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    return res.status(200).json(sessionStatus(sessionId));
+  })
+);
+
+app.post(
+  '/session/:sessionId/trade',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    const { marketPos } = req.body;
+    await trade(sessionId, marketPos);
+    return res.status(200).json({});
   })
 );
 
