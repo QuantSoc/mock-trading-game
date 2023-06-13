@@ -3,12 +3,21 @@ import { useParams } from 'react-router-dom';
 import { fetchAPIRequest } from '../helpers';
 import { ImageUploadBtn } from '../components/index.js';
 
-import { Box, Button, Divider, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  TextField,
+  Typography,
+  IconButton,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import DoneIcon from '@mui/icons-material/Done';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const EditGamePage = () => {
   const { gameId } = useParams();
@@ -57,18 +66,44 @@ const EditGamePage = () => {
                 borderRadius: 3,
               }}
             >
-              <TextField
-                key={'marketNameTextbox' + marketIndex}
-                label="Market Name"
-                fullWidth
-                defaultValue={market.name}
-                placeholder={market.name}
-                onChange={(event) => {
-                  markets[marketIndex].name = event.target.value;
-                  setGameRounds([...markets]);
-                  setIsSaved(false);
-                }}
-              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                <TextField
+                  key={'marketNameTextbox' + marketIndex}
+                  label="Market Name"
+                  sx={{ width: '60%' }}
+                  defaultValue={market.name}
+                  placeholder={market.name}
+                  onChange={(event) => {
+                    markets[marketIndex].name = event.target.value;
+                    setGameRounds([...markets]);
+                    setIsSaved(false);
+                  }}
+                />
+                <TextField
+                  key={'marketTrueValue' + marketIndex}
+                  label="True Value"
+                  type="number"
+                  sx={{ width: '20%' }}
+                  defaultValue={0}
+                  placeholder={market.trueValue}
+                  onChange={(event) => {
+                    markets[marketIndex].trueValue = event.target.value;
+                    setGameRounds([...markets]);
+                    setIsSaved(false);
+                  }}
+                />
+                <IconButton
+                  color="error"
+                  onClick={() => {
+                    markets.splice(marketIndex, 1);
+                    setGameRounds([...markets]);
+                    setIsSaved(false);
+                  }}
+                  sx={{ p: 2 }}
+                >
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Box>
               {market.rounds.map((round, index) => {
                 return (
                   <Box key={'roundBox' + index} sx={{ py: 2, pl: 4 }}>
@@ -81,10 +116,10 @@ const EditGamePage = () => {
                     >
                       <TextField
                         key={'roundDescTextbox' + index}
-                        label="Description"
+                        label="Hint"
                         fullWidth
-                        defaultValue={round.hint}
-                        placeholder={round.hint}
+                        value={markets[marketIndex].rounds[index].hint}
+                        placeholder={markets[marketIndex].rounds[index].hint}
                         onChange={(event) => {
                           markets[marketIndex].rounds[index].hint =
                             event.target.value;
@@ -92,6 +127,17 @@ const EditGamePage = () => {
                           setIsSaved(false);
                         }}
                       />
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          markets[marketIndex].rounds.splice(index, 1);
+                          setGameRounds([...markets]);
+                          setIsSaved(false);
+                        }}
+                        sx={{ p: 2 }}
+                      >
+                        <DeleteOutlineIcon />
+                      </IconButton>
                     </Box>
                   </Box>
                 );
@@ -117,9 +163,11 @@ const EditGamePage = () => {
           onClick={() => {
             markets.push({
               name: '',
+              trueValue: 0,
               rounds: [],
             });
             setGameRounds([...markets]);
+            setIsSaved(false);
           }}
         >
           New Market
