@@ -1,6 +1,9 @@
-import { Button } from '@mui/material';
+import { Button, Box, Typography } from '@mui/material';
+import { Modal } from './index.js';
 import { fetchAPIRequest } from '../helpers';
 import { useEffect } from 'react';
+import useModal from '../hooks/useModal';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const AdvanceGameBtn = ({
   gameId,
@@ -8,6 +11,8 @@ const AdvanceGameBtn = ({
   setIsSessionStart,
   isEnd,
 }) => {
+  const { isModalShown, toggleModal } = useModal();
+
   const advanceSession = async () => {
     const res = await fetchAPIRequest(`/games/${gameId}/next`, 'POST');
     res && setIsSessionStart(true);
@@ -15,19 +20,52 @@ const AdvanceGameBtn = ({
 
   const endSession = async () => {
     const res = await fetchAPIRequest(`/games/${gameId}/end`, 'POST');
-    res && setIsSessionStart(false);
+    // res && setIsSessionStart(false);
   };
 
-  return (
+  return !isEnd ? (
     <Button
       variant="contained"
       size="large"
-      color={isEnd ? 'error' : 'primary'}
-      onClick={isEnd ? endSession : advanceSession}
+      onClick={advanceSession}
       sx={{ my: 2 }}
     >
-      {!isSessionStart ? 'Start Game' : isEnd ? 'End Game' : 'Advance'}
+      {!isSessionStart ? 'Start Game' : 'Advance'}
     </Button>
+  ) : (
+    <>
+      <Modal
+        isModalShown={isModalShown}
+        toggleModal={toggleModal}
+        modalTitle="Game Complete"
+      >
+        <Box>
+          <Typography variant="h6">
+            Would you like to view the session results?
+          </Typography>
+          <Button
+            startIcon={<ArrowForwardIcon />}
+            color="primary"
+            variant="contained"
+            sx={{ my: 2 }}
+          >
+            View Results
+          </Button>
+        </Box>
+      </Modal>
+      <Button
+        variant="contained"
+        color="error"
+        size="large"
+        onClick={() => {
+          endSession();
+          toggleModal();
+        }}
+        sx={{ my: 2 }}
+      >
+        End Game
+      </Button>
+    </>
   );
 };
 export default AdvanceGameBtn;
