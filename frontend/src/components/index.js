@@ -9,3 +9,5 @@ export { default as CopyBtn } from './CopyBtn.jsx';
 export { default as ImageUploadBtn } from './ImageUploadBtn.jsx';
 export { default as AdvanceGameBtn } from './AdvanceGameBtn.jsx';
 export { default as TeamPanel } from './TeamPanel.jsx';
+export { default as TradePanel } from './TradePanel.jsx';
+export { default as BidAskPanel } from './BidAskPanel.jsx';
