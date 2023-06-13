@@ -20,6 +20,7 @@ const AdminSessionPage = () => {
   const [statusInterval, setStatusInterval] = useState('');
   const [marketPosition, setMarketPosition] = useState(0);
   // const [isActive, setIsActive] = useState(false);
+  const [hasTraded, setHasTraded] = useState(false);
 
   const [isSessionStart, setIsSessionStart] = useState(false);
 
@@ -40,12 +41,18 @@ const AdminSessionPage = () => {
     });
   };
 
+  const initiateTrade = async () => {
+    await fetchAPIRequest(`/session/${sessionId}/trade`, 'POST', {
+      marketPos: marketPosition,
+    });
+  };
   useEffect(() => {
     const getGameStatus = async () => {
       const status = await fetchAPIRequest(
         `/admin/session/${sessionId}/status`,
         'GET'
       );
+
       setSession(status.status);
       if (
         status.status.position >= 0 &&
@@ -53,9 +60,15 @@ const AdminSessionPage = () => {
       ) {
         setMarketPosition(status.status.position);
       }
+      if (
+        status.status.position >= 0 &&
+        status.status.questions[status.status.position].type === 'round'
+      ) {
+        setHasTraded(false);
+      }
+
       // setIsActive(status.status.active);
     };
-    console.log('ONE SET HERE');
     setInterval(() => {
       getGameStatus();
     }, 1000);
@@ -177,7 +190,7 @@ const AdminSessionPage = () => {
               sx={{
                 boxShadow: 3,
                 borderRadius: 5,
-                width: '50%',
+                width: { xs: '70%', md: '50%' },
                 height: 'fit-content',
                 py: 4,
                 px: 4,
@@ -191,9 +204,19 @@ const AdminSessionPage = () => {
               >
                 {session.position.toString()}
               </Typography>
-              {/* {session.questions[session.position]?.type === 'market' &&
-                setMarketPosition(session.position)} */}
-              <Typography variant="h5">
+              {session.questions[session.position]?.type === 'trade' && (
+                <Button
+                  variant="contained"
+                  disabled={hasTraded}
+                  onClick={() => {
+                    initiateTrade();
+                    setHasTraded(true);
+                  }}
+                >
+                  Trade
+                </Button>
+              )}
+              <Typography variant="h4">
                 {session.questions[session.position]?.type[0].toUpperCase() +
                   session.questions[session.position]?.type.slice(1)}
               </Typography>
