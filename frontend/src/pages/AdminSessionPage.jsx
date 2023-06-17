@@ -17,7 +17,6 @@ const AdminSessionPage = () => {
   const { gameId } = useParams();
   const { sessionId } = useParams();
   const [session, setSession] = useState({});
-  const [statusInterval, setStatusInterval] = useState('');
   const [marketPosition, setMarketPosition] = useState(0);
   // const [isActive, setIsActive] = useState(false);
   const [hasTraded, setHasTraded] = useState(false);
@@ -52,6 +51,10 @@ const AdminSessionPage = () => {
         `/admin/session/${sessionId}/status`,
         'GET'
       );
+
+      if (status.status.position >= 0) {
+        setIsSessionStart(true);
+      }
 
       setSession(status.status);
       if (
