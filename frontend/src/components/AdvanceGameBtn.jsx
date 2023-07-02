@@ -4,6 +4,8 @@ import { fetchAPIRequest } from '../helpers';
 import { useEffect } from 'react';
 import useModal from '../hooks/useModal';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
 
 const AdvanceGameBtn = ({
   gameId,
@@ -28,6 +30,7 @@ const AdvanceGameBtn = ({
       variant="contained"
       size="large"
       onClick={advanceSession}
+      startIcon={!isSessionStart ? <PlayArrowIcon /> : <ArrowForwardIcon />}
       sx={{ my: 2 }}
     >
       {!isSessionStart ? 'Start Game' : 'Advance'}
@@ -61,6 +64,7 @@ const AdvanceGameBtn = ({
           endSession();
           toggleModal();
         }}
+        startIcon={<StopIcon />}
         sx={{ my: 2 }}
       >
         End Game
