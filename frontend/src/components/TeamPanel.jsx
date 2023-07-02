@@ -1,4 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Button, Box, Card, Divider, Typography } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
+import PaidTwoToneIcon from '@mui/icons-material/PaidTwoTone';
+import RequestPageTwoToneIcon from '@mui/icons-material/RequestPageTwoTone';
 
 const TeamPanel = ({ teamName, balance, contracts, latestBid, latestAsk }) => {
   return (
@@ -6,9 +9,9 @@ const TeamPanel = ({ teamName, balance, contracts, latestBid, latestAsk }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        borderTop: '0.5px solid #ccc',
-        borderBottom: '0.5px solid #ccc',
-        p: 2,
+        p: 3,
+        boxShadow: 3,
+        borderRadius: 3,
       }}
     >
       <Typography
@@ -17,14 +20,56 @@ const TeamPanel = ({ teamName, balance, contracts, latestBid, latestAsk }) => {
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis',
           overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
+        <GroupIcon fontSize="large" sx={{ mr: 1 }} />
         {teamName}
       </Typography>
-      <Typography variant="h6">Balance: ${balance}</Typography>
-      <Typography variant="h6">Contracts: {contracts}</Typography>
-      <Typography variant="h6">Bid: ${latestBid}</Typography>
-      <Typography variant="h6">Ask: ${latestAsk}</Typography>
+      <Divider sx={{ my: 2 }} />
+      <Typography
+        variant="h6"
+        sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+        fontFamily={'monospace'}
+      >
+        <PaidTwoToneIcon fontSize="large" sx={{ mr: 1 }} />
+        {balance.toFixed(2)}
+      </Typography>
+      <Typography
+        variant="h6"
+        sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+        fontFamily={'monospace'}
+      >
+        <RequestPageTwoToneIcon
+          fontSize="large"
+          color="primary"
+          sx={{ mr: 1 }}
+        />
+        {contracts} contracts
+      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          variant={latestBid ? 'contained' : 'outlined'}
+          color="success"
+          sx={{ fontSize: 18, mr: 1 }}
+        >
+          Bid: ${latestBid ? latestBid : '  -'}
+        </Button>
+        <Button
+          variant={latestAsk ? 'contained' : 'outlined'}
+          color="error"
+          sx={{ fontSize: 18, ml: 1 }}
+        >
+          Ask: ${latestAsk ? latestAsk : '  -'}
+        </Button>
+      </Box>
     </Box>
   );
 };

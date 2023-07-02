@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import { fetchAPIRequest } from '../helpers';
 import { useParams } from 'react-router-dom';
 import AdvanceGameBtn from '../components/AdvanceGameBtn';
 import { TeamPanel } from '../components';
+import { TradePanel } from '../components';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -26,20 +28,52 @@ const AdminSessionPage = () => {
   const processTeams = () => {
     return Object.keys(session.teams).map((teamId) => {
       return (
-        <TeamPanel
-          key={teamId}
-          teamName={session.teams[teamId].name}
-          balance={session.teams[teamId].teamAnswers[marketPosition].balance}
-          contracts={
-            session.teams[teamId].teamAnswers[marketPosition].contracts
-          }
-          latestBid={session.teams[teamId].teamAnswers[session.position]?.bid}
-          latestAsk={session.teams[teamId].teamAnswers[session.position]?.ask}
-        />
+        <Grid
+          item={true}
+          xs={2}
+          sm={4}
+          md={4}
+          key={teamId + 'item'}
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <TeamPanel
+            key={teamId}
+            teamName={session.teams[teamId].name}
+            balance={session.teams[teamId].teamAnswers[marketPosition].balance}
+            contracts={
+              session.teams[teamId].teamAnswers[marketPosition].contracts
+            }
+            latestBid={session.teams[teamId].teamAnswers[session.position]?.bid}
+            latestAsk={session.teams[teamId].teamAnswers[session.position]?.ask}
+          />
+        </Grid>
       );
     });
   };
+  const processResults = (teams) => {
+    const teamResults = Object.keys(teams)
+      .map((teamId, index) => {
+        const trueValue = session.questions[session.position]?.trueValue;
+        const balance = teams[teamId].teamAnswers[marketPosition].balance;
+        const contracts = teams[teamId].teamAnswers[marketPosition].contracts;
+        const total =
+          parseInt(contracts, 10) * parseFloat(trueValue, 10) +
+          parseFloat(balance, 10);
+        return {
+          teamId,
+          teamName: teams[teamId].name,
+          balance,
+          contracts,
+          total,
+        };
+      })
+      .sort((a, b) => (a.total < b.total ? 1 : -1));
 
+    const winningTotal = teamResults[0]?.total;
+    return teamResults.map((result) => {
+      return { ...result, isWinner: result.total === winningTotal };
+    });
+  };
   const initiateTrade = async () => {
     await fetchAPIRequest(`/session/${sessionId}/trade`, 'POST', {
       marketPos: marketPosition,
@@ -207,30 +241,84 @@ const AdminSessionPage = () => {
               >
                 {session.position.toString()}
               </Typography>
-              {session.questions[session.position]?.type === 'trade' && (
-                <Button
-                  variant="contained"
-                  disabled={hasTraded}
-                  onClick={() => {
-                    initiateTrade();
-                    setHasTraded(true);
-                  }}
-                >
-                  Trade
-                </Button>
-              )}
               <Typography variant="h4">
                 {session.questions[session.position]?.type[0].toUpperCase() +
                   session.questions[session.position]?.type.slice(1)}
               </Typography>
+              <Divider sx={{ my: 2 }} />
               <Typography variant="h6">
                 {session.questions[session.position]?.name}
               </Typography>
               <Typography variant="h6">
                 {session.questions[session.position]?.hint}
               </Typography>
-              {processTeams()}
+              {session.questions[session.position]?.type === 'trade' && (
+                <Box
+                  sx={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Typography variant="h6">
+                    Click the button to begin trading
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    fulLWidth
+                    disabled={hasTraded}
+                    onClick={() => {
+                      initiateTrade();
+                      setHasTraded(true);
+                    }}
+                    fullWidth
+                    sx={{ maxWidth: '30%' }}
+                  >
+                    Trade
+                  </Button>
+                </Box>
+              )}
             </Box>
+            {session.questions[session.position]?.type !== 'result' && (
+              <Grid
+                container
+                columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
+                spacing={3}
+                sx={{ p: 5 }}
+              >
+                {processTeams()}
+              </Grid>
+            )}
+            <Grid
+              container
+              columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
+              spacing={3}
+              sx={{ py: 3 }}
+            >
+              {session.questions[session.position]?.type === 'result' &&
+                processResults(session.teams).map((team, index) => {
+                  return (
+                    <Grid
+                      item
+                      xs={2}
+                      sm={4}
+                      md={4}
+                      key={index}
+                      sx={{ display: 'flex', justifyContent: 'center' }}
+                    >
+                      <TradePanel
+                        key={team.teamId}
+                        teamName={team.teamName}
+                        balance={team.balance}
+                        contracts={team.contracts}
+                        total={team.total}
+                        isWinner={team.isWinner}
+                      />
+                    </Grid>
+                  );
+                })}
+            </Grid>
           </Box>
         ) : (
           <>

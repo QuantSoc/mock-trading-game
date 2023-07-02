@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
   Grid,
+  LinearProgress,
 } from '@mui/material';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import { BidAskPanel, TradePanel } from '../components/index.js';
@@ -146,11 +147,12 @@ const PlayGamePage = () => {
                 sx={{
                   boxShadow: 3,
                   borderRadius: 5,
-                  width: { xs: '80%', md: '70%' },
+                  width: { xs: '80%', md: '50%' },
                   height: 'fit-content',
                   py: 4,
                   px: 4,
                   mx: 'auto',
+                  mb: 5,
                 }}
               >
                 <Typography
@@ -168,13 +170,20 @@ const PlayGamePage = () => {
                 </Typography>
                 <Typography variant="h6">{question?.hint}</Typography>
                 <Divider sx={{ my: 3 }} />
-                <Typography variant="h6">
+                <Typography variant="h5">
                   {question.type === 'result' &&
                     `The fair value of this market is $${question.trueValue}.`}
                 </Typography>
-                <Typography variant="h6">
+                {/* <Typography variant="h6">
                   {question.type !== 'round' &&
                     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis officia odit nulla aliquid consequuntur id unde doloribus impedit quia tempora debitis ut et labore ex hic, officiis, sequi magni odio.'}
+                </Typography> */}
+                <Typography variant="h5">
+                  {question.type === 'trade' &&
+                    'Trading is in session. Please wait for the trades to complete.'}
+                  {question.type === 'trade' && (
+                    <LinearProgress sx={{ mt: 1 }} />
+                  )}
                 </Typography>
               </Box>
               {question.type === 'round' && (
