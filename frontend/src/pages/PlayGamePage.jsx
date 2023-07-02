@@ -24,6 +24,8 @@ const PlayGamePage = () => {
   const [teams, setTeams] = useState({});
   const [marketPosition, setMarketPosition] = useState(0);
 
+  const [quotable, setQuotable] = useState('');
+
   const createTeam = async () => {
     const teamData = await fetchAPIRequest(`/game/join/${sessionId}`, 'POST', {
       name: teamName,
@@ -31,6 +33,16 @@ const PlayGamePage = () => {
     setMyTeamId(teamData.teamId);
     localStorage.setItem('localTeamId', teamData.teamId);
   };
+
+  useEffect(() => {
+    fetch(
+      'https://api.quotable.io/quotes/random?tags=business|technology|mathematics'
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setQuotable(data[0]);
+      });
+  }, [position]);
 
   const processResults = (teams) => {
     const teamResults = Object.keys(teams)
@@ -174,10 +186,13 @@ const PlayGamePage = () => {
                   {question.type === 'result' &&
                     `The fair value of this market is $${question.trueValue}.`}
                 </Typography>
-                {/* <Typography variant="h6">
-                  {question.type !== 'round' &&
-                    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis officia odit nulla aliquid consequuntur id unde doloribus impedit quia tempora debitis ut et labore ex hic, officiis, sequi magni odio.'}
-                </Typography> */}
+                <Typography
+                  variant="h6"
+                  color="text.secondary"
+                  sx={{ fontStyle: 'italic', textWrap: 'balance' }}
+                >
+                  {quotable.content} - {quotable.author}
+                </Typography>
                 <Typography variant="h5">
                   {question.type === 'trade' &&
                     'Trading is in session. Please wait for the trades to complete.'}
