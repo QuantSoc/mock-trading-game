@@ -10,6 +10,7 @@ import {
   Typography,
   Grid,
   LinearProgress,
+  Card,
 } from '@mui/material';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import { BidAskPanel, TradePanel } from '../components/index.js';
@@ -24,6 +25,10 @@ const PlayGamePage = () => {
   const [teams, setTeams] = useState({});
   const [marketPosition, setMarketPosition] = useState(0);
 
+  const [isTeamCreated, setIsTeamCreated] = useState(
+    localStorage.getItem('localTeamId') ? true : false
+  );
+
   const [quotable, setQuotable] = useState('');
 
   const createTeam = async () => {
@@ -32,6 +37,7 @@ const PlayGamePage = () => {
     });
     setMyTeamId(teamData.teamId);
     localStorage.setItem('localTeamId', teamData.teamId);
+    setIsTeamCreated(true);
   };
 
   useEffect(() => {
@@ -87,6 +93,10 @@ const PlayGamePage = () => {
       if (status.position >= 0 && status.questions.type === 'market') {
         setMarketPosition(status.position);
       }
+      if (!status.active) {
+        localStorage.removeItem('localTeamId');
+        console.log('Game Over');
+      }
     };
     setInterval(() => {
       getGameStatus();
@@ -132,7 +142,15 @@ const PlayGamePage = () => {
         </Typography>
         <Box>
           {position < 0 ? (
-            <>
+            <Card
+              sx={{
+                mx: 'auto',
+                p: 3,
+                width: '50%',
+                borderRadius: 3,
+                boxShadow: 3,
+              }}
+            >
               <Typography
                 variant="h5"
                 sx={{ display: 'flex', alignItems: 'center', my: 2 }}
@@ -140,15 +158,30 @@ const PlayGamePage = () => {
                 <CircularProgress sx={{ mr: 2 }} />
                 Waiting for session to start
               </Typography>
-              <Typography autoFocus variant="h5" sx={{ mt: 3 }}>
-                Set a team name:
+              <Typography autoFocus variant="h5" sx={{ mt: 3, mb: 1 }}>
+                Set a team name
               </Typography>
-              <TextField
-                label="Team Name"
-                onChange={(event) => setTeamName(event.target.value)}
-              />
-              <Button onClick={createTeam}>Create Team</Button>
-            </>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <TextField
+                  label="Team Name"
+                  fullWidth
+                  sx={{ maxWidth: '70%', mr: 2 }}
+                  onChange={(event) => setTeamName(event.target.value)}
+                />
+                <Button
+                  variant="contained"
+                  disabled={isTeamCreated}
+                  onClick={createTeam}
+                >
+                  Create Team
+                </Button>
+              </Box>
+            </Card>
           ) : !myTeamId ? (
             <Typography variant="h4" color="text.secondary">
               Session already started...
@@ -186,19 +219,19 @@ const PlayGamePage = () => {
                   {question.type === 'result' &&
                     `The fair value of this market is $${question.trueValue}.`}
                 </Typography>
-                <Typography
-                  variant="h6"
-                  color="text.secondary"
-                  sx={{ fontStyle: 'italic', textWrap: 'balance' }}
-                >
-                  {quotable.content} - {quotable.author}
-                </Typography>
                 <Typography variant="h5">
                   {question.type === 'trade' &&
                     'Trading is in session. Please wait for the trades to complete.'}
                   {question.type === 'trade' && (
                     <LinearProgress sx={{ mt: 1 }} />
                   )}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  color="text.secondary"
+                  sx={{ mt: 2, fontStyle: 'italic', textWrap: 'balance' }}
+                >
+                  {quotable.content} <br /> - {quotable.author}
                 </Typography>
               </Box>
               {question.type === 'round' && (
