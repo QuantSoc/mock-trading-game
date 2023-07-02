@@ -19,7 +19,7 @@ const PlayGamePage = () => {
   const [myTeamId, setMyTeamId] = useState('');
 
   const [position, setPosition] = useState(-1);
-  const [questions, setQuestions] = useState([]);
+  const [question, setQuestion] = useState({});
   const [teams, setTeams] = useState({});
   const [marketPosition, setMarketPosition] = useState(0);
 
@@ -28,12 +28,13 @@ const PlayGamePage = () => {
       name: teamName,
     });
     setMyTeamId(teamData.teamId);
+    localStorage.setItem('localTeamId', teamData.teamId);
   };
 
   const processResults = (teams) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
-        const trueValue = questions[position].trueValue;
+        const trueValue = question.trueValue;
         const balance = teams[teamId].teamAnswers[marketPosition].balance;
         const contracts = teams[teamId].teamAnswers[marketPosition].contracts;
         const total =
@@ -56,18 +57,21 @@ const PlayGamePage = () => {
   };
 
   useEffect(() => {
+    if (localStorage.getItem('localTeamId')) {
+      setMyTeamId(localStorage.getItem('localTeamId'));
+    }
+  }, []);
+
+  useEffect(() => {
     const getGameStatus = async () => {
       const status = await fetchAPIRequest(
         `/session/${sessionId}/status`,
         'GET'
       );
       setPosition(status.position);
-      setQuestions(status.questions);
+      setQuestion(status.questions);
       setTeams(status.teams);
-      if (
-        status.position >= 0 &&
-        status.questions[status.position].type === 'market'
-      ) {
+      if (status.position >= 0 && status.questions.type === 'market') {
         setMarketPosition(status.position);
       }
     };
@@ -157,26 +161,23 @@ const PlayGamePage = () => {
                   {position.toString()}
                 </Typography>
                 <Typography variant="h4">
-                  {questions[position]?.type[0].toUpperCase() +
-                    questions[position]?.type.slice(1)}
+                  {question?.type[0].toUpperCase() + question?.type.slice(1)}
                 </Typography>
                 <Typography variant="h6" color="text.secondary">
-                  {questions[position]?.name}
+                  {question?.name}
                 </Typography>
-                <Typography variant="h6">
-                  {questions[position]?.hint}
-                </Typography>
+                <Typography variant="h6">{question?.hint}</Typography>
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="h6">
-                  {questions[position].type === 'result' &&
-                    `The fair value of this market is $${questions[position].trueValue}.`}
+                  {question.type === 'result' &&
+                    `The fair value of this market is $${question.trueValue}.`}
                 </Typography>
                 <Typography variant="h6">
-                  {questions[position].type !== 'round' &&
+                  {question.type !== 'round' &&
                     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis officia odit nulla aliquid consequuntur id unde doloribus impedit quia tempora debitis ut et labore ex hic, officiis, sequi magni odio.'}
                 </Typography>
               </Box>
-              {questions[position].type === 'round' && (
+              {question.type === 'round' && (
                 <BidAskPanel
                   teamId={myTeamId}
                   teamName={teams[myTeamId]?.name}
@@ -192,7 +193,7 @@ const PlayGamePage = () => {
                 spacing={3}
                 sx={{ py: 3 }}
               >
-                {questions[position].type === 'result' &&
+                {question.type === 'result' &&
                   processResults(teams).map((team, index) => {
                     return (
                       <Grid
