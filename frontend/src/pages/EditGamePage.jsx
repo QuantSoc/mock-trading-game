@@ -66,11 +66,11 @@ const EditGamePage = () => {
                 borderRadius: 3,
               }}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+              <Box>
                 <TextField
                   key={'marketNameTextbox' + marketIndex}
                   label="Market Name"
-                  sx={{ width: '60%' }}
+                  sx={{ width: '40%' }}
                   defaultValue={market.name}
                   placeholder={market.name}
                   onChange={(event) => {
@@ -83,8 +83,8 @@ const EditGamePage = () => {
                   key={'marketTrueValue' + marketIndex}
                   label="True Value"
                   type="number"
-                  sx={{ width: '20%' }}
-                  defaultValue={0}
+                  sx={{ width: '20%', ml: 2 }}
+                  value={markets[marketIndex].trueValue}
                   placeholder={market.trueValue}
                   onChange={(event) => {
                     markets[marketIndex].trueValue = event.target.value;
@@ -99,7 +99,7 @@ const EditGamePage = () => {
                     setGameRounds([...markets]);
                     setIsSaved(false);
                   }}
-                  sx={{ p: 2 }}
+                  sx={{ p: 2, ml: 2 }}
                 >
                   <DeleteForeverIcon />
                 </IconButton>
@@ -134,7 +134,7 @@ const EditGamePage = () => {
                           setGameRounds([...markets]);
                           setIsSaved(false);
                         }}
-                        sx={{ p: 2 }}
+                        sx={{ p: 2, ml: 2 }}
                       >
                         <DeleteOutlineIcon />
                       </IconButton>
