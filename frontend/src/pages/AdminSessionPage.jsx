@@ -232,6 +232,9 @@ const AdminSessionPage = () => {
                 py: 4,
                 px: 4,
                 mx: 'auto',
+                border:
+                  session.questions[session.position]?.type === 'result' &&
+                  '2px solid gold',
               }}
             >
               <Typography
@@ -251,6 +254,10 @@ const AdminSessionPage = () => {
               </Typography>
               <Typography variant="h6">
                 {session.questions[session.position]?.hint}
+              </Typography>
+              <Typography variant="h6">
+                {session.questions[session.position]?.type === 'result' &&
+                  'Please view the results below.'}
               </Typography>
               {session.questions[session.position]?.type === 'trade' && (
                 <Box
@@ -273,7 +280,8 @@ const AdminSessionPage = () => {
                       setHasTraded(true);
                     }}
                     fullWidth
-                    sx={{ maxWidth: '30%' }}
+                    size="large"
+                    sx={{ maxWidth: '30%', mt: 2 }}
                   >
                     Trade
                   </Button>
