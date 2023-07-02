@@ -260,6 +260,11 @@ const newSessionPayload = (gameId) => ({
   // isoTimeLastQuestionStarted: null,
   teams: {},
   questions: copy(games[gameId].questions),
+  // questions: copy(games[gameId].questions).map((question) => {
+  //   if (question.hasOwnProperty('trueValue')) {
+  //     question.trueValue = 0;
+  //   }
+  // }),
   active: true,
   answerAvailable: false,
 });
@@ -286,7 +291,7 @@ const newTeamPayload = (name, questions) => {
         correct: false,
       });
     question.type === 'result' &&
-      teamAnswers.push({ type: 'result', trueValue: question.trueValue });
+      teamAnswers.push({ type: 'result', trueValue: 0, total: 0 });
   });
 
   return {
@@ -299,12 +304,12 @@ export const assertSessionOwner = async (email, sessionId) => {
   await assertGameOwner(email, sessions[sessionId].gameId);
 };
 
-export const sessionStatus = (sessionId) => {
+export const sessionStatus = (sessionId, isTeam = false) => {
   const session = sessions[sessionId];
   return {
     active: session.active,
     position: session.position,
-    questions: session.questions,
+    questions: isTeam ? session.questions[session.position] : session.questions,
     teams: session.teams,
   };
 };
@@ -491,4 +496,14 @@ export const trade = (sessionId, marketPos) =>
       });
       resolve();
     }
+  });
+
+export const calculateResults = (gameId, sessionId) =>
+  gameLock((resolve, reject) => {
+    const session = getActiveGameSessionFromSessionId(sessionId);
+    if (!session.active) {
+      return reject(new InputError('Game not started'));
+    }
+
+    resolve(session.position);
   });

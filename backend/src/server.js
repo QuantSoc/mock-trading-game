@@ -23,6 +23,7 @@ import {
   sessionStatus,
   assertSessionOwner,
   trade,
+  calculateResults,
 } from './service';
 
 const app = express();
@@ -197,6 +198,18 @@ app.get(
 );
 
 app.post(
+  '/admin/:gameId/session/:sessionId/results',
+  handleErrors(
+    checkAuth(async (req, res, email) => {
+      const { sessionId } = req.params;
+      await assertSessionOwner(email, sessionId);
+      await calculateResults(gameId, sessionId);
+      return res.status(200).json({});
+    })
+  )
+);
+
+app.post(
   '/game/join/:sessionId',
   handleErrors(async (req, res) => {
     const { sessionId } = req.params;
@@ -220,7 +233,7 @@ app.get(
   '/session/:sessionId/status',
   handleErrors(async (req, res) => {
     const { sessionId } = req.params;
-    return res.status(200).json(sessionStatus(sessionId));
+    return res.status(200).json(sessionStatus(sessionId, true));
   })
 );
 
