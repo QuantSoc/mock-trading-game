@@ -1,6 +1,6 @@
-import fs from "fs";
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 import { InputError, AuthError } from "./error";
 import {
@@ -21,6 +21,9 @@ import {
 } from "./service";
 
 const app = express();
+path = require("path");
+
+app.use(express.static(path.join(__dirname, "../../frontend/build"))); // serve frontend
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -183,8 +186,7 @@ app.post(
 
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-const configData = JSON.parse(fs.readFileSync("../frontend/src/config.json"));
-const port = "BACKEND_PORT" in configData ? configData.BACKEND_PORT : 5000;
+const port = process.env.PORT || 5005;
 const server = app.listen(port, () => {
   console.log(`Backend is now listening on port ${port}!`);
   // console.log(`For API docs, navigate to http://localhost:${port}`);

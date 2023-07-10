@@ -1,4 +1,5 @@
-const BACKEND_ROUTE = 'http://localhost:5005';
+const PORT = process.env.PORT || 5005;
+const BACKEND_ROUTE = `http://localhost:${PORT}`;
 
 export const fetchAPIRequest = async (route, method, bodyData = {}) => {
   try {

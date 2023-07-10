@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Divider } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 
+const PORT = process.env.PORT || 5005;
+const BACKEND_ROUTE = `http://localhost:${PORT}`;
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,7 +17,7 @@ const LoginPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:5005/login', {
+      const response = await fetch(BACKEND_ROUTE + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

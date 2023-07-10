@@ -1,0 +1,1 @@
+web: (cd frontend && npm run build && cd ../ && node backend/src/server.js)
