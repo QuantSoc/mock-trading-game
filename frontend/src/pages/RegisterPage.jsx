@@ -11,8 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 
-const PORT = process.env.PORT || 5005;
-const BACKEND_ROUTE = `http://localhost:${PORT}`;
+const BACKEND_ROUTE = `${window.location.origin.toString()}`;
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{2,23}$/;

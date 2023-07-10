@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Divider } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 
-const PORT = process.env.PORT || 5005;
-const BACKEND_ROUTE = `http://localhost:${PORT}`;
+const BACKEND_ROUTE = `${window.location.origin.toString()}`;
 
 const LoginPage = () => {
   const navigate = useNavigate();
