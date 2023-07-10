@@ -46,7 +46,7 @@ const ResponsiveAppBar = () => {
   return (
     // NavBar below has styling and base structure from the MUI page
     // at https://mui.com/material-ui/react-app-bar/
-    <AppBar position="static" sx={{ background: '#8763cb' }}>
+    <AppBar position="fixed" sx={{ background: '#8763cb' }}>
       <Container maxWidth="100%">
         <Toolbar disableGutters>
           <SvgIcon
