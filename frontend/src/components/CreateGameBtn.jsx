@@ -48,6 +48,7 @@ const CreateGameBtn = ({ callback }) => {
           <Typography variant="h6">Enter a name for your new quiz.</Typography>
           <TextField
             label="Game name"
+            id="game-name"
             placeholder={`SQT 📆 ${new Date().toDateString()}`}
             fullWidth
             required
@@ -66,9 +67,10 @@ const CreateGameBtn = ({ callback }) => {
           <Typography variant="h6">Please enter a short description</Typography>
           <TextField
             label="Description"
+            id="game-description"
             placeholder="SQT has joined forces with Quantsoc to bring you our FIRST event of the term and the FINAL event of the semester: MOCK TRADING @ UNSW! 🚀"
             fullWidth
-            required
+            // required
             multiline
             variant="standard"
             sx={{ pb: 2, height: 'fitContent' }}
