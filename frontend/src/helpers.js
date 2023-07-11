@@ -1,4 +1,4 @@
-const BACKEND_ROUTE = 'http://localhost:5005';
+const BACKEND_ROUTE = 'https://mock-trading-game-917265559b13.herokuapp.com';
 
 export const fetchAPIRequest = async (route, method, bodyData = {}) => {
   try {
