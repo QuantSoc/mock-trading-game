@@ -51,7 +51,7 @@ const GameTriggerBtn = ({
             {isStart && `${gameSession}`}
           </Typography>
           <Typography variant="h6">
-            {isStart && `Start the session at /admin/session/${gameSession}.`}
+            {isStart && `Start the session at /admin/game/${gameId}/${gameSession}.`}
           </Typography>
           <Typography variant="h6">
             {isStart
@@ -61,7 +61,7 @@ const GameTriggerBtn = ({
           {isStart ? (
             <CopyBtn
               copyTitle="Session"
-              copyContent={`localhost:3000/admin/game/${gameId}/${gameSession}`}
+              copyContent={`${window.location.origin.toString()}/admin/game/${gameId}/${gameSession}`}
               isContained
               styling={{ my: 2 }}
             />
