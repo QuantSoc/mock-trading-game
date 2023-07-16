@@ -25,6 +25,7 @@ import {
   trade,
   calculateResults,
 } from './service';
+import { BACKEND_PORT } from '../../frontend/src/constants';
 
 const app = express();
 
@@ -254,8 +255,7 @@ app.post(
 
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-const configData = JSON.parse(fs.readFileSync('../frontend/src/config.json'));
-const port = 'BACKEND_PORT' in configData ? configData.BACKEND_PORT : 5000;
+const port = process.env.PORT || BACKEND_PORT; // env.PORT is for Heroku
 const server = app.listen(port, () => {
   console.log(`Backend is now listening on port ${port}!`);
   // console.log(`For API docs, navigate to http://localhost:${port}`);

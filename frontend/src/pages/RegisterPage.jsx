@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
+import { BACKEND_ROUTE } from '../constants';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{2,23}$/;
@@ -62,7 +62,7 @@ const RegisterPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:5005/register', {
+      const response = await fetch(BACKEND_ROUTE + '/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
