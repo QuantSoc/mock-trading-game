@@ -1,4 +1,4 @@
-const BACKEND_ROUTE = 'http://localhost:5005';
+import { BACKEND_ROUTE } from './constants';
 
 export const fetchAPIRequest = async (route, method, bodyData = {}) => {
   try {
