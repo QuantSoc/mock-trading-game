@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Divider } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
+import { BACKEND_ROUTE } from '../constants';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const LoginPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('https://mock-trading-game-917265559b13.herokuapp.com/login', {
+      const response = await fetch(BACKEND_ROUTE + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
