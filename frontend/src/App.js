@@ -37,10 +37,10 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/join/:sessionId" element={<PlayGamePage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/edit/:gameId" element={<EditGamePage />} />
-              <Route path="/join/:sessionId" element={<PlayGamePage />} />
               <Route
                 path="/admin/game/:gameId/:sessionId"
                 element={<AdminSessionPage />}
