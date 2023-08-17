@@ -6,6 +6,8 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Skeleton,
+  LinearProgress,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useEffect, useState } from 'react';
@@ -22,7 +24,7 @@ const AdminSessionPage = () => {
   const [marketPosition, setMarketPosition] = useState(0);
   // const [isActive, setIsActive] = useState(false);
   const [hasTraded, setHasTraded] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [isSessionStart, setIsSessionStart] = useState(false);
 
   const processTeams = () => {
@@ -91,6 +93,7 @@ const AdminSessionPage = () => {
       }
 
       setSession(status.status);
+      setIsLoading(false);
       if (
         status.status.position >= 0 &&
         status.status.questions[status.status.position].type === 'market'
@@ -150,7 +153,7 @@ const AdminSessionPage = () => {
             >
               <TextField
                 key={'round-text-field-' + index}
-                label="Description"
+                label="Hint"
                 fullWidth
                 value={question.hint}
               />
@@ -165,6 +168,15 @@ const AdminSessionPage = () => {
         <Typography variant="h5" sx={{ mb: 1 }}>
           Session Overview
         </Typography>
+        {isLoading && (
+          <>
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+          </>
+        )}
         {markets}
       </Box>
     );
@@ -195,190 +207,134 @@ const AdminSessionPage = () => {
           py: 7,
         }}
       >
-        {isSessionStart ? (
-          <Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                mb: 5,
-              }}
-            >
-              <Typography
-                variant="h4"
+        {isLoading && (
+          <Box
+            sx={{
+              width: '100%',
+              height: '100%',
+              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignContent: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography variant="h5">Loading...</Typography>
+            <LinearProgress sx={{ px: 5, mt: 2 }} />
+          </Box>
+        )}
+        {!isLoading &&
+          (isSessionStart ? (
+            <Box>
+              <Box
                 sx={{
                   display: 'flex',
-                  alignItems: 'center',
-                  whiteSpace: 'nowrap',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  mb: 5,
                 }}
               >
-                <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
-                Session Controls
-              </Typography>
-              <AdvanceGameBtn
-                gameId={gameId}
-                isSessionStart={isSessionStart}
-                setIsSessionStart={setIsSessionStart}
-                isEnd={session.position === session.questions.length - 1}
-              />
-            </Box>
-            <Box
-              sx={{
-                boxShadow: 3,
-                borderRadius: 5,
-                width: { xs: '70%', md: '50%' },
-                height: 'fit-content',
-                py: 4,
-                px: 4,
-                mx: 'auto',
-                border:
-                  session.questions[session.position]?.type === 'result' &&
-                  '2px solid gold',
-              }}
-            >
-              <Typography
-                variant="h5"
-                color="text.secondary"
-                sx={{ float: 'right' }}
-              >
-                {session.position.toString()}
-              </Typography>
-              <Typography variant="h4">
-                {session.questions[session.position]?.type[0].toUpperCase() +
-                  session.questions[session.position]?.type.slice(1)}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="h6">
-                {session.questions[session.position]?.name}
-              </Typography>
-              <Typography variant="h6">
-                {session.questions[session.position]?.hint}
-              </Typography>
-              <Typography variant="h6">
-                {session.questions[session.position]?.type === 'result' &&
-                  'Please view the results below.'}
-              </Typography>
-              {session.questions[session.position]?.type === 'trade' && (
-                <Box
+                <Typography
+                  variant="h4"
                   sx={{
-                    width: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    flexDirection: 'column',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  <Typography variant="h6">
-                    Click the button to begin trading
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    fulLWidth
-                    disabled={hasTraded}
-                    onClick={() => {
-                      initiateTrade();
-                      setHasTraded(true);
+                  <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
+                  Session Controls
+                </Typography>
+                <AdvanceGameBtn
+                  gameId={gameId}
+                  isSessionStart={isSessionStart}
+                  setIsSessionStart={setIsSessionStart}
+                  isEnd={session.position === session.questions.length - 1}
+                />
+              </Box>
+              <Box
+                sx={{
+                  boxShadow: 3,
+                  borderRadius: 5,
+                  width: { xs: '70%', md: '50%' },
+                  height: 'fit-content',
+                  py: 4,
+                  px: 4,
+                  mx: 'auto',
+                  border:
+                    session.questions[session.position]?.type === 'result' &&
+                    '2px solid gold',
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  color="text.secondary"
+                  sx={{ float: 'right' }}
+                >
+                  {session.position.toString()}
+                </Typography>
+                <Typography variant="h4">
+                  {session.questions[session.position]?.type[0].toUpperCase() +
+                    session.questions[session.position]?.type.slice(1)}
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="h6">
+                  {session.questions[session.position]?.name}
+                </Typography>
+                <Typography variant="h6">
+                  {session.questions[session.position]?.hint}
+                </Typography>
+                <Typography variant="h6">
+                  {session.questions[session.position]?.type === 'result' &&
+                    'Please view the results below.'}
+                </Typography>
+                {session.questions[session.position]?.type === 'round' && (
+                  <Box
+                    sx={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexDirection: 'column',
                     }}
-                    fullWidth
-                    size="large"
-                    sx={{ maxWidth: '30%', mt: 2 }}
                   >
-                    Trade
-                  </Button>
-                </Box>
+                    <Typography variant="h6">
+                      Click the button to begin trading
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      fulLWidth
+                      disabled={hasTraded}
+                      onClick={() => {
+                        initiateTrade();
+                        setHasTraded(true);
+                      }}
+                      fullWidth
+                      size="large"
+                      sx={{ maxWidth: '30%', mt: 2 }}
+                    >
+                      Trade
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+              {session.questions[session.position]?.type !== 'result' && (
+                <Grid
+                  container
+                  columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
+                  spacing={3}
+                  sx={{ p: 5 }}
+                >
+                  {processTeams()}
+                </Grid>
               )}
-            </Box>
-            {session.questions[session.position]?.type !== 'result' && (
               <Grid
                 container
                 columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
                 spacing={3}
-                sx={{ p: 5 }}
+                sx={{ py: 3 }}
               >
-                {processTeams()}
-              </Grid>
-            )}
-            <Grid
-              container
-              columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
-              spacing={3}
-              sx={{ py: 3 }}
-            >
-              {session.questions[session.position]?.type === 'result' &&
-                processResults(session.teams).map((team, index) => {
-                  return (
-                    <Grid
-                      item
-                      xs={2}
-                      sm={4}
-                      md={4}
-                      key={index}
-                      sx={{ display: 'flex', justifyContent: 'center' }}
-                    >
-                      <TradePanel
-                        key={team.teamId}
-                        teamName={team.teamName}
-                        balance={team.balance}
-                        contracts={team.contracts}
-                        total={team.total}
-                        isWinner={team.isWinner}
-                      />
-                    </Grid>
-                  );
-                })}
-            </Grid>
-          </Box>
-        ) : (
-          <>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                mb: 5,
-              }}
-            >
-              <Typography
-                variant="h4"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
-                Session Controls
-              </Typography>
-              <AdvanceGameBtn
-                gameId={gameId}
-                isSessionStart={isSessionStart}
-                setIsSessionStart={setIsSessionStart}
-              />
-            </Box>
-            <Typography variant="h5">Players</Typography>
-            <Grid
-              container
-              columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
-              spacing={3}
-              sx={{ p: 5 }}
-            >
-              {session.teams && Object.keys(session.teams).length === 0 && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                  }}
-                >
-                  <CircularProgress sx={{ mr: 3 }} />
-                  <Typography variant="h5">Waiting for Participants</Typography>
-                </Box>
-              )}
-              {session.teams &&
-                Object.keys(session?.teams)
-                  .map((teamId) => session.teams[teamId].name)
-                  .map((team, index) => {
+                {session.questions[session.position]?.type === 'result' &&
+                  processResults(session.teams).map((team, index) => {
                     return (
                       <Grid
                         item
@@ -388,30 +344,107 @@ const AdminSessionPage = () => {
                         key={index}
                         sx={{ display: 'flex', justifyContent: 'center' }}
                       >
-                        <Box
-                          sx={{
-                            boxShadow: 2,
-                            borderRadius: 2,
-                            px: 3,
-                            py: 2,
-                            display: 'flex',
-                            flexGrow: 1,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" key={index}>
-                            {team}
-                          </Typography>
-                        </Box>
+                        <TradePanel
+                          key={team.teamId}
+                          teamName={team.teamName}
+                          balance={team.balance}
+                          contracts={team.contracts}
+                          total={team.total}
+                          isWinner={team.isWinner}
+                        />
                       </Grid>
                     );
                   })}
-            </Grid>
+              </Grid>
+            </Box>
+          ) : (
+            <>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  mb: 5,
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
+                  Session Controls
+                </Typography>
+                <AdvanceGameBtn
+                  gameId={gameId}
+                  isSessionStart={isSessionStart}
+                  setIsSessionStart={setIsSessionStart}
+                />
+              </Box>
+              <Typography variant="h5">Players</Typography>
+              <Grid
+                container
+                columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
+                spacing={3}
+                sx={{ p: 5 }}
+              >
+                {(isLoading ||
+                  (session.teams &&
+                    Object.keys(session.teams).length === 0)) && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '100%',
+                    }}
+                  >
+                    <CircularProgress sx={{ mr: 3 }} />
+                    <Typography variant="h5">
+                      {isLoading ? 'Loading...' : 'Waiting for Participants'}
+                    </Typography>
+                  </Box>
+                )}
+                {session.teams &&
+                  Object.keys(session?.teams)
+                    .map((teamId) => session.teams[teamId].name)
+                    .map((team, index) => {
+                      return (
+                        <Grid
+                          item
+                          xs={2}
+                          sm={4}
+                          md={4}
+                          key={index}
+                          sx={{ display: 'flex', justifyContent: 'center' }}
+                        >
+                          <Box
+                            sx={{
+                              boxShadow: 2,
+                              borderRadius: 2,
+                              px: 3,
+                              py: 2,
+                              display: 'flex',
+                              flexGrow: 1,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Typography variant="h6" key={index}>
+                              {team}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      );
+                    })}
+              </Grid>
 
-            {renderQuestions(session.questions)}
-          </>
-        )}
+              {renderQuestions(session.questions)}
+            </>
+          ))}
       </Box>
     </Box>
   );
