@@ -11,7 +11,8 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { fetchAPIRequest } from '../helpers.js';
 import logo from '../assets/quantsoc.jpg';
-import { CopyBtn, GameTriggerBtn, RedirectBtn } from './index.js';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { GameTriggerBtn, RedirectBtn } from './index.js';
 
 const GameCard = ({ gameId, isLoading, setCardCount }) => {
   const [cardData, setCardData] = useState({});
@@ -60,9 +61,15 @@ const GameCard = ({ gameId, isLoading, setCardCount }) => {
           </Typography>
         )}
         {isLoading ? (
-          <Skeleton variant="rounded" width={50} height={20} sx={{ mt: 1 }} />
+          <Skeleton variant="rounded" width={50} height={30} sx={{ mt: 1 }} />
         ) : (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              height: 45,
+            }}
+          >
             <Typography
               sx={{
                 fontSize: 20,
@@ -78,9 +85,11 @@ const GameCard = ({ gameId, isLoading, setCardCount }) => {
             </Typography>
 
             {gameSession && (
-              <CopyBtn
-                copyTitle="Session"
-                copyContent={`localhost:3000/admin/game/${gameId}/${gameSession}`}
+              <RedirectBtn
+                btnText={<Typography variant="h6">{gameSession}</Typography>}
+                isStartIcon
+                icon={<ArrowForwardIcon />}
+                destination={`/admin/game/${gameId}/${gameSession}`}
               />
             )}
           </Box>

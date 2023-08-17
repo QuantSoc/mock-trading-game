@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { Modal } from './index.js';
+import { Modal, RedirectBtn } from './index.js';
 import useModal from '../hooks/useModal.jsx';
-import { CopyBtn } from './index.js';
 
 import { Button, Box, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -50,19 +49,18 @@ const GameTriggerBtn = ({
           <Typography variant="h2" textAlign="center">
             {isStart && `${gameSession}`}
           </Typography>
-          <Typography variant="h6">
-            {isStart && `Start the session at /admin/game/${gameId}/${gameSession}.`}
-          </Typography>
-          <Typography variant="h6">
+          <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
             {isStart
-              ? `Players can join at /join/${gameSession}. \r\n Please copy the session ID`
+              ? `Players can join at \r\n ${window.location.origin.toString()}/join/${gameSession}.`
               : 'Would you like to view the session results?'}
           </Typography>
           {isStart ? (
-            <CopyBtn
-              copyTitle="Session"
-              copyContent={`${window.location.origin.toString()}/admin/game/${gameId}/${gameSession}`}
-              isContained
+            <RedirectBtn
+              destination={`/admin/game/${gameId}/${gameSession}`}
+              btnText="Begin Session"
+              variant="contained"
+              isStartIcon
+              icon={<ArrowForwardIcon />}
               styling={{ my: 2 }}
             />
           ) : (
