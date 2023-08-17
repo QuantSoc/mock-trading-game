@@ -1,9 +1,10 @@
-import { Button, Box, Divider, TextField, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, Divider, Typography } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import PaidTwoToneIcon from '@mui/icons-material/PaidTwoTone';
 import RequestPageTwoToneIcon from '@mui/icons-material/RequestPageTwoTone';
 import SavingsTwoToneIcon from '@mui/icons-material/SavingsTwoTone';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+
 const TradePanel = ({ teamName, balance, contracts, total, isWinner }) => {
   return (
     <Box
@@ -18,6 +19,15 @@ const TradePanel = ({ teamName, balance, contracts, total, isWinner }) => {
         border: isWinner && '1px solid limegreen',
       }}
     >
+      <EmojiEventsIcon
+        fontSize="large"
+        sx={{
+          color: 'gold',
+          mx: 'auto',
+          mb: 1,
+          visibility: isWinner ? 'visible' : 'hidden',
+        }}
+      />
       <Typography
         variant="h5"
         sx={{
