@@ -8,6 +8,7 @@ const RedirectBtn = ({
   color,
   isStartIcon,
   icon,
+  disabled = false,
 }) => {
   const navigate = useNavigate();
   // const location = useLocation();
@@ -26,6 +27,7 @@ const RedirectBtn = ({
         startIcon={isStartIcon && icon}
         endIcon={!isStartIcon && icon}
         onClick={handleClick}
+        disabled={disabled}
       >
         {btnText}
       </Button>

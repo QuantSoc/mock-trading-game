@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Modal, RedirectBtn } from './index.js';
 import useModal from '../hooks/useModal.jsx';
 
-import { Button, Box, Typography } from '@mui/material';
+import { Button, Box, Typography, Skeleton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StopIcon from '@mui/icons-material/Stop';
@@ -18,12 +18,13 @@ const GameTriggerBtn = ({
   const { isModalShown, toggleModal } = useModal();
   const [isStart, setIsStart] = useState(false);
   const [gameSession, setGameSession] = useState(initGameSession);
-
+  const [isLoading, setIsLoading] = useState(true);
   const startGame = async () => {
+    setIsLoading(true);
     const sessionData = await fetchAPIRequest(`/games/${gameId}/start`, 'POST');
-    console.log(sessionData);
     setGameSession(sessionData.sessionId);
     isStart ? gameSessionSetter('') : gameSessionSetter(sessionData.sessionId);
+    setIsLoading(false);
   };
 
   const endGame = async () => {
@@ -46,9 +47,18 @@ const GameTriggerBtn = ({
         modalTitle={isStart ? 'Game Started' : 'Game Complete'}
       >
         <Box>
-          <Typography variant="h2" textAlign="center">
-            {isStart && `${gameSession}`}
-          </Typography>
+          {isStart && isLoading ? (
+            <Skeleton
+              variant="rounded"
+              width={248}
+              height={72}
+              sx={{ mx: 'auto' }}
+            />
+          ) : (
+            <Typography variant="h2" textAlign="center">
+              {isStart && `${gameSession}`}
+            </Typography>
+          )}
           <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
             {isStart
               ? `Players can join at \r\n ${window.location.origin.toString()}/join/${gameSession}.`
@@ -62,6 +72,7 @@ const GameTriggerBtn = ({
               isStartIcon
               icon={<ArrowForwardIcon />}
               styling={{ my: 2 }}
+              disabled={isLoading}
             />
           ) : (
             <Button
