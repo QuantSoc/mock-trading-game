@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { fetchAPIRequest } from "../helpers";
-import { CreateGameBtn, GameCard } from "../components/index.js";
-import { Box, Grid } from "@mui/material";
+import { useState, useEffect } from 'react';
+import { fetchAPIRequest } from '../helpers';
+import { CreateGameBtn, GameCard } from '../components/index.js';
+import { Box, Grid } from '@mui/material';
 
 const Dashboard = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userGames, setUserGames] = useState([]);
   const [isNewGame, setIsNewGame] = useState(false);
+  const [cardCount, setCardCount] = useState(0);
 
   const fetchGames = async () => {
     setIsLoading(true);
-    await fetchAPIRequest("/games", "GET");
-    const gameData = await fetchAPIRequest("/games", "GET");
+    await fetchAPIRequest('/games', 'GET');
+    const gameData = await fetchAPIRequest('/games', 'GET');
     setUserGames(gameData.games);
-    setIsLoading(false);
     setIsNewGame(false);
   };
 
@@ -22,18 +22,26 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    if (cardCount > 0 && cardCount >= userGames.length) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
+    }
+  }, [cardCount, userGames]);
+
+  useEffect(() => {
     isNewGame && fetchGames();
   }, [isNewGame]);
 
   return (
     <Box
       sx={{
-        height: "92.5vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        height: '92.5vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         py: 5,
-        boxSizing: "border-box",
+        boxSizing: 'border-box',
       }}
     >
       <CreateGameBtn callback={setIsNewGame} />
@@ -51,9 +59,14 @@ const Dashboard = () => {
             sm={4}
             md={4}
             key={index}
-            sx={{ display: "flex", justifyContent: "center" }}
+            sx={{ display: 'flex', justifyContent: 'center' }}
           >
-            <GameCard key={game.id} gameId={game.id} />
+            <GameCard
+              key={game.id}
+              gameId={game.id}
+              isLoading={isLoading}
+              setCardCount={setCardCount}
+            />
           </Grid>
         ))}
       </Grid>
