@@ -280,10 +280,10 @@ const newTeamPayload = (name, questions) => {
         balance: 0,
         contracts: 0,
       });
-    question.type === 'round' && teamAnswers.push({ type: 'round' });
-    question.type === 'trade' &&
+    // question.type === 'round' && teamAnswers.push({ type: 'round' });
+    question.type === 'round' &&
       teamAnswers.push({
-        type: 'trade',
+        type: 'round',
         questionStartedAt: null,
         answeredAt: null,
         bid: 0,
@@ -409,7 +409,7 @@ const flattenQuestions = (markets) => {
     flatpack.push({ type: 'market', name: market.name });
     market.rounds.map((round, index) => {
       flatpack.push({ type: 'round', round: index + 1, hint: round.hint });
-      flatpack.push({ type: 'trade' });
+      // flatpack.push({ type: 'trade' });
     });
     flatpack.push({ type: 'result', trueValue: market.trueValue });
   });
@@ -448,10 +448,10 @@ export const setTeamBidAsk = (teamId, bid, ask) =>
 
         round.bid = parseFloat(bid, 10);
         round.ask = parseFloat(ask, 10);
-        const nextRound =
-          session.teams[teamId].teamAnswers[session.position + 1];
-        nextRound.bid = parseFloat(bid, 10);
-        nextRound.ask = parseFloat(ask, 10);
+        // const nextRound =
+        //   session.teams[teamId].teamAnswers[session.position + 1];
+        // nextRound.bid = parseFloat(bid, 10);
+        // nextRound.ask = parseFloat(ask, 10);
       }
       resolve();
     }
