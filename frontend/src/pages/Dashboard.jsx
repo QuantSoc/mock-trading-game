@@ -25,7 +25,7 @@ const Dashboard = () => {
     if (cardCount > 0 && cardCount >= userGames.length) {
       setTimeout(() => {
         setIsLoading(false);
-      }, 5000);
+      }, 500);
     }
   }, [cardCount, userGames]);
 
