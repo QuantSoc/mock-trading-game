@@ -6,16 +6,20 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchAPIRequest } from '../helpers';
 import GroupIcon from '@mui/icons-material/Group';
 import PaidTwoToneIcon from '@mui/icons-material/PaidTwoTone';
 import RequestPageTwoToneIcon from '@mui/icons-material/RequestPageTwoTone';
 
-const BidAskPanel = ({ teamId, teamName, balance, contracts }) => {
+const BidAskPanel = ({ teamId, teamName, balance, contracts, position }) => {
   const [isTradeSuccess, setIsTradeSuccess] = useState(false);
   const [bid, setBid] = useState('');
   const [ask, setAsk] = useState('');
+
+  useEffect(() => {
+    setIsTradeSuccess(false);
+  }, [position]);
 
   const submitSpread = async () => {
     const res = await fetchAPIRequest(`/game/${teamId}/submit`, 'PUT', {
