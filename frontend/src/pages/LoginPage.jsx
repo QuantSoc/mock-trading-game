@@ -41,87 +41,100 @@ const LoginPage = () => {
   return (
     <Box
       sx={{
-        height: '100vh',
+        height: '92.5vh',
         width: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        p: 3,
-        boxSizing: 'border-box',
       }}
     >
       <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
-        <QuantsocIcon style={{ maxWidth: 150, padding: '0 20px' }} />
-        <Typography variant="h2">Competitions</Typography>
-      </Box>
-      <Divider sx={{ py: 1 }} />
-      <Typography variant="h3">Sign In</Typography>
+        sx={{ width: { xs: '0%', lg: '50%' }, objectFit: 'cover' }}
+        component="img"
+        src="https://source.unsplash.com/random?trading,stocks,quant,finance,math"
+      />
       <Box
-        component="form"
-        onSubmit={handleSubmit}
         sx={{
-          width: '100%',
+          width: { xs: '100%', lg: '50%' },
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          maxWidth: 800,
-          minWidth: 300,
-          borderRadius: 2,
-          boxShadow: 5,
-          rowGap: 2,
-          p: 5,
-          m: 3,
+          justifyContent: 'center',
+          p: 3,
           boxSizing: 'border-box',
         }}
       >
-        <TextField
-          id="login-email"
-          label="Email"
-          variant="standard"
-          type="email"
-          name="login-email"
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="example@email.com"
-          fullWidth
-          autoFocus
-        />
-        <TextField
-          id="login-password"
-          label="Password"
-          variant="standard"
-          type="password"
-          name="register-password"
-          placeholder="••••••••••"
-          fullWidth
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <Typography variant="body2" sx={{ fontSize: 16 }}>
-          {"Don't have an account? "}
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            component="a"
-            sx={{
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              fontSize: 16,
-            }}
-            onClick={() => navigate('/register')}
-          >
-            Sign up here
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <QuantsocIcon
+            style={{ maxWidth: 125, padding: '0 20px', marginBottom: '10px' }}
+          />
+          <Typography variant="h3">Competitions</Typography>
+        </Box>
+        <Divider sx={{ py: 1 }} />
+        <Typography variant="h4">Sign In</Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            maxWidth: 800,
+            minWidth: 300,
+            rowGap: 7,
+            py: 5,
+            px: 10,
+            m: 3,
+            boxSizing: 'border-box',
+          }}
+        >
+          <TextField
+            id="login-email"
+            label="Email"
+            variant="standard"
+            type="email"
+            name="login-email"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="example@email.com"
+            fullWidth
+            autoFocus
+          />
+          <TextField
+            id="login-password"
+            label="Password"
+            variant="standard"
+            type="password"
+            name="register-password"
+            placeholder="••••••••••"
+            fullWidth
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <Typography variant="body2" sx={{ fontSize: 16 }}>
+            {"Don't have an account? "}
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              component="a"
+              sx={{
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                fontSize: 16,
+              }}
+              onClick={() => navigate('/register')}
+            >
+              Sign up here
+            </Typography>
           </Typography>
-        </Typography>
-        <Button type="submit" variant="contained" size="large">
-          Log In
-        </Button>
+          <Button type="submit" variant="contained" size="large">
+            Log In
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
