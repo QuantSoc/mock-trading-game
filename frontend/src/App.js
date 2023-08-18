@@ -12,6 +12,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'Poppins',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  },
   palette: {
     primary: {
       main: '#8763cb',
