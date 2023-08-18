@@ -12,6 +12,7 @@ const AdvanceGameBtn = ({
   isSessionStart,
   setIsSessionStart,
   isEnd,
+  unsetTradeBtn,
 }) => {
   const { isModalShown, toggleModal } = useModal();
   const { sessionId } = useParams();
@@ -21,15 +22,17 @@ const AdvanceGameBtn = ({
   };
 
   const endSession = async () => {
-    const res = await fetchAPIRequest(`/games/${gameId}/end`, 'POST');
-    // res && setIsSessionStart(false);
+    await fetchAPIRequest(`/games/${gameId}/end`, 'POST');
   };
 
   return !isEnd ? (
     <Button
       variant="contained"
       size="large"
-      onClick={advanceSession}
+      onClick={() => {
+        advanceSession();
+        unsetTradeBtn();
+      }}
       startIcon={!isSessionStart ? <PlayArrowIcon /> : <ArrowForwardIcon />}
       sx={{ my: 2 }}
     >
