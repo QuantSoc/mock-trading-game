@@ -72,7 +72,16 @@ const AdminSessionPage = () => {
       .sort((a, b) => (a.total < b.total ? 1 : -1));
 
     const winningTotal = teamResults[0]?.total;
+    const saveWinner = async (winnerRes) => {
+      await fetchAPIRequest(`/session/${sessionId}/result`, 'POST', {
+        position: session.position,
+        teamId: winnerRes.teamId,
+        isWinner: winnerRes.total === winningTotal,
+      });
+    };
+
     return teamResults.map((result) => {
+      session.active && saveWinner(result);
       return { ...result, isWinner: result.total === winningTotal };
     });
   };
@@ -302,13 +311,11 @@ const AdminSessionPage = () => {
                     </Typography>
                     <Button
                       variant="contained"
-                      fulLWidth
                       disabled={hasTraded}
                       onClick={() => {
                         initiateTrade();
                         setHasTraded(true);
                       }}
-                      fullWidth
                       size="large"
                       sx={{ maxWidth: '30%', mt: 2 }}
                     >
