@@ -36,7 +36,8 @@ const Dashboard = () => {
   return (
     <Box
       sx={{
-        height: '92.5vh',
+        minHeight: '92.5vh',
+        height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
