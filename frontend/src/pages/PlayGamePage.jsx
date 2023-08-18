@@ -41,9 +41,7 @@ const PlayGamePage = () => {
   };
 
   useEffect(() => {
-    fetch(
-      'https://api.quotable.io/quotes/random?tags=business|technology|mathematics'
-    )
+    fetch('https://api.quotable.io/quotes/random?tags=business|mathematics')
       .then((res) => res.json())
       .then((data) => {
         setQuotable(data[0]);
