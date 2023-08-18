@@ -109,14 +109,6 @@ const AdminSessionPage = () => {
       ) {
         setMarketPosition(status.status.position);
       }
-      if (
-        status.status.position >= 0 &&
-        status.status.questions[status.status.position].type === 'round'
-      ) {
-        setHasTraded(false);
-      }
-
-      // setIsActive(status.status.active);
     };
     setInterval(() => {
       getGameStatus();
@@ -259,6 +251,7 @@ const AdminSessionPage = () => {
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
                   isEnd={session.position === session.questions.length - 1}
+                  unsetTradeBtn={() => setHasTraded(false)}
                 />
               </Box>
               <Box
