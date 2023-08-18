@@ -13,7 +13,7 @@ const Dashboard = () => {
     setIsLoading(true);
     await fetchAPIRequest('/games', 'GET');
     const gameData = await fetchAPIRequest('/games', 'GET');
-    setUserGames(gameData.games);
+    setUserGames(gameData?.games);
     setIsNewGame(false);
   };
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (cardCount > 0 && cardCount >= userGames.length) {
+    if (cardCount > 0 && cardCount >= userGames?.length) {
       setTimeout(() => {
         setIsLoading(false);
       }, 500);
@@ -52,7 +52,7 @@ const Dashboard = () => {
         spacing={3}
         sx={{ p: 5 }}
       >
-        {userGames.map((game, index) => (
+        {userGames?.map((game, index) => (
           <Grid
             item={true}
             xs={2}
