@@ -82,7 +82,7 @@ const BidAskPanel = ({ teamId, teamName, balance, contracts, position }) => {
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mb: 2 }}>
         <TextField
-          color="success"
+          color="error"
           label="Bid Price"
           type="number"
           inputProps={{
@@ -94,7 +94,7 @@ const BidAskPanel = ({ teamId, teamName, balance, contracts, position }) => {
           value={bid}
         />
         <TextField
-          color="error"
+          color="success"
           label="Ask Price"
           type="number"
           inputProps={{
