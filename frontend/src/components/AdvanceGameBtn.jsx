@@ -1,11 +1,11 @@
 import { Button, Box, Typography } from '@mui/material';
-import { Modal } from './index.js';
+import { Modal, RedirectBtn } from './index.js';
 import { fetchAPIRequest } from '../helpers';
-import { useEffect } from 'react';
 import useModal from '../hooks/useModal';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
+import { useParams } from 'react-router-dom';
 
 const AdvanceGameBtn = ({
   gameId,
@@ -14,7 +14,7 @@ const AdvanceGameBtn = ({
   isEnd,
 }) => {
   const { isModalShown, toggleModal } = useModal();
-
+  const { sessionId } = useParams();
   const advanceSession = async () => {
     const res = await fetchAPIRequest(`/games/${gameId}/next`, 'POST');
     res && setIsSessionStart(true);
@@ -46,14 +46,13 @@ const AdvanceGameBtn = ({
           <Typography variant="h6">
             Would you like to view the session results?
           </Typography>
-          <Button
-            startIcon={<ArrowForwardIcon />}
-            color="primary"
+          <RedirectBtn
+            destination={`/history/${sessionId}`}
+            btnText="View Results"
             variant="contained"
-            sx={{ my: 2 }}
-          >
-            View Results
-          </Button>
+            isStartIcon
+            icon={<ArrowForwardIcon />}
+          />
         </Box>
       </Modal>
       <Button

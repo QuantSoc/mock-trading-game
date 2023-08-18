@@ -10,6 +10,8 @@ import {
 } from './pages/index.js';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
+import GameHistoryPage from './pages/GameHistoryPage/GameHistoryPage.jsx';
+import SessionHistoryPage from './pages/GameHistoryPage/SessionHistoryPage.jsx';
 
 const theme = createTheme({
   typography: {
@@ -59,6 +61,15 @@ const App = () => {
               <Route
                 path="/admin/game/:gameId/:sessionId"
                 element={<AdminSessionPage />}
+              />
+              <Route
+                path="/admin/game/:gameId/:sessionId"
+                element={<AdminSessionPage />}
+              />
+              <Route path="/history" element={<GameHistoryPage />} />
+              <Route
+                path="/history/:sessionId"
+                element={<SessionHistoryPage />}
               />
             </Route>
           </Routes>

@@ -115,7 +115,7 @@ const ResponsiveAppBar = () => {
                 <MenuItem
                   onClick={() => {
                     handleCloseNavMenu();
-                    navigate('game-history');
+                    navigate('history');
                   }}
                 >
                   <Typography textAlign="center">Game History</Typography>
@@ -234,7 +234,7 @@ const ResponsiveAppBar = () => {
               <Button
                 onClick={() => {
                   handleCloseNavMenu();
-                  navigate('/game-history');
+                  navigate('history');
                 }}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >

@@ -75,14 +75,14 @@ const GameTriggerBtn = ({
               disabled={isLoading}
             />
           ) : (
-            <Button
-              startIcon={<ArrowForwardIcon />}
-              color="primary"
+            <RedirectBtn
+              destination={`/history/${gameSession}`}
+              btnText="View Results"
               variant="contained"
-              sx={{ my: 2 }}
-            >
-              View Results
-            </Button>
+              isStartIcon
+              icon={<ArrowForwardIcon />}
+              styling={{ my: 2 }}
+            />
           )}
         </Box>
       </Modal>
