@@ -31,7 +31,7 @@ const AdvanceGameBtn = ({
       size="large"
       onClick={() => {
         advanceSession();
-        unsetTradeBtn();
+        unsetTradeBtn && unsetTradeBtn();
       }}
       startIcon={!isSessionStart ? <PlayArrowIcon /> : <ArrowForwardIcon />}
       sx={{ my: 2 }}
