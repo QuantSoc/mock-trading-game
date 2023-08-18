@@ -69,11 +69,20 @@ const TeamStats = ({
       </Box>
       {!trueValue && (
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography
+            color={bid && 'error'}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
             <ArrowDropDownOutlinedIcon color="error" fontSize="large" />
             Bid {bid ? bid.toFixed(2) : '--'}
           </Typography>
-          <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: ask && '#2e7d32',
+            }}
+          >
             <ArrowDropUpOutlinedIcon color="success" fontSize="large" />
             Ask {ask ? ask.toFixed(2) : '--'}
           </Typography>
@@ -94,7 +103,7 @@ const TeamStats = ({
           <Typography color="text.secondary" sx={{ mr: 2 }}>
             Total
           </Typography>
-          {`$${trueValue * contracts - balance} `}
+          {`$${(trueValue * contracts + balance).toFixed(2)} `}
         </Typography>
       )}
     </Box>

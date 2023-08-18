@@ -11,9 +11,11 @@ import {
   Grid,
   LinearProgress,
   Card,
+  FormControl,
 } from '@mui/material';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import { BidAskPanel, TradePanel } from '../components/index.js';
+import { BidAskPanel } from '../components/index.js';
+import TeamStats from './GameHistoryPage/TeamStats';
 
 const PlayGamePage = () => {
   const { sessionId } = useParams();
@@ -63,6 +65,7 @@ const PlayGamePage = () => {
           balance,
           contracts,
           total,
+          trueValue,
         };
       })
       .sort((a, b) => (a.total < b.total ? 1 : -1));
@@ -272,31 +275,28 @@ const PlayGamePage = () => {
                     }
                   />
                 )}
-                <Grid
-                  container
-                  columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
-                  spacing={3}
-                  sx={{ py: 3 }}
-                >
+                <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
                   {question.type === 'result' &&
                     processResults(teams).map((team, index) => {
                       return (
                         <Grid
                           item
-                          xs={2}
-                          sm={4}
-                          md={4}
+                          xs={12}
+                          md={6}
+                          lg={4}
                           key={index}
                           sx={{ display: 'flex', justifyContent: 'center' }}
                         >
-                          <TradePanel
-                            key={team.teamId}
-                            teamName={team.teamName}
-                            balance={team.balance}
-                            contracts={team.contracts}
-                            total={team.total}
-                            isWinner={team.isWinner}
-                          />
+                          <FormControl sx={{ width: '100%' }}>
+                            <TeamStats
+                              key={team.teamId}
+                              teamName={team.teamName}
+                              balance={team.balance}
+                              contracts={team.contracts}
+                              trueValue={team.trueValue}
+                              isWinner={team.isWinner}
+                            />
+                          </FormControl>
                         </Grid>
                       );
                     })}

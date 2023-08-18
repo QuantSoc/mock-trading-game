@@ -8,14 +8,14 @@ import {
   Divider,
   Skeleton,
   LinearProgress,
+  FormControl,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useEffect, useState } from 'react';
 import { fetchAPIRequest } from '../helpers';
 import { useParams } from 'react-router-dom';
 import AdvanceGameBtn from '../components/AdvanceGameBtn';
-import { TeamPanel } from '../components';
-import { TradePanel } from '../components';
+import TeamStats from './GameHistoryPage/TeamStats';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -32,13 +32,27 @@ const AdminSessionPage = () => {
       return (
         <Grid
           item={true}
-          xs={2}
-          sm={4}
-          md={4}
+          xs={12}
+          md={6}
+          lg={4}
           key={teamId + 'item'}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
-          <TeamPanel
+          <FormControl sx={{ width: '100%' }}>
+            <TeamStats
+              key={`team-stats-${teamId}`}
+              teamName={session.teams[teamId].name}
+              balance={
+                session.teams[teamId].teamAnswers[marketPosition].balance
+              }
+              contracts={
+                session.teams[teamId].teamAnswers[marketPosition].contracts
+              }
+              bid={session.teams[teamId].teamAnswers[session.position]?.bid}
+              ask={session.teams[teamId].teamAnswers[session.position]?.ask}
+            />
+          </FormControl>
+          {/* <TeamPanel
             key={teamId}
             teamName={session.teams[teamId].name}
             balance={session.teams[teamId].teamAnswers[marketPosition].balance}
@@ -47,7 +61,7 @@ const AdminSessionPage = () => {
             }
             latestBid={session.teams[teamId].teamAnswers[session.position]?.bid}
             latestAsk={session.teams[teamId].teamAnswers[session.position]?.ask}
-          />
+          /> */}
         </Grid>
       );
     });
@@ -67,6 +81,7 @@ const AdminSessionPage = () => {
           balance,
           contracts,
           total,
+          trueValue,
         };
       })
       .sort((a, b) => (a.total < b.total ? 1 : -1));
@@ -318,40 +333,32 @@ const AdminSessionPage = () => {
                 )}
               </Box>
               {session.questions[session.position]?.type !== 'result' && (
-                <Grid
-                  container
-                  columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
-                  spacing={3}
-                  sx={{ p: 5 }}
-                >
+                <Grid container columns={12} spacing={3} sx={{ p: 5 }}>
                   {processTeams()}
                 </Grid>
               )}
-              <Grid
-                container
-                columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
-                spacing={3}
-                sx={{ py: 3 }}
-              >
+              <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
                 {session.questions[session.position]?.type === 'result' &&
                   processResults(session.teams).map((team, index) => {
                     return (
                       <Grid
                         item
-                        xs={2}
-                        sm={4}
-                        md={4}
+                        xs={12}
+                        md={6}
+                        lg={4}
                         key={index}
                         sx={{ display: 'flex', justifyContent: 'center' }}
                       >
-                        <TradePanel
-                          key={team.teamId}
-                          teamName={team.teamName}
-                          balance={team.balance}
-                          contracts={team.contracts}
-                          total={team.total}
-                          isWinner={team.isWinner}
-                        />
+                        <FormControl sx={{ width: '100%' }}>
+                          <TeamStats
+                            key={`team-stats-${index}`}
+                            teamName={team.teamName}
+                            balance={team.balance}
+                            contracts={team.contracts}
+                            isWinner={team.isWinner}
+                            trueValue={team.trueValue}
+                          />
+                        </FormControl>
                       </Grid>
                     );
                   })}
