@@ -21,27 +21,6 @@ const QuestionAccordion = ({
   trueValue,
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const processResults = (teams) => {
-    const teamResults = Object.keys(teams)
-      .map((teamId, index) => {
-        const balance = teams[teamId].teamAnswers[0].balance;
-        const contracts = teams[teamId].teamAnswers[0].contracts;
-        const total =
-          parseInt(contracts, 10) * parseFloat(trueValue, 10) +
-          parseFloat(balance, 10);
-        return {
-          teamId,
-          teamName: teams[teamId].name,
-          balance,
-          contracts,
-          total,
-        };
-      })
-      .sort((a, b) => (a.total < b.total ? 1 : -1));
-
-    const winningTotal = teamResults[0]?.total;
-    return winningTotal;
-  };
 
   return (
     <Box sx={{ mb: 2 }}>
