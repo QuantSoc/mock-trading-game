@@ -89,7 +89,7 @@ const EditGamePage = () => {
                   type="number"
                   sx={{ minWidth: 25, ml: 2 }}
                   value={markets[marketIndex].trueValue}
-                  placeholder={market.trueValue}
+                  placeholder={`${market.trueValue}`}
                   onChange={(event) => {
                     markets[marketIndex].trueValue = event.target.value;
                     setGameRounds([...markets]);
