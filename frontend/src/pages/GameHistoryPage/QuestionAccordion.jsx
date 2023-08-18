@@ -72,38 +72,42 @@ const QuestionAccordion = ({
         {!marketName && <Divider sx={{ my: 1 }} />}
         {!marketName && (
           <AccordionDetails onClick={(e) => e.stopPropagation()}>
-            <Grid
-              container
-              columnSpacing={5}
-              rowSpacing={5}
-              columns={12}
-              sx={{ gridAutoFlow: 'column' }}
-            >
-              {!!teams &&
-                Object.keys(teams).map((teamId, index) => {
-                  const curr = teams[teamId].teamAnswers;
-                  return (
-                    <Grid
-                      key={`team-stats-grid-${index}`}
-                      item
-                      xs={12}
-                      md={6}
-                      xl={4}
-                    >
-                      <TeamStats
-                        key={`team-stats-${index}`}
-                        teamName={teams[teamId].name}
-                        bid={curr[qIndex]?.bid}
-                        ask={curr[qIndex]?.ask}
-                        balance={curr[qIndex].balance}
-                        contracts={curr[qIndex]?.contracts}
-                        isWinner={curr[qIndex]?.isWinner}
-                        trueValue={trueValue}
-                      />
-                    </Grid>
-                  );
-                })}
-            </Grid>
+            {Object.keys(teams).length < 1 ? (
+              <Typography textAlign="center">No teams...</Typography>
+            ) : (
+              <Grid
+                container
+                columnSpacing={5}
+                rowSpacing={5}
+                columns={12}
+                sx={{ gridAutoFlow: 'column' }}
+              >
+                {!!teams &&
+                  Object.keys(teams).map((teamId, index) => {
+                    const curr = teams[teamId].teamAnswers;
+                    return (
+                      <Grid
+                        key={`team-stats-grid-${index}`}
+                        item
+                        xs={12}
+                        md={6}
+                        xl={4}
+                      >
+                        <TeamStats
+                          key={`team-stats-${index}`}
+                          teamName={teams[teamId].name}
+                          bid={curr[qIndex]?.bid}
+                          ask={curr[qIndex]?.ask}
+                          balance={curr[qIndex].balance}
+                          contracts={curr[qIndex]?.contracts}
+                          isWinner={curr[qIndex]?.isWinner}
+                          trueValue={trueValue}
+                        />
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+            )}
           </AccordionDetails>
         )}
       </Accordion>
