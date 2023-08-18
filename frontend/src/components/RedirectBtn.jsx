@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 
 const RedirectBtn = ({
@@ -11,11 +11,8 @@ const RedirectBtn = ({
   disabled = false,
 }) => {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const from = location.state?.from?.pathname || '/';
 
   const handleClick = () => {
-    // navigate(from, { replace: true });
     navigate(destination);
   };
 

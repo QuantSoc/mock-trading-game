@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Skeleton, Divider } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import { fetchAPIRequest } from '../../helpers';
-import GameAccordion from './GameAccordion';
 import { useParams } from 'react-router-dom';
 import QuestionAccordion from './QuestionAccordion';
 
