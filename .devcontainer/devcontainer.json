@@ -10,7 +10,8 @@
 				"dbaeumer.vscode-eslint",
 				"dsznajder.es7-react-js-snippets",
 				"xabikos.JavaScriptSnippets",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"ChakrounAnas.turbo-console-log"
 			]
 		}
 	},
