@@ -129,7 +129,7 @@ const AdminSessionPage = () => {
       getGameStatus(gameInterval);
     }, 1000);
     return () => clearTimeout(gameInterval);
-  }, [sessionId]);
+  }, [sessionId, alertCtx]);
 
   const renderQuestions = (questions) => {
     const markets = [];

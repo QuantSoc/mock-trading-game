@@ -104,7 +104,7 @@ const PlayGamePage = () => {
     setInterval(() => {
       getGameStatus();
     }, 1000);
-  }, [sessionId]);
+  }, [sessionId, alertCtx]);
 
   return (
     <Box
