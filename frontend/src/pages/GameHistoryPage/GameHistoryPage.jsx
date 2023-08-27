@@ -29,7 +29,7 @@ const GameHistoryPage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
+        // px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
@@ -50,7 +50,7 @@ const GameHistoryPage = () => {
           Game History
         </Typography>
         {isLoading &&
-          Array.from({ length: 16 }, (_, index) => (
+          Array.from({ length: 9 }, (_, index) => (
             <Skeleton
               variant="rounded"
               width="100%"

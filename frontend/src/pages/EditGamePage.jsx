@@ -192,7 +192,6 @@ const EditGamePage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
