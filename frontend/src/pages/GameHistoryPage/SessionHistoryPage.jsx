@@ -30,14 +30,13 @@ const SessionHistoryPage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
           flexGrow: 1,
-          borderRadius: '20px 20px 0px 0px',
+          borderRadius: '10px 10px 0px 0px',
           boxShadow: 3,
           px: { xs: 2, sm: 5 },
           py: 7,
@@ -92,7 +91,7 @@ const SessionHistoryPage = () => {
           );
         })}
         {isLoading &&
-          Array.from({ length: 16 }, (_, index) => (
+          Array.from({ length: 5 }, (_, index) => (
             <Skeleton
               variant="rounded"
               width="100%"
