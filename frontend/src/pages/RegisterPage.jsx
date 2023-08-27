@@ -1,15 +1,16 @@
 import { Box, Button, TextField, Typography, Divider } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 import { BACKEND_ROUTE } from '../constants';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{2,23}$/;
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,20}$/;
-
 const RegisterPage = () => {
+  const alertCtx = useContext(AlertContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -69,8 +70,9 @@ const RegisterPage = () => {
       const token = data?.token;
       localStorage.setItem('token', token);
       navigate(from, { replace: true });
+      alertCtx.success("Welcome to QuantSoc's Mock Trading Game");
     } catch (error) {
-      alert(error);
+      alertCtx.error(error);
     }
   };
 

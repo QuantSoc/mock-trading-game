@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import GameHistoryPage from './pages/GameHistoryPage/GameHistoryPage.jsx';
 import SessionHistoryPage from './pages/GameHistoryPage/SessionHistoryPage.jsx';
+import AlertProvider from './contexts/NotificationContext.jsx';
 
 const theme = createTheme({
   typography: {
@@ -31,7 +32,7 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#8763cb',
+      main: '#8763cbdd',
       darker: '#513b7a',
     },
   },
@@ -43,7 +44,6 @@ const App = () => {
       sx={{
         minHeight: '100vh',
         height: 'fit-content',
-        backgroundColor: '#f2f2f2',
         flex: '1 1 auto',
       }}
     >
@@ -51,28 +51,30 @@ const App = () => {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <NavBar />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/join/:sessionId" element={<PlayGamePage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/edit/:gameId" element={<EditGamePage />} />
-              <Route
-                path="/admin/game/:gameId/:sessionId"
-                element={<AdminSessionPage />}
-              />
-              <Route
-                path="/admin/game/:gameId/:sessionId"
-                element={<AdminSessionPage />}
-              />
-              <Route path="/history" element={<GameHistoryPage />} />
-              <Route
-                path="/history/:sessionId"
-                element={<SessionHistoryPage />}
-              />
-            </Route>
-          </Routes>
+          <AlertProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/join/:sessionId" element={<PlayGamePage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/edit/:gameId" element={<EditGamePage />} />
+                <Route
+                  path="/admin/game/:gameId/:sessionId"
+                  element={<AdminSessionPage />}
+                />
+                <Route
+                  path="/admin/game/:gameId/:sessionId"
+                  element={<AdminSessionPage />}
+                />
+                <Route path="/history" element={<GameHistoryPage />} />
+                <Route
+                  path="/history/:sessionId"
+                  element={<SessionHistoryPage />}
+                />
+              </Route>
+            </Routes>
+          </AlertProvider>
         </ThemeProvider>
       </BrowserRouter>
     </Box>

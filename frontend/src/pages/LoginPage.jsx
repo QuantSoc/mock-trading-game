@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Divider } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 import { BACKEND_ROUTE } from '../constants';
-
+import { AlertContext } from '../contexts/NotificationContext';
 const LoginPage = () => {
+  const alertCtx = useContext(AlertContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -27,14 +28,14 @@ const LoginPage = () => {
       });
       const data = await response.json();
       if (data.error) {
-        console.log(data.error);
         throw new Error(data.error);
       }
       const token = data?.token;
       localStorage.setItem('token', token);
       navigate(from, { replace: true });
+      alertCtx.success("Welcome to QuantSoc's Mock Trading Game");
     } catch (error) {
-      alert(error);
+      alertCtx.error(error);
     }
   };
 
