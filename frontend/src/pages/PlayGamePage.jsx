@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { fetchAPIRequest } from '../helpers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import {
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import { BidAskPanel } from '../components/index.js';
 import TeamStats from './GameHistoryPage/TeamStats';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const PlayGamePage = () => {
   const { sessionId } = useParams();
@@ -30,7 +31,7 @@ const PlayGamePage = () => {
   const [isTeamCreated, setIsTeamCreated] = useState(
     localStorage.getItem('localTeamId') ? true : false
   );
-
+  const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
 
   const createTeam = async () => {
@@ -96,7 +97,7 @@ const PlayGamePage = () => {
       }
       if (!status.active) {
         localStorage.removeItem('localTeamId');
-        console.log('Game Over');
+        alertCtx.info('This session has finished!');
       }
       setIsLoading(false);
     };
@@ -116,15 +117,14 @@ const PlayGamePage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
           flexGrow: 1,
-          borderRadius: '20px 20px 0px 0px',
-          boxShadow: 3,
+          borderRadius: '10px 10px 0px 0px',
+          boxShadow: 2,
           width: '100%',
           px: { xs: 2, sm: 5 },
           py: 7,
@@ -166,8 +166,8 @@ const PlayGamePage = () => {
                   mx: 'auto',
                   p: 3,
                   width: '50%',
-                  borderRadius: 3,
-                  boxShadow: 3,
+                  borderRadius: '10px',
+                  boxShadow: 2,
                 }}
               >
                 <Typography
@@ -218,36 +218,37 @@ const PlayGamePage = () => {
               <>
                 <Box
                   sx={{
-                    boxShadow: 3,
-                    borderRadius: 5,
+                    boxShadow: 2,
+                    borderRadius: '10px',
                     width: { xs: '80%', md: '50%' },
                     height: 'fit-content',
                     py: 4,
                     px: 4,
                     mx: 'auto',
                     mb: 5,
+                    border: question?.type === 'result' && '1px solid gold',
                   }}
                 >
                   <Typography
-                    variant="h5"
+                    variant="h6"
                     color="text.secondary"
                     sx={{ float: 'right' }}
                   >
                     {position.toString()}
                   </Typography>
-                  <Typography variant="h4">
+                  <Typography variant="h5">
                     {question?.type[0].toUpperCase() + question?.type.slice(1)}
                   </Typography>
-                  <Typography variant="h6" color="text.secondary">
+                  <Typography color="text.secondary">
                     {question?.name}
                   </Typography>
-                  <Typography variant="h6">{question?.hint}</Typography>
+                  <Typography>{question?.hint}</Typography>
                   <Divider sx={{ my: 3 }} />
-                  <Typography variant="h5">
+                  <Typography variant="h6">
                     {question.type === 'result' &&
                       `The fair value of this market is $${question.trueValue}.`}
                   </Typography>
-                  <Typography variant="h5">
+                  <Typography fontSize={18}>
                     {question.type === 'round' &&
                       'Trading is in session. Please wait for the trades to complete.'}
                     {question.type === 'round' && (
@@ -255,7 +256,6 @@ const PlayGamePage = () => {
                     )}
                   </Typography>
                   <Typography
-                    variant="h6"
                     color="text.secondary"
                     sx={{ mt: 2, fontStyle: 'italic', textWrap: 'balance' }}
                   >

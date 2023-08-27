@@ -11,11 +11,12 @@ import {
   FormControl,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { fetchAPIRequest } from '../helpers';
 import { useParams } from 'react-router-dom';
 import AdvanceGameBtn from '../components/AdvanceGameBtn';
 import TeamStats from './GameHistoryPage/TeamStats';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -26,6 +27,8 @@ const AdminSessionPage = () => {
   const [hasTraded, setHasTraded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSessionStart, setIsSessionStart] = useState(false);
+  const [current, setCurrent] = useState({});
+  const alertCtx = useContext(AlertContext);
 
   const processTeams = () => {
     return Object.keys(session.teams).map((teamId) => {
@@ -52,16 +55,6 @@ const AdminSessionPage = () => {
               ask={session.teams[teamId].teamAnswers[session.position]?.ask}
             />
           </FormControl>
-          {/* <TeamPanel
-            key={teamId}
-            teamName={session.teams[teamId].name}
-            balance={session.teams[teamId].teamAnswers[marketPosition].balance}
-            contracts={
-              session.teams[teamId].teamAnswers[marketPosition].contracts
-            }
-            latestBid={session.teams[teamId].teamAnswers[session.position]?.bid}
-            latestAsk={session.teams[teamId].teamAnswers[session.position]?.ask}
-          /> */}
         </Grid>
       );
     });
@@ -106,11 +99,17 @@ const AdminSessionPage = () => {
     });
   };
   useEffect(() => {
-    const getGameStatus = async () => {
+    const getGameStatus = async (gameInterval) => {
       const status = await fetchAPIRequest(
         `/admin/session/${sessionId}/status`,
         'GET'
       );
+
+      if (status.status.questions.length <= 0) {
+        alertCtx.error('This game has no markets. Please create some.');
+        clearTimeout(gameInterval);
+        return;
+      }
 
       if (status.status.position >= 0) {
         setIsSessionStart(true);
@@ -120,14 +119,16 @@ const AdminSessionPage = () => {
       setIsLoading(false);
       if (
         status.status.position >= 0 &&
-        status.status.questions[status.status.position].type === 'market'
+        status.status.questions[status.status.position]?.type === 'market'
       ) {
         setMarketPosition(status.status.position);
       }
+      setCurrent(status.status.questions[status.status.position]);
     };
-    setInterval(() => {
-      getGameStatus();
+    const gameInterval = setInterval(() => {
+      getGameStatus(gameInterval);
     }, 1000);
+    return () => clearTimeout(gameInterval);
   }, [sessionId]);
 
   const renderQuestions = (questions) => {
@@ -145,7 +146,7 @@ const AdminSessionPage = () => {
               pb: 2,
               mb: 3,
               border: '1px solid lightgray',
-              borderRadius: 3,
+              borderRadius: '10px',
             }}
           >
             <TextField
@@ -181,7 +182,7 @@ const AdminSessionPage = () => {
 
     return (
       <Box>
-        <Typography variant="h5" sx={{ mb: 1 }}>
+        <Typography variant="h5" sx={{ mb: 1, fontSize: { xs: 16, md: 24 } }}>
           Session Overview
         </Typography>
         {isLoading && (
@@ -209,15 +210,14 @@ const AdminSessionPage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
           flexGrow: 1,
-          borderRadius: '20px 20px 0px 0px',
-          boxShadow: 3,
+          borderRadius: '10px 10px 0px 0px',
+          boxShadow: 1,
           width: '100%',
           px: { xs: 2, sm: 5 },
           py: 7,
@@ -256,6 +256,7 @@ const AdminSessionPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     whiteSpace: 'nowrap',
+                    fontSize: { xs: 24, md: 34 },
                   }}
                 >
                   <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
@@ -271,41 +272,36 @@ const AdminSessionPage = () => {
               </Box>
               <Box
                 sx={{
-                  boxShadow: 3,
-                  borderRadius: 5,
+                  boxShadow: 2,
+                  borderRadius: '10px',
                   width: { xs: '70%', md: '50%' },
                   height: 'fit-content',
                   py: 4,
                   px: 4,
                   mx: 'auto',
-                  border:
-                    session.questions[session.position]?.type === 'result' &&
-                    '2px solid gold',
+                  border: current?.type === 'result' && '1px solid gold',
                 }}
               >
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   color="text.secondary"
                   sx={{ float: 'right' }}
                 >
                   {session.position.toString()}
                 </Typography>
-                <Typography variant="h4">
-                  {session.questions[session.position]?.type[0].toUpperCase() +
-                    session.questions[session.position]?.type.slice(1)}
+                <Typography variant="h5">
+                  {current?.type[0].toUpperCase() + current?.type.slice(1)}
                 </Typography>
+                <Typography color="text.secondary">{current?.name}</Typography>
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="h6">
-                  {session.questions[session.position]?.name}
+                <Typography color="text.secondary">
+                  {current?.hint ? current?.hint : 'No hint given'}
                 </Typography>
-                <Typography variant="h6">
-                  {session.questions[session.position]?.hint}
-                </Typography>
-                <Typography variant="h6">
-                  {session.questions[session.position]?.type === 'result' &&
+                <Typography fontSize={18}>
+                  {current?.type === 'result' &&
                     'Please view the results below.'}
                 </Typography>
-                {session.questions[session.position]?.type === 'round' && (
+                {current?.type === 'round' && (
                   <Box
                     sx={{
                       width: '100%',
@@ -314,9 +310,7 @@ const AdminSessionPage = () => {
                       flexDirection: 'column',
                     }}
                   >
-                    <Typography variant="h6">
-                      Click the button to begin trading
-                    </Typography>
+                    <Typography>Click the button to begin trading</Typography>
                     <Button
                       variant="contained"
                       disabled={hasTraded}
@@ -332,13 +326,13 @@ const AdminSessionPage = () => {
                   </Box>
                 )}
               </Box>
-              {session.questions[session.position]?.type !== 'result' && (
+              {current?.type !== 'result' && (
                 <Grid container columns={12} spacing={3} sx={{ p: 5 }}>
                   {processTeams()}
                 </Grid>
               )}
               <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
-                {session.questions[session.position]?.type === 'result' &&
+                {current?.type === 'result' &&
                   processResults(session.teams).map((team, index) => {
                     return (
                       <Grid
@@ -380,6 +374,7 @@ const AdminSessionPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     whiteSpace: 'nowrap',
+                    fontSize: { xs: 24, md: 34 },
                   }}
                 >
                   <AdminPanelSettingsIcon sx={{ width: 50, height: 50 }} />
@@ -391,7 +386,9 @@ const AdminSessionPage = () => {
                   setIsSessionStart={setIsSessionStart}
                 />
               </Box>
-              <Typography variant="h5">Players</Typography>
+              <Typography variant="h5" sx={{ fontSize: { xs: 16, md: 24 } }}>
+                Players
+              </Typography>
               <Grid
                 container
                 columns={{ xs: 2, sm: 8, md: 12, lg: 16 }}
@@ -410,7 +407,10 @@ const AdminSessionPage = () => {
                     }}
                   >
                     <CircularProgress sx={{ mr: 3 }} />
-                    <Typography variant="h5">
+                    <Typography
+                      variant="h5"
+                      sx={{ fontSize: { xs: 16, md: 24 } }}
+                    >
                       {isLoading ? 'Loading...' : 'Waiting for Participants'}
                     </Typography>
                   </Box>
@@ -431,7 +431,7 @@ const AdminSessionPage = () => {
                           <Box
                             sx={{
                               boxShadow: 2,
-                              borderRadius: 2,
+                              borderRadius: '10px',
                               px: 3,
                               py: 2,
                               display: 'flex',
