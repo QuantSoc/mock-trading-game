@@ -42,15 +42,23 @@ const GameAccordion = ({ gameName, creationDate, sessions }) => {
               No sessions yet...
             </Typography>
           )}
-          {sessions?.map((session, index) => {
-            return (
-              <SessionAccordion
-                key={`session-history-accordion-${index}`}
-                sessionId={session.id}
-                timeStarted={session.timeStarted}
-              />
-            );
-          })}
+          {sessions
+            .sort((a, b) => {
+              return a.timeStarted > b.timeStarted
+                ? -1
+                : a.timeStarted < b.timeStarted
+                ? 1
+                : 0;
+            })
+            ?.map((session, index) => {
+              return (
+                <SessionAccordion
+                  key={`session-history-accordion-${index}`}
+                  sessionId={session.id}
+                  timeStarted={session.timeStarted}
+                />
+              );
+            })}
         </AccordionDetails>
       </Accordion>
     </Box>
