@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const Notification = ({ type, message, open, setClose }) => {
   return (
     <Snackbar
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={open}
       autoHideDuration={3000}
       onClose={() => setClose()}
