@@ -46,43 +46,38 @@ const ResponsiveAppBar = () => {
   return (
     // NavBar below has styling and base structure from the MUI page
     // at https://mui.com/material-ui/react-app-bar/
-    <AppBar position="fixed" sx={{ background: '#8763cb' }}>
+    <AppBar position="fixed" sx={{ background: '#fff', boxShadow: 'none' }}>
       <Container maxWidth="100%">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ mx: { xs: '3%', md: '7%', xl: '10%' } }}>
           <SvgIcon
             sx={{
               width: 45,
               height: 45,
               display: { xs: 'none', md: 'flex' },
-              marginRight: '10px',
+              mr: '9px',
             }}
           >
             <QuantsocIcon />
           </SvgIcon>
           <Typography
-            variant="h6"
             noWrap
             sx={{
               mr: 3,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'Poppins',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              fontSize: 30,
-              color: 'inherit',
-              textDecoration: 'none',
+              color: '#000',
+              fontSize: 32,
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              WebkitTextStroke: '0.5px black',
             }}
           >
-            comps
+            QuantSoc
           </Typography>
           {localStorage.getItem('token') && (
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
+              <IconButton size="large" onClick={handleOpenNavMenu} color="#000">
+                <MenuIcon color="#000" />
               </IconButton>
 
               {/* HERE --> NavBar SHRUNK Menu Items */}
@@ -110,7 +105,9 @@ const ResponsiveAppBar = () => {
                     navigate('/');
                   }}
                 >
-                  <Typography textAlign="center">Dashboard</Typography>
+                  <Typography textAlign="center" textDecoration="none">
+                    Dashboard
+                  </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
@@ -125,12 +122,8 @@ const ResponsiveAppBar = () => {
           )}
           {!localStorage.getItem('token') && (
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
+              <IconButton size="large" onClick={handleOpenNavMenu} color="#000">
+                <MenuIcon color="#000" />
               </IconButton>
 
               {/* HERE --> NavBar SHRUNK Menu Items */}
@@ -189,66 +182,120 @@ const ResponsiveAppBar = () => {
               mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'Poppins',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              color: '#000',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              WebkitTextStroke: '0.5px black',
             }}
           >
-            comps
+            QuantSoc
           </Typography>
           {!localStorage.getItem('token') && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: 'none', md: 'flex' },
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Typography
+                sx={{
+                  mx: 2,
+                  my: 'auto',
+                  color: '#000',
+                  fontSize: 18,
+                  fontWeight: 300,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    opacity: 0.6,
+                    transition: 'opacity 0.3s ease',
+                  },
+                }}
                 onClick={() => {
-                  handleCloseNavMenu();
                   navigate('/login');
                 }}
-                sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Login
-              </Button>
-              <Button
+              </Typography>
+              <Typography
+                sx={{
+                  mx: 2,
+                  my: 'auto',
+                  color: '#000',
+                  fontSize: 18,
+                  fontWeight: 300,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    opacity: 0.6,
+                    transition: 'opacity 0.3s ease',
+                  },
+                }}
                 onClick={() => {
                   handleCloseNavMenu();
                   navigate('/register');
                 }}
-                sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Register
-              </Button>
+              </Typography>
             </Box>
           )}
           {localStorage.getItem('token') && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: 'none', md: 'flex' },
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Typography
+                sx={{
+                  mx: 2,
+                  my: 'auto',
+                  color: '#000',
+                  fontSize: 18,
+                  fontWeight: 300,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    opacity: 0.6,
+                    transition: 'opacity 0.3s ease',
+                  },
+                }}
                 onClick={() => {
-                  handleCloseNavMenu();
                   navigate('/');
                 }}
-                sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Dashboard
-              </Button>
-              <Button
+              </Typography>
+              <Typography
+                sx={{
+                  mx: 2,
+                  my: 'auto',
+                  color: '#000',
+                  fontSize: 18,
+                  fontWeight: 300,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    opacity: 0.6,
+                    transition: 'opacity 0.3s ease',
+                  },
+                }}
                 onClick={() => {
                   handleCloseNavMenu();
-                  navigate('history');
+                  navigate('/history');
                 }}
-                sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Game History
-              </Button>
+              </Typography>
             </Box>
           )}
 
           {/* HERE --> NavBar User Menu */}
           {localStorage.getItem('token') && (
-            <Box sx={{ flexGrow: 0 }}>
+            <Box sx={{ flexGrow: 0, ml: 2 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -289,7 +336,12 @@ const ResponsiveAppBar = () => {
                     navigate('/');
                   }}
                 >
-                  <Typography textAlign="center">Dashboard</Typography>
+                  <Typography
+                    textAlign="center"
+                    sx={{ textDecoration: 'none' }}
+                  >
+                    Dashboard
+                  </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
