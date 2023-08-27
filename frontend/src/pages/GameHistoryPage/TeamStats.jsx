@@ -20,10 +20,10 @@ const TeamStats = ({
   return (
     <Box
       sx={{
-        borderRadius: 1,
+        borderRadius: '10px',
         p: 2,
         border: '0.5px solid',
-        borderColor: isWinner ? 'limegreen' : '#EAEAEA',
+        borderColor: isWinner ? 'limegreen' : '#E0E0E0',
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -88,7 +88,7 @@ const TeamStats = ({
           </Typography>
         </Box>
       )}
-      {trueValue && (
+      {!!trueValue && (
         <Typography
           variant="h6"
           fontSize={16}
