@@ -52,7 +52,12 @@ const SessionAccordion = ({ sessionId, timeStarted }) => {
           />
           {sessionId}
         </Typography>
-        <Typography sx={{ color: 'text.secondary' }}>
+        <Typography
+          sx={{
+            fontFamily: 'Consolas',
+            color: 'text.secondary',
+          }}
+        >
           {new Date(timeStarted).toLocaleString()}
         </Typography>
       </Box>
