@@ -72,7 +72,7 @@ const RegisterPage = () => {
       navigate(from, { replace: true });
       alertCtx.success("Welcome to QuantSoc's Mock Trading Game");
     } catch (error) {
-      alertCtx.error(error);
+      alertCtx.error(error.message);
     }
   };
 
