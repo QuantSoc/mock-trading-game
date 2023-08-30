@@ -10,6 +10,8 @@ import {
   TextField,
   Typography,
   IconButton,
+  Tooltip,
+  Skeleton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -17,17 +19,18 @@ import AddIcon from '@mui/icons-material/Add';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CloseIcon from '@mui/icons-material/Close';
 
 const EditGamePage = () => {
   const { gameId } = useParams();
-  const [oldGameName, setOldGameName] = useState('');
-  const [gameName, setGameName] = useState('');
-  const [oldGameDesc, setOldGameDesc] = useState('');
-  const [gameDesc, setGameDesc] = useState('');
+  const [oldGameName, setOldGameName] = useState('Loading...');
+  const [gameName, setGameName] = useState('Loading...');
+  const [oldGameDesc, setOldGameDesc] = useState('Loading...');
+  const [gameDesc, setGameDesc] = useState('Loading...');
   const [gameRounds, setGameRounds] = useState([]);
   const [gameMedia, setGameMedia] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -37,6 +40,7 @@ const EditGamePage = () => {
       setOldGameDesc(gameData.desc);
       setGameDesc(gameData.desc);
       setGameRounds(gameData.markets);
+      setIsLoading(false);
     };
     fetchGame();
   }, [gameId]);
@@ -66,11 +70,11 @@ const EditGamePage = () => {
                 borderRadius: 3,
               }}
             >
-              <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <TextField
                   key={'marketNameTextbox' + marketIndex}
                   label="Market Name"
-                  sx={{ width: '40%' }}
+                  sx={{ width: '100%' }}
                   defaultValue={market.name}
                   placeholder={market.name}
                   onChange={(event) => {
@@ -83,26 +87,28 @@ const EditGamePage = () => {
                   key={'marketTrueValue' + marketIndex}
                   label="True Value"
                   type="number"
-                  sx={{ width: '20%', ml: 2 }}
+                  sx={{ minWidth: 25, ml: 2 }}
                   value={markets[marketIndex].trueValue}
-                  placeholder={market.trueValue}
+                  placeholder={`${market.trueValue}`}
                   onChange={(event) => {
                     markets[marketIndex].trueValue = event.target.value;
                     setGameRounds([...markets]);
                     setIsSaved(false);
                   }}
                 />
-                <IconButton
-                  color="error"
-                  onClick={() => {
-                    markets.splice(marketIndex, 1);
-                    setGameRounds([...markets]);
-                    setIsSaved(false);
-                  }}
-                  sx={{ p: 2, ml: 2 }}
-                >
-                  <DeleteForeverIcon />
-                </IconButton>
+                <Tooltip title="Delete Market">
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      markets.splice(marketIndex, 1);
+                      setGameRounds([...markets]);
+                      setIsSaved(false);
+                    }}
+                    sx={{ p: 2, ml: 2 }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
               {market.rounds.map((round, index) => {
                 return (
@@ -186,7 +192,6 @@ const EditGamePage = () => {
         display: 'flex',
         justifyContent: 'center',
         pt: 10,
-        px: { xs: 1, sm: 10, md: 18, lg: 25 },
       }}
     >
       <Box
@@ -203,34 +208,40 @@ const EditGamePage = () => {
           <EditIcon sx={{ mr: 2 }} />
           Edit Game
         </Typography>
-        <Box sx={{ pt: 3, px: { md: 5 } }}>
-          <TextField
-            label="Name"
-            variant="standard"
-            value={gameName}
-            onChange={(event) => {
-              setIsSaved(false);
-              setGameName(event.target.value);
-            }}
-            placeholder={oldGameName}
-            autoFocus
-            fullWidth
-            sx={{ pb: 5 }}
-          />
-          <TextField
-            label="Description"
-            variant="standard"
-            value={gameDesc}
-            onChange={(event) => {
-              setIsSaved(false);
-              setGameDesc(event.target.value);
-            }}
-            placeholder={oldGameDesc}
-            autoFocus
-            fullWidth
-            multiline
-            sx={{ pb: 5 }}
-          />
+        <Box
+          sx={{
+            pt: 3,
+            px: { md: 5 },
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TextField
+              label="Name"
+              variant="standard"
+              value={gameName}
+              onChange={(event) => {
+                setIsSaved(false);
+                setGameName(event.target.value);
+              }}
+              placeholder={oldGameName}
+              autoFocus
+              sx={{ pb: 5, mr: 1, width: '28%' }}
+            />
+            <TextField
+              label="Description"
+              variant="standard"
+              value={gameDesc}
+              onChange={(event) => {
+                setIsSaved(false);
+                setGameDesc(event.target.value);
+              }}
+              placeholder={oldGameDesc}
+              autoFocus
+              multiline
+              sx={{ pb: 5, ml: 1, width: '68%' }}
+            />
+          </Box>
+
           <Typography variant="h5" sx={{ pb: 2 }}>
             Upload Thumbnail
           </Typography>
@@ -244,6 +255,15 @@ const EditGamePage = () => {
           <Typography variant="h5" sx={{ pb: 2 }}>
             Markets
           </Typography>
+          {isLoading && (
+            <>
+              <Skeleton width="100%" height={100} />
+              <Skeleton width="100%" height={100} />
+              <Skeleton width="100%" height={100} />
+              <Skeleton width="100%" height={100} />
+              <Skeleton width="100%" height={100} />
+            </>
+          )}
           {renderMarketRounds(gameRounds)}
           {/* <Button></Button> */}
         </Box>
