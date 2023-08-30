@@ -24,6 +24,8 @@ import {
   assertSessionOwner,
   trade,
   calculateResults,
+  fetchSessionHistory,
+  setWinningTeams,
 } from './service';
 import { BACKEND_PORT } from '../../frontend/src/constants';
 
@@ -244,6 +246,27 @@ app.post(
     const { sessionId } = req.params;
     const { marketPos } = req.body;
     await trade(sessionId, marketPos);
+    return res.status(200).json({});
+  })
+);
+
+/**************************************************************************
+                                  HISTORY
+**************************************************************************/
+app.get(
+  '/history/:sessionId',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    const sessionData = await fetchSessionHistory(sessionId);
+    return res.status(200).json(sessionData);
+  })
+);
+app.post(
+  '/session/:sessionId/result',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    const { position, teamId, isWinner } = req.body;
+    await setWinningTeams(position, sessionId, teamId, isWinner);
     return res.status(200).json({});
   })
 );

@@ -175,7 +175,7 @@ export const getUserOwnedGames = (email) =>
           name: games[gameId].name,
           owner: games[gameId].owner,
           active: getActiveGameSessionId(gameId),
-          // oldSessions: getInactiveSessionsIdFromQuizId(quizId),
+          oldSessions: getInactiveGameSessions(gameId),
           createdAt: games[gameId].createdAt,
         }))
     );
@@ -257,41 +257,45 @@ export const endGame = (gameId) =>
 const newSessionPayload = (gameId) => ({
   gameId,
   position: -1,
-  // isoTimeLastQuestionStarted: null,
+  timeStarted: new Date().toISOString(),
   teams: {},
   questions: copy(games[gameId].questions),
-  // questions: copy(games[gameId].questions).map((question) => {
-  //   if (question.hasOwnProperty('trueValue')) {
-  //     question.trueValue = 0;
-  //   }
-  // }),
   active: true,
   answerAvailable: false,
 });
 
 const newTeamPayload = (name, questions) => {
   const teamAnswers = [];
-
-  questions.map((question) => {
-    question.type === 'market' &&
+  let latestMarketIndex = 0;
+  questions.map((question, index) => {
+    if (question.type === 'market') {
       teamAnswers.push({
         type: 'market',
         market: question.name,
         balance: 0,
         contracts: 0,
+        resultsIndex: 0,
       });
-    question.type === 'round' && teamAnswers.push({ type: 'round' });
-    question.type === 'trade' &&
+
+      latestMarketIndex = index;
+    }
+    // question.type === 'round' && teamAnswers.push({ type: 'round' });
+    question.type === 'round' &&
       teamAnswers.push({
-        type: 'trade',
-        questionStartedAt: null,
-        answeredAt: null,
+        type: 'round',
         bid: 0,
         ask: 0,
-        correct: false,
+        balance: 0,
+        contracts: 0,
       });
-    question.type === 'result' &&
-      teamAnswers.push({ type: 'result', trueValue: 0, total: 0 });
+    if (question.type === 'result') {
+      teamAnswers[latestMarketIndex].resultsIndex = index;
+      teamAnswers.push({
+        type: 'result',
+        balance: 0,
+        contracts: 0,
+      });
+    }
   });
 
   return {
@@ -350,19 +354,31 @@ const getActiveGameSession = (gameId) => {
   return sessionId !== null ? sessions[sessionId] : null;
 };
 
-const getInactiveGameSessons = (gameId) => {
-  Object.keys(sessions)
+const getInactiveGameSessions = (gameId) => {
+  return Object.keys(sessions)
     .filter(
       (seshId) => sessions[seshId].gameId === gameId && !sessions[seshId].active
     )
-    .map((seshId) => parseInt(seshId, 10));
+    .map((seshId) => {
+      return {
+        id: parseInt(seshId, 10),
+        timeStarted: sessions[seshId].timeStarted,
+      };
+    });
 };
 
 const getActiveGameSessionFromSessionId = (sessionId) => {
   if (sessionId in sessions && sessions[sessionId].active) {
     return sessions[sessionId];
   }
-  throw new InputError('Session ID is inactive');
+  throw new InputError('Session is inactive');
+};
+
+const getInactiveGameSessionFromSessionId = (sessionId) => {
+  if (sessionId in sessions && !sessions[sessionId].active) {
+    return sessions[sessionId];
+  }
+  throw new InputError('Session is still active');
 };
 
 const getSessionIdFromTeamId = (teamId) => {
@@ -409,7 +425,7 @@ const flattenQuestions = (markets) => {
     flatpack.push({ type: 'market', name: market.name });
     market.rounds.map((round, index) => {
       flatpack.push({ type: 'round', round: index + 1, hint: round.hint });
-      flatpack.push({ type: 'trade' });
+      // flatpack.push({ type: 'trade' });
     });
     flatpack.push({ type: 'result', trueValue: market.trueValue });
   });
@@ -448,10 +464,10 @@ export const setTeamBidAsk = (teamId, bid, ask) =>
 
         round.bid = parseFloat(bid, 10);
         round.ask = parseFloat(ask, 10);
-        const nextRound =
-          session.teams[teamId].teamAnswers[session.position + 1];
-        nextRound.bid = parseFloat(bid, 10);
-        nextRound.ask = parseFloat(ask, 10);
+        // const nextRound =
+        //   session.teams[teamId].teamAnswers[session.position + 1];
+        // nextRound.bid = parseFloat(bid, 10);
+        // nextRound.ask = parseFloat(ask, 10);
       }
       resolve();
     }
@@ -473,8 +489,25 @@ const initiateTrade = (teams, position, marketPos, buyerId, sellerId) => {
       buyPrice === sellPrice ? buyPrice : (sellPrice + buyPrice) / 2;
     teams[buyerId].teamAnswers[marketPos].balance -= tradePrice;
     teams[buyerId].teamAnswers[marketPos].contracts += 1;
+    const buyerBal = teams[buyerId].teamAnswers[marketPos].balance;
+    const buyerCon = teams[buyerId].teamAnswers[marketPos].contracts;
+    teams[buyerId].teamAnswers[position].balance = buyerBal;
+    teams[buyerId].teamAnswers[position].contracts = buyerCon;
+
     teams[sellerId].teamAnswers[marketPos].balance += tradePrice;
     teams[sellerId].teamAnswers[marketPos].contracts -= 1;
+    const sellerBal = teams[sellerId].teamAnswers[marketPos].balance;
+    const sellerCon = teams[sellerId].teamAnswers[marketPos].contracts;
+    teams[sellerId].teamAnswers[position].balance = sellerBal;
+    teams[sellerId].teamAnswers[position].contracts = sellerCon;
+
+    const buyerResIdx = teams[buyerId].teamAnswers[marketPos].resultsIndex;
+    teams[buyerId].teamAnswers[buyerResIdx].balance = buyerBal;
+    teams[buyerId].teamAnswers[buyerResIdx].contracts = buyerCon;
+
+    const sellerResIdx = teams[sellerId].teamAnswers[marketPos].resultsIndex;
+    teams[sellerId].teamAnswers[sellerResIdx].balance = sellerBal;
+    teams[sellerId].teamAnswers[sellerResIdx].contracts = sellerCon;
   }
 };
 
@@ -506,4 +539,24 @@ export const calculateResults = (gameId, sessionId) =>
     }
 
     resolve(session.position);
+  });
+
+/**************************************************************************
+                                  HISTORY
+**************************************************************************/
+export const fetchSessionHistory = (sessionId) =>
+  gameLock((resolve, reject) => {
+    const session = getInactiveGameSessionFromSessionId(sessionId);
+    resolve(session);
+  });
+
+export const setWinningTeams = (position, sessionId, teamId, isWinner) =>
+  gameLock((resolve, reject) => {
+    const session = getActiveGameSessionFromSessionId(sessionId);
+    if (!session.active) {
+      return reject(new InputError('Game not started'));
+    }
+    const team = session.teams[teamId].teamAnswers[position];
+    team.isWinner = isWinner;
+    resolve();
   });
