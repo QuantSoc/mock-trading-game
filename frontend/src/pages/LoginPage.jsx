@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TextField, Button, Box, Typography, Divider } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 import { BACKEND_ROUTE } from '../constants';
-
+import { AlertContext } from '../contexts/NotificationContext';
 const LoginPage = () => {
+  const alertCtx = useContext(AlertContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -27,28 +28,26 @@ const LoginPage = () => {
       });
       const data = await response.json();
       if (data.error) {
-        console.log(data.error);
         throw new Error(data.error);
       }
       const token = data?.token;
       localStorage.setItem('token', token);
       navigate(from, { replace: true });
+      alertCtx.success("Welcome to QuantSoc's Mock Trading Game");
     } catch (error) {
-      alert(error);
+      alertCtx.error(error.message);
     }
   };
 
   return (
     <Box
       sx={{
-        height: '100vh',
+        height: '92.5vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        p: 3,
-        boxSizing: 'border-box',
+        justifyContent: 'center',
       }}
     >
       <Box
@@ -59,11 +58,12 @@ const LoginPage = () => {
           flexWrap: 'wrap',
         }}
       >
-        <QuantsocIcon style={{ maxWidth: 150, padding: '0 20px' }} />
-        <Typography variant="h2">Competitions</Typography>
+        <QuantsocIcon style={{ maxWidth: 100, padding: '0 20px', mb: 20 }} />
+        <Typography sx={{ fontSize: 34 }}>Mock Trading Game</Typography>
       </Box>
-      <Divider sx={{ py: 1 }} />
-      <Typography variant="h3">Sign In</Typography>
+      <Typography variant="h5" textAlign="center">
+        Sign In
+      </Typography>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -74,10 +74,9 @@ const LoginPage = () => {
           alignItems: 'center',
           maxWidth: 800,
           minWidth: 300,
-          borderRadius: 2,
-          boxShadow: 5,
-          rowGap: 2,
-          p: 5,
+          rowGap: 7,
+          py: 2,
+          px: { xs: 7, sm: 20 },
           m: 3,
           boxSizing: 'border-box',
         }}

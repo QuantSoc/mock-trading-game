@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { Modal } from './index.js';
+import { Modal, RedirectBtn } from './index.js';
 import useModal from '../hooks/useModal.jsx';
-import { CopyBtn } from './index.js';
 
-import { Button, Box, Typography } from '@mui/material';
+import { Button, Box, Typography, Skeleton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StopIcon from '@mui/icons-material/Stop';
@@ -19,12 +18,13 @@ const GameTriggerBtn = ({
   const { isModalShown, toggleModal } = useModal();
   const [isStart, setIsStart] = useState(false);
   const [gameSession, setGameSession] = useState(initGameSession);
-
+  const [isLoading, setIsLoading] = useState(true);
   const startGame = async () => {
+    setIsLoading(true);
     const sessionData = await fetchAPIRequest(`/games/${gameId}/start`, 'POST');
-    console.log(sessionData);
     setGameSession(sessionData.sessionId);
     isStart ? gameSessionSetter('') : gameSessionSetter(sessionData.sessionId);
+    setIsLoading(false);
   };
 
   const endGame = async () => {
@@ -47,33 +47,42 @@ const GameTriggerBtn = ({
         modalTitle={isStart ? 'Game Started' : 'Game Complete'}
       >
         <Box>
-          <Typography variant="h2" textAlign="center">
-            {isStart && `${gameSession}`}
-          </Typography>
-          <Typography variant="h6">
-            {isStart && `Start the session at /admin/game/${gameId}/${gameSession}.`}
-          </Typography>
-          <Typography variant="h6">
+          {isStart && isLoading ? (
+            <Skeleton
+              variant="rounded"
+              width={248}
+              height={72}
+              sx={{ mx: 'auto' }}
+            />
+          ) : (
+            <Typography variant="h2" textAlign="center">
+              {isStart && `${gameSession}`}
+            </Typography>
+          )}
+          <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
             {isStart
-              ? `Players can join at /join/${gameSession}. \r\n Please copy the session ID`
+              ? `Players can join at \r\n ${window.location.origin.toString()}/join/${gameSession}.`
               : 'Would you like to view the session results?'}
           </Typography>
           {isStart ? (
-            <CopyBtn
-              copyTitle="Session"
-              copyContent={`${window.location.origin.toString()}/admin/game/${gameId}/${gameSession}`}
-              isContained
+            <RedirectBtn
+              destination={`/admin/game/${gameId}/${gameSession}`}
+              btnText="Begin Session"
+              variant="contained"
+              isStartIcon
+              icon={<ArrowForwardIcon />}
               styling={{ my: 2 }}
+              disabled={isLoading}
             />
           ) : (
-            <Button
-              startIcon={<ArrowForwardIcon />}
-              color="primary"
+            <RedirectBtn
+              destination={`/history/${gameSession}`}
+              btnText="View Results"
               variant="contained"
-              sx={{ my: 2 }}
-            >
-              View Results
-            </Button>
+              isStartIcon
+              icon={<ArrowForwardIcon />}
+              styling={{ my: 2 }}
+            />
           )}
         </Box>
       </Modal>

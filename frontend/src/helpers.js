@@ -24,10 +24,15 @@ export const fetchAPIRequest = async (route, method, bodyData = {}) => {
     //   console.log(data.error);
     //   return data;
     // }
-    // if (data.error === 'Session has not started yet') {
-    //   console.log(data.error);
-    //   return data;
-    // }
+    if (data.error === 'Failed to fetch') {
+      console.log(data.error);
+      return;
+    }
+    if (data.error === 'Invalid Token') {
+      localStorage.removeItem('token');
+      window.location.reload();
+      return;
+    }
     if (data.error) {
       throw new Error(data.error);
     }

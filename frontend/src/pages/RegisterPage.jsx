@@ -1,22 +1,16 @@
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  SvgIcon,
-  Divider,
-} from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 import { BACKEND_ROUTE } from '../constants';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{2,23}$/;
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,20}$/;
-
 const RegisterPage = () => {
+  const alertCtx = useContext(AlertContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -38,10 +32,6 @@ const RegisterPage = () => {
   const [passwordMatch, setPasswordMatch] = useState('');
   const [isValidMatch, setValidMatch] = useState(false);
   const [isMatchFocus, setMatchFocus] = useState(false);
-
-  // useEffect(() => {
-  //   setErrorMessage('');
-  // }, [email, password, passwordMatch]);
 
   useEffect(() => {
     const result = EMAIL_REGEX.test(email);
@@ -80,22 +70,21 @@ const RegisterPage = () => {
       const token = data?.token;
       localStorage.setItem('token', token);
       navigate(from, { replace: true });
+      alertCtx.success("Welcome to QuantSoc's Mock Trading Game");
     } catch (error) {
-      alert(error);
+      alertCtx.error(error.message);
     }
   };
 
   return (
     <Box
       sx={{
-        height: '100vh',
+        height: '92.5vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        p: 3,
-        boxSizing: 'border-box',
       }}
     >
       <Box
@@ -106,11 +95,10 @@ const RegisterPage = () => {
           flexWrap: 'wrap',
         }}
       >
-        <QuantsocIcon style={{ maxWidth: 150, padding: '0 20px' }} />
-        <Typography variant="h2">Competitions</Typography>
+        <QuantsocIcon style={{ maxWidth: 100, padding: '0 20px', mb: 20 }} />
+        <Typography sx={{ fontSize: 34 }}>Mock Trading Game</Typography>
       </Box>
-      <Divider sx={{ py: 1 }} />
-      <Typography variant="h3">Register</Typography>
+      <Typography variant="h5">Register</Typography>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -122,10 +110,9 @@ const RegisterPage = () => {
           alignItems: 'center',
           maxWidth: 800,
           minWidth: 300,
-          borderRadius: 2,
-          boxShadow: 5,
-          rowGap: 2,
-          p: 5,
+          rowGap: 3,
+          pb: 5,
+          px: { xs: 5, sm: 12, md: 15 },
           m: 5,
           boxSizing: 'border-box',
         }}
