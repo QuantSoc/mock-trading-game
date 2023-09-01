@@ -128,7 +128,7 @@ const AdminSessionPage = () => {
     const gameInterval = setInterval(() => {
       getGameStatus(gameInterval);
     }, 1000);
-    return () => clearTimeout(gameInterval);
+    return () => clearInterval(gameInterval);
   }, [sessionId, alertCtx]);
 
   const renderQuestions = (questions) => {

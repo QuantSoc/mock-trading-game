@@ -101,9 +101,10 @@ const PlayGamePage = () => {
       }
       setIsLoading(false);
     };
-    setInterval(() => {
+    const gameInterval = setInterval(() => {
       getGameStatus();
     }, 1000);
+    return () => clearInterval(gameInterval);
   }, [sessionId, alertCtx]);
 
   return (
