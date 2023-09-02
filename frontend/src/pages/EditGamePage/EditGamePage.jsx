@@ -86,6 +86,7 @@ const EditGamePage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
