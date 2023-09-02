@@ -226,8 +226,8 @@ app.put(
   '/game/:teamId/submit',
   handleErrors(async (req, res) => {
     const { teamId } = req.params;
-    const { bid, ask } = req.body;
-    await setTeamBidAsk(teamId, bid, ask);
+    const { bid, ask, marketIndex } = req.body;
+    await setTeamBidAsk(teamId, bid, ask, marketIndex);
     return res.status(200).send({ status: 200 });
   })
 );
