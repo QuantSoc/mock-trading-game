@@ -49,7 +49,9 @@ const AdminSessionPage = () => {
   const processResults = (teams) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
-        const trueValue = session.questions[session.position]?.trueValue;
+        const trueValue = Object.values(
+          session.questions[session.position].round
+        )[selectedMarketIndex];
         const balance =
           teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
             .balance;

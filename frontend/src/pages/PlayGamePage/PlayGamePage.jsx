@@ -57,7 +57,7 @@ const PlayGamePage = () => {
   const processResults = (teams) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
-        const trueValue = question.trueValue;
+        const trueValue = Object.values(question.round)[selectedMarketIndex];
         const balance =
           teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
             .balance;
