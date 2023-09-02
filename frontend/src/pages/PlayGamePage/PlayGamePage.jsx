@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { fetchAPIRequest } from '../helpers';
+import { fetchAPIRequest } from '../../helpers';
 import { useEffect, useState, useContext } from 'react';
 import {
   Box,
@@ -14,9 +14,11 @@ import {
   FormControl,
 } from '@mui/material';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import { BidAskPanel } from '../components/index.js';
-import TeamStats from './GameHistoryPage/TeamStats';
-import { AlertContext } from '../contexts/NotificationContext';
+import { BidAskPanel } from '../../components/index.js';
+import TeamStats from '../GameHistoryPage/TeamStats';
+import { AlertContext } from '../../contexts/NotificationContext';
+import PlayGameTradeArea from './PlayGameTradeArea';
+import PlayGameMarketSelector from './PlayGameMarketSelector';
 
 const PlayGamePage = () => {
   const { sessionId } = useParams();
@@ -33,6 +35,7 @@ const PlayGamePage = () => {
   );
   const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
+  const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
 
   const createTeam = async () => {
     const teamData = await fetchAPIRequest(`/game/join/${sessionId}`, 'POST', {
@@ -55,8 +58,12 @@ const PlayGamePage = () => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
         const trueValue = question.trueValue;
-        const balance = teams[teamId].teamAnswers[marketPosition].balance;
-        const contracts = teams[teamId].teamAnswers[marketPosition].contracts;
+        const balance =
+          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
+            .balance;
+        const contracts =
+          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
+            .contracts;
         const total =
           parseInt(contracts, 10) * parseFloat(trueValue, 10) +
           parseFloat(balance, 10);
@@ -243,7 +250,15 @@ const PlayGamePage = () => {
                   <Typography color="text.secondary">
                     {question?.name}
                   </Typography>
-                  <Typography>{question?.hint}</Typography>
+                  {question?.type === 'round' && (
+                    <Typography sx={{ mt: 1 }} color="text.secondary">
+                      Hint:{' '}
+                      {question?.round &&
+                      Object.values(question?.round)[selectedMarketIndex]
+                        ? Object.values(question?.round)[selectedMarketIndex]
+                        : 'No hint given'}
+                    </Typography>
+                  )}
                   <Divider sx={{ my: 3 }} />
                   <Typography variant="h6">
                     {question.type === 'result' &&
@@ -263,17 +278,19 @@ const PlayGamePage = () => {
                     {quotable.content} <br /> - {quotable.author}
                   </Typography>
                 </Box>
+                {question.type !== 'section' && (
+                  <PlayGameMarketSelector
+                    current={question}
+                    setSelectedMarketIndex={setSelectedMarketIndex}
+                  />
+                )}
                 {question.type === 'round' && (
-                  <BidAskPanel
+                  <PlayGameTradeArea
+                    current={question}
                     position={position}
-                    teamId={myTeamId}
-                    teamName={teams[myTeamId]?.name}
-                    balance={
-                      teams[myTeamId]?.teamAnswers[marketPosition].balance
-                    }
-                    contracts={
-                      teams[myTeamId]?.teamAnswers[marketPosition].contracts
-                    }
+                    teams={teams}
+                    myTeamId={myTeamId}
+                    selectedMarketIndex={selectedMarketIndex}
                   />
                 )}
                 <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
