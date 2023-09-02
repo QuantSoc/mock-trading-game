@@ -50,7 +50,7 @@ const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
               return [...sections];
             });
           }}
-          sx={{ py: 1 }}
+          sx={{ py: 1, opacity: 0.7 }}
         >
           Delete Section
         </Button>

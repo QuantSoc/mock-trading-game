@@ -94,7 +94,7 @@ const EditGameMarket = ({
                 setMarkets([...markets]);
               }, 300);
             }}
-            sx={{ p: 2, ml: 2 }}
+            sx={{ p: 2, ml: 2, opacity: 0.7 }}
           >
             <CloseIcon />
           </IconButton>
@@ -129,7 +129,7 @@ const EditGameMarket = ({
                     markets.forEach((market) => market.rounds.splice(index, 1));
                     setMarkets([...markets]);
                   }}
-                  sx={{ p: 2, ml: 2 }}
+                  sx={{ p: 2, ml: 2, opacity: 0.7 }}
                 >
                   <DeleteOutlineIcon />
                 </IconButton>
