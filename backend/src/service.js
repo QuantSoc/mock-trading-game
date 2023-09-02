@@ -148,7 +148,7 @@ const newGamePayload = (name, desc, owner) => ({
   name,
   desc,
   owner,
-  markets: [],
+  sections: [],
   questions: [],
   active: null,
   createdAt: new Date().toISOString(),
@@ -201,10 +201,10 @@ export const getGame = (gameId) =>
     });
   });
 
-export const updateGame = (gameId, markets, name, desc, media) =>
+export const updateGame = (gameId, sections, name, desc, media) =>
   gameLock((resolve, reject) => {
-    markets && (games[gameId].markets = markets);
-    markets && (games[gameId].questions = flattenQuestions(markets));
+    sections && (games[gameId].sections = sections);
+    sections && (games[gameId].questions = flattenQuestions(sections));
     name && (games[gameId].name = name);
     desc && (games[gameId].desc = desc);
     media && (games[gameId].media = media);
@@ -418,24 +418,33 @@ export const teamJoin = (name, sessionId) =>
     }
   });
 
-const flattenQuestions = (markets) => {
+const flattenQuestions = (sections) => {
   const flatpack = [];
 
-  markets.map((market) => {
-    flatpack.push({ type: 'market', name: market.name });
-    market.rounds.map((round, index) => {
-      flatpack.push({ type: 'round', round: index + 1, hint: round.hint });
-      // flatpack.push({ type: 'trade' });
+  sections.map((section, index) => {
+    flatpack.push({ type: 'section', name: `Section ${index + 1}` });
+
+    const marketRounds = {};
+    section.markets[0].rounds.map((round, index) => {
+      section.markets.forEach((market) => {
+        marketRounds[market.name] = market.rounds[index].hint;
+      });
+      flatpack.push({ type: 'round', round: { ...marketRounds } });
     });
-    flatpack.push({ type: 'result', trueValue: market.trueValue });
+
+    const marketResults = {};
+    section.markets.map((market, index) => {
+      marketResults[market.name] = market.trueValue;
+    });
+    flatpack.push({ type: 'result', results: marketResults });
   });
 
   return flatpack;
 };
 
-const getGameRound = (markets, position) => {
+const getGameRound = (sections, position) => {
   let counter = -1;
-  for (const market of markets) {
+  for (const market of sections) {
     counter += 1;
 
     for (const round of market.rounds) {
