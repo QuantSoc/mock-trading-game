@@ -5,10 +5,19 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditGameTabs from './EditGameTabs';
 import EditGameMarket from './EditGameMarket';
 
-const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
+const EditGameSection = ({
+  section,
+  index,
+  setGameSections,
+  setIsSaved,
+  isDisabled,
+}) => {
   const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
   const [markets, setMarkets] = useState(section.markets);
   useEffect(() => {
+    if (isDisabled) {
+      return () => {};
+    }
     setIsSaved(false);
     // save section changes
     setGameSections((sections) => {
@@ -19,7 +28,7 @@ const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
         return section;
       });
     });
-  }, [markets, setIsSaved, setGameSections, index]);
+  }, [markets, setIsSaved, setGameSections, index, isDisabled]);
 
   return (
     <Box
@@ -41,19 +50,22 @@ const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
         }}
       >
         <Typography variant="h6">Section {index + 1}</Typography>
-        <Button
-          color="error"
-          size="small"
-          onClick={() => {
-            setGameSections((sections) => {
-              sections.splice(index, 1);
-              return [...sections];
-            });
-          }}
-          sx={{ py: 1, opacity: 0.7 }}
-        >
-          Delete Section
-        </Button>
+        {!isDisabled && (
+          <Button
+            color="error"
+            size="small"
+            onClick={() => {
+              setGameSections((sections) => {
+                sections.splice(index, 1);
+                return [...sections];
+              });
+            }}
+            disabled={isDisabled}
+            sx={{ py: 1, opacity: 0.7 }}
+          >
+            Delete Section
+          </Button>
+        )}
       </Box>
       <Box
         sx={{
@@ -68,26 +80,29 @@ const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
           selectedMarketIndex={selectedMarketIndex}
           setSelectedMarketIndex={setSelectedMarketIndex}
         />
-        <Button
-          startIcon={<ShowChartIcon />}
-          onClick={() => {
-            let newRounds = [];
-            let globalRoundsLength = markets.slice(-1)[0]?.rounds.length;
-            if (markets.length > 0 && globalRoundsLength > 0) {
-              newRounds = Array.from({ length: globalRoundsLength }, () => {
-                return { hint: '' };
+        {!isDisabled && (
+          <Button
+            startIcon={<ShowChartIcon />}
+            disabled={isDisabled}
+            onClick={() => {
+              let newRounds = [];
+              let globalRoundsLength = markets.slice(-1)[0]?.rounds.length;
+              if (markets.length > 0 && globalRoundsLength > 0) {
+                newRounds = Array.from({ length: globalRoundsLength }, () => {
+                  return { hint: '' };
+                });
+              }
+              markets.push({
+                name: `New Market ${markets.length + 1}`,
+                trueValue: 0,
+                rounds: newRounds,
               });
-            }
-            markets.push({
-              name: `New Market ${markets.length + 1}`,
-              trueValue: 0,
-              rounds: newRounds,
-            });
-            setMarkets([...markets]);
-          }}
-        >
-          New Market
-        </Button>
+              setMarkets([...markets]);
+            }}
+          >
+            New Market
+          </Button>
+        )}
       </Box>
 
       {markets.length > 0 && (
@@ -99,6 +114,7 @@ const EditGameSection = ({ section, setGameSections, setIsSaved, index }) => {
           setSelectedMarketIndex={setSelectedMarketIndex}
           markets={markets}
           setMarkets={setMarkets}
+          isDisabled={isDisabled}
         />
       )}
     </Box>

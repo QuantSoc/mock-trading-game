@@ -25,6 +25,7 @@ const EditGameMarket = ({
   setSelectedMarketIndex,
   markets,
   setMarkets,
+  isDisabled,
 }) => {
   const [marketName, setMarketName] = useState(name);
   const [marketTrueValue, setMarketTrueValue] = useState(0);
@@ -52,6 +53,7 @@ const EditGameMarket = ({
           label="Market Name"
           sx={{ width: '100%' }}
           value={marketName}
+          disabled={isDisabled}
           onChange={(event) => {
             setMarketName(event.target.value);
             markets[selectedMarketIndex].name = event.target.value;
@@ -64,41 +66,47 @@ const EditGameMarket = ({
           sx={{ minWidth: 25, ml: 2 }}
           value={trueValue}
           placeholder={`${marketTrueValue}`}
-          disabled={!isDefaultTrueValue}
+          disabled={isDisabled || !isDefaultTrueValue}
           onChange={(event) => {
             setMarketTrueValue(event.target.value);
             markets[selectedMarketIndex].trueValue = event.target.value;
             setMarkets([...markets]);
           }}
         />
-        <Tooltip title="Default True Value">
-          <Switch
-            checked={isDefaultTrueValue}
-            onChange={() => {
-              // if true, set the opposite as we want it off.
-              markets[selectedMarketIndex].trueValue = isDefaultTrueValue
-                ? -1
-                : marketTrueValue;
-              setIsDefaultTrueValue((prev) => !prev);
-              setMarkets([...markets]);
-            }}
-          />
-        </Tooltip>
-        <Tooltip title="Delete Market">
-          <IconButton
-            color="error"
-            onClick={() => {
-              setSelectedMarketIndex(0);
-              setTimeout(() => {
-                markets.splice(selectedMarketIndex, 1);
+        {!isDisabled && (
+          <Tooltip title="Default True Value">
+            <Switch
+              checked={isDefaultTrueValue}
+              disabled={isDisabled}
+              onChange={() => {
+                // if true, set the opposite as we want it off.
+                markets[selectedMarketIndex].trueValue = isDefaultTrueValue
+                  ? -1
+                  : marketTrueValue;
+                setIsDefaultTrueValue((prev) => !prev);
                 setMarkets([...markets]);
-              }, 300);
-            }}
-            sx={{ p: 2, ml: 2, opacity: 0.7 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
+              }}
+            />
+          </Tooltip>
+        )}
+        {!isDisabled && (
+          <Tooltip title="Delete Market">
+            <IconButton
+              color="error"
+              disabled={isDisabled}
+              onClick={() => {
+                setSelectedMarketIndex(0);
+                setTimeout(() => {
+                  markets.splice(selectedMarketIndex, 1);
+                  setMarkets([...markets]);
+                }, 300);
+              }}
+              sx={{ p: 2, ml: 2, opacity: 0.7 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       {rounds?.map((round, index) => {
         return (
@@ -111,29 +119,34 @@ const EditGameMarket = ({
                 fullWidth
                 value={round?.hint}
                 placeholder={round?.hint}
+                disabled={isDisabled}
                 onChange={(event) => {
                   round.hint = event.target.value;
                   setMarkets([...markets]);
                 }}
               />
-              <Tooltip
-                title={
-                  <p>
-                    Delete round from <b>all markets</b>
-                  </p>
-                }
-              >
-                <IconButton
-                  color="error"
-                  onClick={() => {
-                    markets.forEach((market) => market.rounds.splice(index, 1));
-                    setMarkets([...markets]);
-                  }}
-                  sx={{ p: 2, ml: 2, opacity: 0.7 }}
+              {!isDisabled && (
+                <Tooltip
+                  title={
+                    <p>
+                      Delete round from <b>all markets</b>
+                    </p>
+                  }
                 >
-                  <DeleteOutlineIcon />
-                </IconButton>
-              </Tooltip>
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      markets.forEach((market) =>
+                        market.rounds.splice(index, 1)
+                      );
+                      setMarkets([...markets]);
+                    }}
+                    sx={{ p: 2, ml: 2, opacity: 0.7 }}
+                  >
+                    <DeleteOutlineIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
           </Box>
         );
@@ -141,6 +154,7 @@ const EditGameMarket = ({
       <Button
         startIcon={<AddIcon />}
         sx={{ ml: 4, mt: 2 }}
+        disabled={isDisabled}
         onClick={() => {
           markets.forEach((market) => market.rounds.push({ ...ROUND_PAYLOAD }));
           setMarkets([...markets]);
