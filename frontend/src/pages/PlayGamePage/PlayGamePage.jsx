@@ -262,7 +262,9 @@ const PlayGamePage = () => {
                   <Divider sx={{ my: 3 }} />
                   <Typography variant="h6">
                     {question.type === 'result' &&
-                      `The fair value of this market is $${question.trueValue}.`}
+                      `The fair value of this market is $${
+                        Object.values(question.round)[selectedMarketIndex]
+                      }.`}
                   </Typography>
                   <Typography fontSize={18}>
                     {question.type === 'round' &&
