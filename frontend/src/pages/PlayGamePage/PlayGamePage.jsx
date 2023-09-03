@@ -266,7 +266,7 @@ const PlayGamePage = () => {
                       {question?.round &&
                       Object.values(question?.round)[selectedMarketIndex]
                         ? Object.values(question?.round)[selectedMarketIndex]
-                        : 'No hint given'}
+                        : 'N/A'}
                     </Typography>
                   )}
                   <Divider sx={{ my: 3 }} />
