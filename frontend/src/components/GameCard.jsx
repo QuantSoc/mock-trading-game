@@ -8,7 +8,7 @@ import {
   Skeleton,
   Box,
 } from '@mui/material';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import EventIcon from '@mui/icons-material/Event';
 import { fetchAPIRequest } from '../helpers.js';
 import banner from '../assets/mtg-image.png';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -73,7 +73,6 @@ const GameCard = ({ gameId, isLoading, setCardCount }) => {
           >
             <Typography
               sx={{
-                fontSize: 20,
                 display: 'flex',
                 alignItems: 'center',
                 m: 0,
@@ -81,8 +80,8 @@ const GameCard = ({ gameId, isLoading, setCardCount }) => {
               color="text.secondary"
               gutterBottom
             >
-              <AccessTimeIcon sx={{ mr: 0.5 }} />
-              {cardData?.rounds?.length}s
+              <EventIcon sx={{ mr: 0.5, color: 'text.secondary' }} />
+              {new Date(cardData?.createdAt).toLocaleDateString()}
             </Typography>
 
             {gameSession && (
