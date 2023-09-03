@@ -563,7 +563,9 @@ export const trade = (sessionId, marketPos) =>
       return reject(new InputError('Game session has not begun'));
     } else {
       const teamIds = Object.keys(teams);
-
+      if (teamIds.length <= 0) {
+        resolve();
+      }
       const marketsLength =
         teams[teamIds[0]].teamAnswers[session.position].markets.length;
 
