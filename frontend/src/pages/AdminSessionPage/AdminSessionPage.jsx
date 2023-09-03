@@ -34,7 +34,6 @@ const AdminSessionPage = () => {
   const alertCtx = useContext(AlertContext);
   const [gameData, setGameData] = useState({});
   const [isTransition, setIsTransition] = useState(false);
-  const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -285,7 +284,7 @@ const AdminSessionPage = () => {
                 hasTraded={hasTraded}
                 initiateTrade={initiateTrade}
                 setHasTraded={setHasTraded}
-                selectedMarketIndex={selectedMarketIndex}
+                selectedMarketIndex={0}
               />
               {/* {current?.type !== 'section' && (
                 <AdminSessionMarketSelector

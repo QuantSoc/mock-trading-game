@@ -1,6 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
-const GameTransition = ({ message, isTransition }) => {
+const GameTransition = ({ isTransition }) => {
   return (
     <Box
       sx={{

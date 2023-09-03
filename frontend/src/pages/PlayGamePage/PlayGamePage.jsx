@@ -33,7 +33,6 @@ const PlayGamePage = () => {
   );
   const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
-  const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
   const [isTransition, setIsTransition] = useState(false);
 
   // useEffect(() => {
@@ -263,9 +262,8 @@ const PlayGamePage = () => {
                   {question?.type === 'round' && (
                     <Typography sx={{ mt: 1 }} color="text.secondary">
                       Hint:{' '}
-                      {question?.round &&
-                      Object.values(question?.round)[selectedMarketIndex]
-                        ? Object.values(question?.round)[selectedMarketIndex]
+                      {question?.round && Object.values(question?.round)[0]
+                        ? Object.values(question?.round)[0]
                         : 'N/A'}
                     </Typography>
                   )}
@@ -369,13 +367,16 @@ const PlayGamePage = () => {
                           <Box
                             sx={{
                               display: 'flex',
-                              justifyContent: 'space-between',
+                              // justifyContent: 'space-between',
                               alignItems: 'flex-end',
                               mb: 1,
                             }}
                           >
                             <Typography fontSize={18}>{market}</Typography>
-                            <Typography color="text.secondary" sx={{ mr: 2 }}>
+                            <Typography
+                              color="text.secondary"
+                              sx={{ fontSize: 14, ml: 2 }}
+                            >
                               True Value $
                               {Object.values(question.round)[marketIndex]}
                             </Typography>
