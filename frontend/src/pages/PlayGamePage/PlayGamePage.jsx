@@ -17,6 +17,7 @@ import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import TeamStats from '../GameHistoryPage/TeamStats';
 import { AlertContext } from '../../contexts/NotificationContext';
 import PlayGameTradeArea from './PlayGameTradeArea';
+import { GameTransition } from '../../components';
 
 const PlayGamePage = () => {
   const { sessionId } = useParams();
@@ -33,6 +34,14 @@ const PlayGamePage = () => {
   const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
   const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
+  const [isTransition, setIsTransition] = useState(false);
+
+  // useEffect(() => {
+  //   setIsTransition(true);
+  //   setTimeout(() => {
+  //     setIsTransition(false);
+  //   }, 750);
+  // }, [position]);
 
   const createTeam = async () => {
     const teamData = await fetchAPIRequest(`/game/join/${sessionId}`, 'POST', {
@@ -91,7 +100,15 @@ const PlayGamePage = () => {
         `/session/${sessionId}/status`,
         'GET'
       );
-      setPosition(status.position);
+      console.log(status.position, position);
+      if (status.position !== position) {
+        setIsTransition(true);
+        await new Promise((r) => setTimeout(r, 500));
+        setPosition(status.position);
+        setTimeout(() => {
+          setIsTransition(false);
+        }, 500);
+      }
       setQuestion(status.questions);
       setTeams(status.teams);
       if (!status.active) {
@@ -104,7 +121,7 @@ const PlayGamePage = () => {
       getGameStatus();
     }, 1000);
     return () => clearInterval(gameInterval);
-  }, [sessionId, alertCtx]);
+  }, [sessionId, alertCtx, position]);
 
   return (
     <Box
@@ -119,6 +136,7 @@ const PlayGamePage = () => {
         pt: 10,
       }}
     >
+      <GameTransition isTransition={isTransition} />
       <Box
         sx={{
           backgroundColor: '#fff',

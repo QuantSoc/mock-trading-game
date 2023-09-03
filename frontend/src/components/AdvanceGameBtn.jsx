@@ -14,6 +14,7 @@ const AdvanceGameBtn = ({
   isEnd,
   unsetTradeBtn,
   isDisabled,
+  callback,
 }) => {
   const { isModalShown, toggleModal } = useModal();
   const { sessionId } = useParams();
@@ -33,6 +34,7 @@ const AdvanceGameBtn = ({
       onClick={() => {
         advanceSession();
         unsetTradeBtn && unsetTradeBtn();
+        callback();
       }}
       disabled={isDisabled}
       startIcon={!isSessionStart ? <PlayArrowIcon /> : <ArrowForwardIcon />}

@@ -18,6 +18,7 @@ import { AlertContext } from '../../contexts/NotificationContext';
 import { EditGameSection } from '../EditGamePage';
 import AdminSessionQuestionCard from './AdminSessionQuestionCard';
 import AdminSessionTradeArea from './AdminSessionTradeArea';
+import { GameTransition } from '../../components';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -32,7 +33,7 @@ const AdminSessionPage = () => {
   const [current, setCurrent] = useState({});
   const alertCtx = useContext(AlertContext);
   const [gameData, setGameData] = useState({});
-
+  const [isTransition, setIsTransition] = useState(false);
   const [selectedMarketIndex, setSelectedMarketIndex] = useState(0);
 
   useEffect(() => {
@@ -42,6 +43,10 @@ const AdminSessionPage = () => {
     };
     fetchGameData();
   }, [gameId]);
+
+  useEffect(() => {
+    setIsTransition(false);
+  }, [position]);
 
   const processResults = (teams, marketIndex) => {
     const teamResults = Object.keys(teams)
@@ -213,6 +218,7 @@ const AdminSessionPage = () => {
         pt: 10,
       }}
     >
+      <GameTransition isTransition={isTransition} />
       <Box
         sx={{
           backgroundColor: '#fff',
@@ -270,6 +276,7 @@ const AdminSessionPage = () => {
                   isEnd={session.position === session.questions.length - 1}
                   isDisabled={current?.type === 'round' && !hasTraded}
                   unsetTradeBtn={() => setHasTraded(false)}
+                  callback={() => setIsTransition(true)}
                 />
               </Box>
               <AdminSessionQuestionCard
@@ -445,6 +452,7 @@ const AdminSessionPage = () => {
                   gameId={gameId}
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
+                  callback={() => {}}
                 />
               </Box>
               <Typography variant="h5" sx={{ fontSize: { xs: 16, md: 24 } }}>
