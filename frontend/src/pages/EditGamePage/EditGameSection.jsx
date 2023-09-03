@@ -74,7 +74,7 @@ const EditGameSection = ({
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'start',
+          alignItems: 'flex-start',
           my: 1,
         }}
       >
@@ -83,6 +83,11 @@ const EditGameSection = ({
           selectedMarketIndex={selectedMarketIndex}
           setSelectedMarketIndex={setSelectedMarketIndex}
         />
+        {markets.length <= 0 && (
+          <Typography color="text.secondary" sx={{ my: 'auto' }}>
+            No markets. Start by creating one!
+          </Typography>
+        )}
         {!isDisabled && (
           <Button
             startIcon={<ShowChartIcon />}
