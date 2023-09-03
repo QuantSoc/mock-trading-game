@@ -4,7 +4,8 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import EditGameTabs from './EditGameTabs';
 import EditGameMarket from './EditGameMarket';
 
-const MARKET_PAYLOAD = {
+// all markets will use the same rounds array.
+let marketPayload = {
   rounds: [],
 };
 
@@ -105,7 +106,16 @@ const EditGameSection = ({
               //   trueValue: 0,
               //   rounds: newRounds,
               // });
-              const newMarket = { ...MARKET_PAYLOAD };
+
+              // overwrite single rounds array object with new one as the old
+              // one still has data stored.
+              if (markets.length <= 0) {
+                marketPayload = { rounds: [] };
+              } else {
+                marketPayload = { rounds: markets[0].rounds };
+              }
+
+              const newMarket = { ...marketPayload };
               newMarket.name = `New Market ${markets.length + 1}`;
               newMarket.trueValue = 0;
               markets.push(newMarket);
@@ -120,7 +130,7 @@ const EditGameSection = ({
       {markets.length > 0 && (
         <EditGameMarket
           name={markets[selectedMarketIndex].name}
-          rounds={markets[selectedMarketIndex].rounds}
+          rounds={markets[0].rounds}
           trueValue={markets[selectedMarketIndex]?.trueValue}
           selectedMarketIndex={selectedMarketIndex}
           setSelectedMarketIndex={setSelectedMarketIndex}
