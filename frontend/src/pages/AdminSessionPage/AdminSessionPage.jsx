@@ -3,9 +3,7 @@ import {
   Typography,
   Grid,
   TextField,
-  Button,
   CircularProgress,
-  Divider,
   Skeleton,
   LinearProgress,
   FormControl,
@@ -20,7 +18,6 @@ import { AlertContext } from '../../contexts/NotificationContext';
 import { EditGameSection } from '../EditGamePage';
 import AdminSessionQuestionCard from './AdminSessionQuestionCard';
 import AdminSessionTradeArea from './AdminSessionTradeArea';
-import AdminSessionMarketSelector from './AdminSessionMarketSelector';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -46,18 +43,16 @@ const AdminSessionPage = () => {
     fetchGameData();
   }, [gameId]);
 
-  const processResults = (teams) => {
+  const processResults = (teams, marketIndex) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
         const trueValue = Object.values(
           session.questions[session.position].round
-        )[selectedMarketIndex];
+        )[marketIndex];
         const balance =
-          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
-            .balance;
+          teams[teamId].teamAnswers[position].markets[marketIndex].balance;
         const contracts =
-          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
-            .contracts;
+          teams[teamId].teamAnswers[position].markets[marketIndex].contracts;
         const total =
           parseInt(contracts, 10) * parseFloat(trueValue, 10) +
           parseFloat(balance, 10);
@@ -225,7 +220,7 @@ const AdminSessionPage = () => {
           borderRadius: '10px 10px 0px 0px',
           boxShadow: 1,
           width: '100%',
-          px: { xs: 2, sm: 5 },
+          px: { xs: 2, sm: 2, lg: 2, xl: 5 },
           py: 7,
         }}
       >
@@ -273,6 +268,7 @@ const AdminSessionPage = () => {
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
                   isEnd={session.position === session.questions.length - 1}
+                  isDisabled={current?.type === 'round' && !hasTraded}
                   unsetTradeBtn={() => setHasTraded(false)}
                 />
               </Box>
@@ -284,20 +280,119 @@ const AdminSessionPage = () => {
                 setHasTraded={setHasTraded}
                 selectedMarketIndex={selectedMarketIndex}
               />
-              {current?.type !== 'section' && (
+              {/* {current?.type !== 'section' && (
                 <AdminSessionMarketSelector
                   current={current}
                   setSelectedMarketIndex={setSelectedMarketIndex}
                 />
-              )}
-              {current?.type === 'round' && (
+              )} */}
+              {/* {current?.type === 'round' && (
                 <AdminSessionTradeArea
                   teams={session.teams}
                   position={position}
                   selectedMarketIndex={selectedMarketIndex}
                 />
-              )}
-              <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
+              )} */}
+
+              <Grid
+                container
+                columns={24}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ mt: 4 }}
+              >
+                {current?.type === 'round' &&
+                  Object.keys(current.round).map((market, index) => {
+                    return (
+                      <Grid
+                        item
+                        xs={24}
+                        md={24}
+                        lg={12}
+                        xl={12}
+                        key={index}
+                        sx={{
+                          // border: '0.5px solid #41414111',
+                          borderRadius: '10px',
+                          mb: 7,
+                        }}
+                      >
+                        <Typography sx={{ mb: 1, fontSize: 18 }}>
+                          {market}
+                        </Typography>
+                        <AdminSessionTradeArea
+                          key={index}
+                          teams={session.teams}
+                          position={position}
+                          marketName={market}
+                          selectedMarketIndex={index}
+                        />
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+
+              <Grid
+                container
+                columns={24}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ mt: 4 }}
+              >
+                {current?.type === 'result' &&
+                  Object.keys(current.round).map((market, marketIndex) => {
+                    return (
+                      <Grid
+                        item
+                        xs={24}
+                        md={24}
+                        lg={12}
+                        xl={12}
+                        key={marketIndex}
+                        sx={{
+                          // border: '0.5px solid #41414111',
+                          borderRadius: '10px',
+                          mb: 7,
+                        }}
+                      >
+                        <Typography sx={{ mb: 1, fontSize: 18 }}>
+                          {market}
+                        </Typography>
+                        <Grid container columns={12} spacing={1}>
+                          {processResults(session.teams, marketIndex).map(
+                            (team, index) => {
+                              return (
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sm={6}
+                                  md={6}
+                                  lg={6}
+                                  key={index}
+                                  sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <FormControl sx={{ width: '100%' }}>
+                                    <TeamStats
+                                      key={`team-stats-${index}`}
+                                      teamName={team.teamName}
+                                      balance={team.balance}
+                                      contracts={team.contracts}
+                                      isWinner={team.isWinner}
+                                      trueValue={team.trueValue}
+                                    />
+                                  </FormControl>
+                                </Grid>
+                              );
+                            }
+                          )}
+                        </Grid>
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+
+              {/* <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
                 {current?.type === 'result' &&
                   processResults(session.teams).map((team, index) => {
                     return (
@@ -322,7 +417,7 @@ const AdminSessionPage = () => {
                       </Grid>
                     );
                   })}
-              </Grid>
+              </Grid> */}
             </Box>
           ) : (
             <>

@@ -8,8 +8,9 @@ const AdminSessionTradeArea = ({ teams, position, selectedMarketIndex }) => {
         <Grid
           item={true}
           xs={12}
+          sm={6}
           md={6}
-          lg={4}
+          lg={6}
           key={teamId + 'item'}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
@@ -39,7 +40,7 @@ const AdminSessionTradeArea = ({ teams, position, selectedMarketIndex }) => {
 
   return (
     <Box>
-      <Grid container columns={12} spacing={3} sx={{ p: 5 }}>
+      <Grid container columns={12} spacing={1} sx={{}}>
         {processTeams(selectedMarketIndex)}
       </Grid>
     </Box>

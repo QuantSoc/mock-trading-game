@@ -14,11 +14,9 @@ import {
   FormControl,
 } from '@mui/material';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import { BidAskPanel } from '../../components/index.js';
 import TeamStats from '../GameHistoryPage/TeamStats';
 import { AlertContext } from '../../contexts/NotificationContext';
 import PlayGameTradeArea from './PlayGameTradeArea';
-import PlayGameMarketSelector from './PlayGameMarketSelector';
 
 const PlayGamePage = () => {
   const { sessionId } = useParams();
@@ -28,7 +26,6 @@ const PlayGamePage = () => {
   const [position, setPosition] = useState(-1);
   const [question, setQuestion] = useState({});
   const [teams, setTeams] = useState({});
-  const [marketPosition, setMarketPosition] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isTeamCreated, setIsTeamCreated] = useState(
     localStorage.getItem('localTeamId') ? true : false
@@ -54,16 +51,14 @@ const PlayGamePage = () => {
       });
   }, [position]);
 
-  const processResults = (teams) => {
+  const processResults = (teams, marketIndex) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
-        const trueValue = Object.values(question.round)[selectedMarketIndex];
+        const trueValue = Object.values(question.round)[marketIndex];
         const balance =
-          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
-            .balance;
+          teams[teamId].teamAnswers[position].markets[marketIndex].balance;
         const contracts =
-          teams[teamId].teamAnswers[position].markets[selectedMarketIndex]
-            .contracts;
+          teams[teamId].teamAnswers[position].markets[marketIndex].contracts;
         const total =
           parseInt(contracts, 10) * parseFloat(trueValue, 10) +
           parseFloat(balance, 10);
@@ -99,9 +94,6 @@ const PlayGamePage = () => {
       setPosition(status.position);
       setQuestion(status.questions);
       setTeams(status.teams);
-      if (status.position >= 0 && status.questions.type === 'market') {
-        setMarketPosition(status.position);
-      }
       if (!status.active) {
         localStorage.removeItem('localTeamId');
         alertCtx.info('This session has finished!');
@@ -134,7 +126,7 @@ const PlayGamePage = () => {
           borderRadius: '10px 10px 0px 0px',
           boxShadow: 2,
           width: '100%',
-          px: { xs: 2, sm: 5 },
+          px: { xs: 2, sm: 3, lg: 5 },
           py: 7,
         }}
       >
@@ -223,7 +215,7 @@ const PlayGamePage = () => {
                 Session already started...
               </Typography>
             ) : (
-              <>
+              <Box sx={{ m: 0, p: 0 }}>
                 <Box
                   sx={{
                     boxShadow: 2,
@@ -260,12 +252,12 @@ const PlayGamePage = () => {
                     </Typography>
                   )}
                   <Divider sx={{ my: 3 }} />
-                  <Typography variant="h6">
+                  {/* <Typography variant="h6">
                     {question.type === 'result' &&
                       `The fair value of this market is $${
                         Object.values(question.round)[selectedMarketIndex]
                       }.`}
-                  </Typography>
+                  </Typography> */}
                   <Typography fontSize={18}>
                     {question.type === 'round' &&
                       'Trading is in session. Please wait for the trades to complete.'}
@@ -280,7 +272,7 @@ const PlayGamePage = () => {
                     {quotable.content} <br /> - {quotable.author}
                   </Typography>
                 </Box>
-                {question.type !== 'section' && (
+                {/* {question.type !== 'section' && (
                   <PlayGameMarketSelector
                     current={question}
                     setSelectedMarketIndex={setSelectedMarketIndex}
@@ -294,34 +286,118 @@ const PlayGamePage = () => {
                     myTeamId={myTeamId}
                     selectedMarketIndex={selectedMarketIndex}
                   />
-                )}
-                <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
-                  {question.type === 'result' &&
-                    processResults(teams).map((team, index) => {
+                )} */}
+
+                <Grid
+                  container
+                  columns={24}
+                  // columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                  sx={{ mt: 4 }}
+                >
+                  {question?.type === 'round' &&
+                    Object.keys(question.round).map((market, index) => {
                       return (
                         <Grid
                           item
-                          xs={12}
-                          md={6}
-                          lg={4}
+                          xs={24}
+                          md={24}
+                          lg={12}
+                          xl={12}
                           key={index}
-                          sx={{ display: 'flex', justifyContent: 'center' }}
+                          sx={{
+                            // border: '0.5px solid #41414111',
+                            borderRadius: '10px',
+                            mb: 7,
+                          }}
                         >
-                          <FormControl sx={{ width: '100%' }}>
-                            <TeamStats
-                              key={team.teamId}
-                              teamName={team.teamName}
-                              balance={team.balance}
-                              contracts={team.contracts}
-                              trueValue={team.trueValue}
-                              isWinner={team.isWinner}
-                            />
-                          </FormControl>
+                          <Typography
+                            sx={{ mb: 1, fontSize: 18, textAlign: 'center' }}
+                          >
+                            {market}
+                          </Typography>
+                          <PlayGameTradeArea
+                            current={question}
+                            position={position}
+                            teams={teams}
+                            myTeamId={myTeamId}
+                            selectedMarketIndex={index}
+                          />
                         </Grid>
                       );
                     })}
                 </Grid>
-              </>
+                <Grid
+                  container
+                  columns={24}
+                  columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                  sx={{ mt: 4 }}
+                >
+                  {question?.type === 'result' &&
+                    Object.keys(question.round).map((market, marketIndex) => {
+                      return (
+                        <Grid
+                          item
+                          xs={24}
+                          md={24}
+                          lg={12}
+                          xl={12}
+                          key={marketIndex}
+                          sx={{
+                            // border: '0.5px solid #41414111',
+                            borderRadius: '10px',
+                            mb: 7,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-end',
+                              mb: 1,
+                            }}
+                          >
+                            <Typography fontSize={18}>{market}</Typography>
+                            <Typography color="text.secondary" sx={{ mr: 2 }}>
+                              True Value $
+                              {Object.values(question.round)[marketIndex]}
+                            </Typography>
+                          </Box>
+                          <Grid container columns={12} spacing={1}>
+                            {processResults(teams, marketIndex).map(
+                              (team, index) => {
+                                return (
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    md={6}
+                                    lg={6}
+                                    key={index}
+                                    sx={{
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                    }}
+                                  >
+                                    <FormControl sx={{ width: '100%' }}>
+                                      <TeamStats
+                                        key={`team-stats-${index}`}
+                                        teamName={team.teamName}
+                                        balance={team.balance}
+                                        contracts={team.contracts}
+                                        isWinner={team.isWinner}
+                                        trueValue={team.trueValue}
+                                      />
+                                    </FormControl>
+                                  </Grid>
+                                );
+                              }
+                            )}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+              </Box>
             ))}
         </Box>
       </Box>
