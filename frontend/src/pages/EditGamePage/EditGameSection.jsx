@@ -4,6 +4,10 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import EditGameTabs from './EditGameTabs';
 import EditGameMarket from './EditGameMarket';
 
+const MARKET_PAYLOAD = {
+  rounds: [],
+};
+
 const EditGameSection = ({
   section,
   index,
@@ -84,18 +88,22 @@ const EditGameSection = ({
             startIcon={<ShowChartIcon />}
             disabled={isDisabled}
             onClick={() => {
-              let newRounds = [];
-              let globalRoundsLength = markets.slice(-1)[0]?.rounds.length;
-              if (markets.length > 0 && globalRoundsLength > 0) {
-                newRounds = Array.from({ length: globalRoundsLength }, () => {
-                  return { hint: '' };
-                });
-              }
-              markets.push({
-                name: `New Market ${markets.length + 1}`,
-                trueValue: 0,
-                rounds: newRounds,
-              });
+              // let newRounds = [];
+              // let globalRoundsLength = markets.slice(-1)[0]?.rounds.length;
+              // if (markets.length > 0 && globalRoundsLength > 0) {
+              //   newRounds = Array.from({ length: globalRoundsLength }, () => {
+              //     return { hint: '' };
+              //   });
+              // }
+              // markets.push({
+              //   name: `New Market ${markets.length + 1}`,
+              //   trueValue: 0,
+              //   rounds: newRounds,
+              // });
+              const newMarket = { ...MARKET_PAYLOAD };
+              newMarket.name = `New Market ${markets.length + 1}`;
+              newMarket.trueValue = 0;
+              markets.push(newMarket);
               setMarkets([...markets]);
             }}
           >
