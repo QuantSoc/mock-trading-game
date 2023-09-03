@@ -12,3 +12,4 @@ export { default as TeamPanel } from './TeamPanel.jsx';
 export { default as TradePanel } from './TradePanel.jsx';
 export { default as BidAskPanel } from './BidAskPanel.jsx';
 export { default as Notification } from './Notification.jsx';
+export { default as GameTransition } from './GameTransition.jsx';
