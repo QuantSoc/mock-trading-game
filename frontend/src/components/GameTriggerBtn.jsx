@@ -61,7 +61,7 @@ const GameTriggerBtn = ({
           )}
           <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
             {isStart
-              ? `Players can join at \r\n ${window.location.origin.toString()}/join/${gameSession}.`
+              ? `Players can join at \r\n ${window.location.origin.toString()}/join/${gameSession}`
               : 'Would you like to view the session results?'}
           </Typography>
           {isStart ? (
