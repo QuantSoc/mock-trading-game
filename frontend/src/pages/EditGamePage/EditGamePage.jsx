@@ -9,18 +9,12 @@ import {
   Divider,
   TextField,
   Typography,
-  IconButton,
-  Tooltip,
   Skeleton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import AddIcon from '@mui/icons-material/Add';
 import SegmentIcon from '@mui/icons-material/Segment';
 import DoneIcon from '@mui/icons-material/Done';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import CloseIcon from '@mui/icons-material/Close';
-import EditGameMarket from './EditGameMarket';
 import EditGameSection from './EditGameSection';
 
 const EditGamePage = () => {
@@ -42,7 +36,6 @@ const EditGamePage = () => {
       setOldGameDesc(gameData.desc);
       setGameDesc(gameData.desc);
       setGameSections(gameData.sections);
-      // setGameRounds(gameData.sections);
       setIsLoading(false);
     };
     fetchGame();

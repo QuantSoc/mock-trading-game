@@ -31,7 +31,7 @@ const BidAskPanel = ({
   }, [position]);
 
   const submitSpread = async () => {
-    const res = await fetchAPIRequest(`/game/${teamId}/submit`, 'PUT', {
+    await fetchAPIRequest(`/game/${teamId}/submit`, 'PUT', {
       bid,
       ask,
       marketIndex,

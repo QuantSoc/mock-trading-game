@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, IconButton, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditGameTabs from './EditGameTabs';
 import EditGameMarket from './EditGameMarket';
 
