@@ -13,6 +13,7 @@ const AdvanceGameBtn = ({
   setIsSessionStart,
   isEnd,
   unsetTradeBtn,
+  isDisabled,
 }) => {
   const { isModalShown, toggleModal } = useModal();
   const { sessionId } = useParams();
@@ -33,6 +34,7 @@ const AdvanceGameBtn = ({
         advanceSession();
         unsetTradeBtn && unsetTradeBtn();
       }}
+      disabled={isDisabled}
       startIcon={!isSessionStart ? <PlayArrowIcon /> : <ArrowForwardIcon />}
       sx={{ my: 2 }}
     >
@@ -46,7 +48,7 @@ const AdvanceGameBtn = ({
         modalTitle="Game Complete"
       >
         <Box>
-          <Typography variant="h6">
+          <Typography variant="h6" sx={{ mb: 2 }}>
             Would you like to view the session results?
           </Typography>
           <RedirectBtn
