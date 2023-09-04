@@ -5,6 +5,7 @@ import {
   LoginPage,
   RegisterPage,
   EditGamePage,
+  JoinGamePage,
   PlayGamePage,
   AdminSessionPage,
 } from './pages/index.js';
@@ -55,6 +56,7 @@ const App = () => {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/join" element={<JoinGamePage />} />
               <Route path="/join/:sessionId" element={<PlayGamePage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Dashboard />} />
