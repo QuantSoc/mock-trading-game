@@ -99,7 +99,7 @@ const ResponsiveAppBar = () => {
               }}
             >
               {localStorage.getItem('token') && (
-                <>
+                <div key={localStorage.getItem('token')}>
                   <MenuItem
                     onClick={() => {
                       handleCloseNavMenu();
@@ -118,10 +118,10 @@ const ResponsiveAppBar = () => {
                   >
                     <Typography textAlign="center">Game History</Typography>
                   </MenuItem>
-                </>
+                </div>
               )}
               {!localStorage.getItem('token') && (
-                <>
+                <div key={localStorage.getItem('token')}>
                   <MenuItem
                     onClick={() => {
                       handleCloseNavMenu();
@@ -138,7 +138,7 @@ const ResponsiveAppBar = () => {
                   >
                     <Typography textAlign="center">Register</Typography>
                   </MenuItem>
-                </>
+                </div>
               )}
               <MenuItem
                 onClick={() => {
@@ -152,6 +152,7 @@ const ResponsiveAppBar = () => {
               </MenuItem>
             </Menu>
           </Box>
+
           {/* HERE -->  NavBar EXPANDED Buttons */}
           <SvgIcon
             sx={{
