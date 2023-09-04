@@ -99,46 +99,46 @@ const ResponsiveAppBar = () => {
               }}
             >
               {localStorage.getItem('token') && (
-                <>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/');
-                  }}
-                >
-                  <Typography textAlign="center" textDecoration="none">
-                    Dashboard
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('history');
-                  }}
-                >
-                  <Typography textAlign="center">Game History</Typography>
-                </MenuItem>
-                </>
+                <div key={localStorage.getItem('token')}>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/');
+                    }}
+                  >
+                    <Typography textAlign="center" textDecoration="none">
+                      Dashboard
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('history');
+                    }}
+                  >
+                    <Typography textAlign="center">Game History</Typography>
+                  </MenuItem>
+                </div>
               )}
               {!localStorage.getItem('token') && (
-                <>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/login');
-                  }}
-                >
-                  <Typography textAlign="center">Login</Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/register');
-                  }}
-                >
-                  <Typography textAlign="center">Register</Typography>
-                </MenuItem>
-                </>
+                <div key={localStorage.getItem('token')}>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/login');
+                    }}
+                  >
+                    <Typography textAlign="center">Login</Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/register');
+                    }}
+                  >
+                    <Typography textAlign="center">Register</Typography>
+                  </MenuItem>
+                </div>
               )}
               <MenuItem
                 onClick={() => {
@@ -152,6 +152,7 @@ const ResponsiveAppBar = () => {
               </MenuItem>
             </Menu>
           </Box>
+          
           {/* HERE -->  NavBar EXPANDED Buttons */}
           <SvgIcon
             sx={{
