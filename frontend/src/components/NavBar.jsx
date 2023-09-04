@@ -99,7 +99,7 @@ const ResponsiveAppBar = () => {
               }}
             >
               {localStorage.getItem('token') && (
-                <div key={localStorage.getItem('token')}>
+                <>
                   <MenuItem
                     onClick={() => {
                       handleCloseNavMenu();
@@ -118,10 +118,10 @@ const ResponsiveAppBar = () => {
                   >
                     <Typography textAlign="center">Game History</Typography>
                   </MenuItem>
-                </div>
+                </>
               )}
               {!localStorage.getItem('token') && (
-                <div key={localStorage.getItem('token')}>
+                <>
                   <MenuItem
                     onClick={() => {
                       handleCloseNavMenu();
@@ -138,7 +138,7 @@ const ResponsiveAppBar = () => {
                   >
                     <Typography textAlign="center">Register</Typography>
                   </MenuItem>
-                </div>
+                </>
               )}
               <MenuItem
                 onClick={() => {
@@ -152,7 +152,6 @@ const ResponsiveAppBar = () => {
               </MenuItem>
             </Menu>
           </Box>
-          
           {/* HERE -->  NavBar EXPANDED Buttons */}
           <SvgIcon
             sx={{
@@ -189,88 +188,88 @@ const ResponsiveAppBar = () => {
           >
             {!localStorage.getItem('token') && (
               <>
-              <Typography
-                sx={{
-                  mx: 2,
-                  my: 'auto',
-                  color: '#000',
-                  fontSize: 18,
-                  fontWeight: 300,
-                  '&:hover': {
-                    cursor: 'pointer',
-                    opacity: 0.6,
-                    transition: 'opacity 0.3s ease',
-                  },
-                }}
-                onClick={() => {
-                  navigate('/login');
-                }}
-              >
-                Login
-              </Typography>
-              <Typography
-                sx={{
-                  mx: 2,
-                  my: 'auto',
-                  color: '#000',
-                  fontSize: 18,
-                  fontWeight: 300,
-                  '&:hover': {
-                    cursor: 'pointer',
-                    opacity: 0.6,
-                    transition: 'opacity 0.3s ease',
-                  },
-                }}
-                onClick={() => {
-                  handleCloseNavMenu();
-                  navigate('/register');
-                }}
-              >
-                Register
-              </Typography>
+                <Typography
+                  sx={{
+                    mx: 2,
+                    my: 'auto',
+                    color: '#000',
+                    fontSize: 18,
+                    fontWeight: 300,
+                    '&:hover': {
+                      cursor: 'pointer',
+                      opacity: 0.6,
+                      transition: 'opacity 0.3s ease',
+                    },
+                  }}
+                  onClick={() => {
+                    navigate('/login');
+                  }}
+                >
+                  Login
+                </Typography>
+                <Typography
+                  sx={{
+                    mx: 2,
+                    my: 'auto',
+                    color: '#000',
+                    fontSize: 18,
+                    fontWeight: 300,
+                    '&:hover': {
+                      cursor: 'pointer',
+                      opacity: 0.6,
+                      transition: 'opacity 0.3s ease',
+                    },
+                  }}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    navigate('/register');
+                  }}
+                >
+                  Register
+                </Typography>
               </>
             )}
             {localStorage.getItem('token') && (
               <>
-              <Typography
-                sx={{
-                  mx: 2,
-                  my: 'auto',
-                  color: '#000',
-                  fontSize: 18,
-                  fontWeight: 300,
-                  '&:hover': {
-                    cursor: 'pointer',
-                    opacity: 0.6,
-                    transition: 'opacity 0.3s ease',
-                  },
-                }}
-                onClick={() => {
-                  navigate('/');
-                }}
-              >
-                Dashboard
-              </Typography>
-              <Typography
-                sx={{
-                  mx: 2,
-                  my: 'auto',
-                  color: '#000',
-                  fontSize: 18,
-                  fontWeight: 300,
-                  '&:hover': {
-                    cursor: 'pointer',
-                    opacity: 0.6,
-                    transition: 'opacity 0.3s ease',
-                  },
-                }}
-                onClick={() => {
-                  handleCloseNavMenu();
-                  navigate('/history');
-                }}
-              >
-                Game History
-              </Typography>
+                <Typography
+                  sx={{
+                    mx: 2,
+                    my: 'auto',
+                    color: '#000',
+                    fontSize: 18,
+                    fontWeight: 300,
+                    '&:hover': {
+                      cursor: 'pointer',
+                      opacity: 0.6,
+                      transition: 'opacity 0.3s ease',
+                    },
+                  }}
+                  onClick={() => {
+                    navigate('/');
+                  }}
+                >
+                  Dashboard
+                </Typography>
+                <Typography
+                  sx={{
+                    mx: 2,
+                    my: 'auto',
+                    color: '#000',
+                    fontSize: 18,
+                    fontWeight: 300,
+                    '&:hover': {
+                      cursor: 'pointer',
+                      opacity: 0.6,
+                      transition: 'opacity 0.3s ease',
+                    },
+                  }}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    navigate('/history');
+                  }}
+                >
+                  Game History
+                </Typography>
               </>
             )}
             <Typography
