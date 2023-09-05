@@ -317,6 +317,9 @@ export const assertSessionOwner = async (email, sessionId) => {
 };
 
 export const sessionStatus = (sessionId, isTeam = false) => {
+  if (!(sessionId in sessions)) {
+    throw new InputError('Invalid session id');
+  }
   const session = sessions[sessionId];
   return {
     active: session.active,
