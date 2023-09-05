@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { ReactComponent as QuantsocIcon } from '../assets/quantsoc.svg';
 import Logo from '../assets/crop_logo.svg';
@@ -15,7 +15,6 @@ const JoinGamePage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(BACKEND_ROUTE + `/session/${sessionId}/status`);
       const response = await fetch(
         BACKEND_ROUTE + `/session/${sessionId}/status`
       );
@@ -79,8 +78,6 @@ const JoinGamePage = () => {
             py: 2,
             px: { xs: 7, sm: 20 },
             m: 3,
-            // boxSizing: 'border-box',
-            // backgroundColor: '#eee2ff',
             backgroundColor: '#ffffff',
             borderRadius: '10px 10px 10px 10px',
             boxShadow: 2,
@@ -108,28 +105,6 @@ const JoinGamePage = () => {
           >
             Join Session
           </Button>
-          {/* <Typography variant="body2" sx={{ fontSize: 16 }}>
-          {"Want to make your own game? "}
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            component="a"
-            sx={{
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              fontSize: 16,
-            }}
-            onClick={() => {
-							if (localStorage.getItem('token')) {
-								navigate('/')
-							} else {
-								navigate('/login')
-							}
-						}}
-          >
-            Click here
-          </Typography>
-        </Typography> */}
         </Box>
       </>
       <Typography variant="body2" sx={{ fontSize: 16 }}>
