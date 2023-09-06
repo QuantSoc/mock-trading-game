@@ -609,13 +609,20 @@ export const fetchSessionHistory = (sessionId) =>
     resolve(session);
   });
 
-export const setWinningTeams = (position, sessionId, teamId, isWinner) =>
+export const setWinningTeams = (
+  position,
+  sessionId,
+  teamId,
+  marketIndex,
+  isWinner
+) =>
   gameLock((resolve, reject) => {
     const session = getActiveGameSessionFromSessionId(sessionId);
     if (!session.active) {
       return reject(new InputError('Game not started'));
     }
-    const team = session.teams[teamId].teamAnswers[position];
+    const team =
+      session.teams[teamId].teamAnswers[position].markets[marketIndex];
     team.isWinner = isWinner;
     resolve();
   });

@@ -265,8 +265,8 @@ app.post(
   '/session/:sessionId/result',
   handleErrors(async (req, res) => {
     const { sessionId } = req.params;
-    const { position, teamId, isWinner } = req.body;
-    await setWinningTeams(position, sessionId, teamId, isWinner);
+    const { position, teamId, marketIndex, isWinner } = req.body;
+    await setWinningTeams(position, sessionId, teamId, marketIndex, isWinner);
     return res.status(200).json({});
   })
 );
