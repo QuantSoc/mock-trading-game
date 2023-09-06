@@ -1,7 +1,12 @@
 import { Box, Grid, FormControl } from '@mui/material';
 import TeamStats from '../GameHistoryPage/TeamStats';
 
-const AdminSessionTradeArea = ({ teams, position, selectedMarketIndex }) => {
+const AdminSessionTradeArea = ({
+  teams,
+  position,
+  selectedMarketIndex,
+  trueValue,
+}) => {
   const processTeams = (marketIndex) => {
     return Object.keys(teams).map((teamId) => {
       return (
@@ -31,6 +36,11 @@ const AdminSessionTradeArea = ({ teams, position, selectedMarketIndex }) => {
               ask={
                 teams[teamId].teamAnswers[position].markets[marketIndex]?.ask
               }
+              isWinner={
+                teams[teamId].teamAnswers[position].markets[marketIndex]
+                  ?.isWinner
+              }
+              trueValue={trueValue}
             />
           </FormControl>
         </Grid>
