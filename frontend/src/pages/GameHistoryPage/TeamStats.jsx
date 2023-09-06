@@ -42,7 +42,6 @@ const TeamStats = ({
           {teamName}
         </Typography>
         <EmojiEventsIcon
-          // fontSize="large"
           sx={{
             color: 'gold',
             mb: 1,
@@ -68,7 +67,7 @@ const TeamStats = ({
           </Typography>
         </Typography>
       </Box>
-      {!trueValue && (
+      {isNaN(trueValue) ? (
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           <Typography
             color={bid && 'error'}
@@ -89,8 +88,7 @@ const TeamStats = ({
             Ask {ask ? ask.toFixed(2) : '--'}
           </Typography>
         </Box>
-      )}
-      {!!trueValue && (
+      ) : (
         <Typography
           variant="h6"
           fontSize={16}
