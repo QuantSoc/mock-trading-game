@@ -156,8 +156,8 @@ const EditGameMarket = ({
         sx={{ ml: 4, mt: 2 }}
         disabled={isDisabled}
         onClick={() => {
-          // markets[selectedMarketIndex].rounds.push({ ...ROUND_PAYLOAD });
-          markets.forEach((market) => market.rounds.push({ ...ROUND_PAYLOAD }));
+          markets[selectedMarketIndex].rounds.push({ ...ROUND_PAYLOAD });
+          // markets.forEach((market) => market.rounds.push({ ...ROUND_PAYLOAD }));
           setMarkets([...markets]);
         }}
       >
