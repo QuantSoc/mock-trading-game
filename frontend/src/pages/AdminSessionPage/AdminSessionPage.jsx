@@ -76,13 +76,17 @@ const AdminSessionPage = () => {
       await fetchAPIRequest(`/session/${sessionId}/result`, 'POST', {
         position: session.position,
         teamId: winnerRes.teamId,
-        isWinner: winnerRes.total === winningTotal,
+        marketIndex,
+        isWinner: winnerRes.total > 0 && winnerRes.total === winningTotal,
       });
     };
 
     return teamResults.map((result) => {
       session.active && saveWinner(result);
-      return { ...result, isWinner: result.total === winningTotal };
+      return {
+        ...result,
+        isWinner: result.total > 0 && result.total === winningTotal,
+      };
     });
   };
 
