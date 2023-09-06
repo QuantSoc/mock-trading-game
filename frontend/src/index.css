@@ -15,11 +15,14 @@ body {
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
-  padding: 0 15%;
   gap: 4em;
   width: auto !important;
   scroll-behavior: smooth;
   height: fit-content;
+}
+
+.responsive-pad {
+  padding: 0 15%;
 }
 
 #root {
@@ -27,17 +30,17 @@ body {
 }
 
 @media screen and (max-width: 1700px) {
-  body {
+  .responsive-pad {
     padding: 0 10%;
   }
 }
 @media screen and (max-width: 1536px) {
-  body {
+  .responsive-pad {
     padding: 0 7%;
   }
 }
 @media screen and (max-width: 900px) {
-  body {
+  .responsive-pad {
     padding: 0 3%;
   }
 }
