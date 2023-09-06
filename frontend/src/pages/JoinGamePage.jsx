@@ -33,10 +33,10 @@ const JoinGamePage = () => {
 
   return (
     <Box
+			// className="responsive-pad"
       sx={{
-        backgroundImage: `url(${Logo})`,
-        backgroundSize: 'cover',
-        // backgroundPosition: '-15% 0%',
+				backgroundImage: `url(${Logo})`,
+				backgroundSize: 'cover',
         height: '92.5vh',
         width: '100%',
         display: 'flex',
