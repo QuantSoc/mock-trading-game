@@ -35,6 +35,7 @@ const Dashboard = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         minHeight: '92.5vh',
         height: 'fit-content',
