@@ -19,20 +19,19 @@ import { AlertContext } from '../../contexts/NotificationContext';
 import PlayGameTradeArea from './PlayGameTradeArea';
 import { GameTransition } from '../../components';
 
-const getTeamCookie = () => {
+const getTeamCookie = (sessionId) => {
   return document.cookie
     ?.split(';')
-    ?.filter((item) => item.includes('localTeamId'))[0]
+    ?.filter((item) => item.includes(sessionId))[0]
     ?.split('=')[1];
 };
 
-const setTeamCookie = (newTeamId) => {
-  document.cookie = `localTeamId=${newTeamId}`;
+const setTeamCookie = (sessionId, newTeamId) => {
+  document.cookie = `${sessionId}=${newTeamId}`;
 };
 
-const deleteTeamCookie = () => {
-  document.cookie =
-    'localTeamId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+const deleteTeamCookie = (sessionId) => {
+  document.cookie = `${sessionId}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 };
 
 const PlayGamePage = () => {
@@ -45,7 +44,7 @@ const PlayGamePage = () => {
   const [teams, setTeams] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isTeamCreated, setIsTeamCreated] = useState(
-    getTeamCookie() ? true : false
+    getTeamCookie(sessionId) ? true : false
   );
   const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
@@ -63,7 +62,7 @@ const PlayGamePage = () => {
       name: teamName,
     });
     setMyTeamId(teamData.teamId);
-    setTeamCookie(teamData.teamId);
+    setTeamCookie(sessionId, teamData.teamId);
     setIsTeamCreated(true);
   };
 
@@ -104,10 +103,10 @@ const PlayGamePage = () => {
   };
 
   useEffect(() => {
-    if (getTeamCookie()) {
-      setMyTeamId(getTeamCookie());
+    if (getTeamCookie(sessionId)) {
+      setMyTeamId(getTeamCookie(sessionId));
     }
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     const getGameStatus = async () => {
@@ -126,7 +125,7 @@ const PlayGamePage = () => {
       setQuestion(status.questions);
       setTeams(status.teams);
       if (!status.active) {
-        deleteTeamCookie();
+        deleteTeamCookie(sessionId);
         alertCtx.info('This session has finished!');
       }
       setIsLoading(false);
