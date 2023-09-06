@@ -19,6 +19,22 @@ import { AlertContext } from '../../contexts/NotificationContext';
 import PlayGameTradeArea from './PlayGameTradeArea';
 import { GameTransition } from '../../components';
 
+const getTeamCookie = () => {
+  return document.cookie
+    ?.split(';')
+    ?.filter((item) => item.includes('localTeamId'))[0]
+    ?.split('=')[1];
+};
+
+const setTeamCookie = (newTeamId) => {
+  document.cookie = `localTeamId=${newTeamId}`;
+};
+
+const deleteTeamCookie = () => {
+  document.cookie =
+    'localTeamId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+};
+
 const PlayGamePage = () => {
   const { sessionId } = useParams();
   const [teamName, setTeamName] = useState('');
@@ -29,7 +45,7 @@ const PlayGamePage = () => {
   const [teams, setTeams] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isTeamCreated, setIsTeamCreated] = useState(
-    localStorage.getItem('localTeamId') ? true : false
+    getTeamCookie() ? true : false
   );
   const alertCtx = useContext(AlertContext);
   const [quotable, setQuotable] = useState('');
@@ -47,7 +63,7 @@ const PlayGamePage = () => {
       name: teamName,
     });
     setMyTeamId(teamData.teamId);
-    localStorage.setItem('localTeamId', teamData.teamId);
+    setTeamCookie(teamData.teamId);
     setIsTeamCreated(true);
   };
 
@@ -88,8 +104,8 @@ const PlayGamePage = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('localTeamId')) {
-      setMyTeamId(localStorage.getItem('localTeamId'));
+    if (getTeamCookie()) {
+      setMyTeamId(getTeamCookie());
     }
   }, []);
 
@@ -99,7 +115,6 @@ const PlayGamePage = () => {
         `/session/${sessionId}/status`,
         'GET'
       );
-      console.log(status.position, position);
       if (status.position !== position) {
         setIsTransition(true);
         await new Promise((r) => setTimeout(r, 500));
@@ -111,7 +126,7 @@ const PlayGamePage = () => {
       setQuestion(status.questions);
       setTeams(status.teams);
       if (!status.active) {
-        localStorage.removeItem('localTeamId');
+        deleteTeamCookie();
         alertCtx.info('This session has finished!');
       }
       setIsLoading(false);
