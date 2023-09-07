@@ -440,6 +440,12 @@ const flattenQuestions = (sections) => {
     });
 
     const marketRounds = {};
+    if (section.markets.length <= 0) {
+      throw new InputError('Please create at least one market');
+    }
+    if (section.markets[0].rounds.length <= 0) {
+      throw new InputError('Please create at least one round');
+    }
     section.markets[0].rounds.map((round, index) => {
       section.markets.forEach((market) => {
         marketRounds[market.name] = market.rounds[index].hint;
