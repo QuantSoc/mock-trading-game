@@ -8,17 +8,16 @@ import {
   AccordionSummary,
   Typography,
   Divider,
-  Grid,
 } from '@mui/material';
-import TeamStats from './TeamStats';
+import AdminSessionTradeArea from '../AdminSessionPage/AdminSessionTradeArea';
 
 const QuestionAccordion = ({
   qIndex,
   marketName,
-  round,
+  markets,
   type,
   teams,
-  trueValue,
+  trueValueMarkets,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -43,7 +42,7 @@ const QuestionAccordion = ({
           >
             <Typography>{type}</Typography>
             <Typography sx={{ color: 'text.secondary' }}>
-              {!!round && round}
+              {/* {!!round && round} */}
               {!!marketName && marketName}
             </Typography>
           </Box>
@@ -54,38 +53,26 @@ const QuestionAccordion = ({
             {Object.keys(teams).length < 1 ? (
               <Typography textAlign="center">No teams...</Typography>
             ) : (
-              <Grid
-                container
-                columnSpacing={5}
-                rowSpacing={5}
-                columns={12}
-                sx={{ gridAutoFlow: 'column' }}
-              >
-                {!!teams &&
-                  Object.keys(teams).map((teamId, index) => {
-                    const curr = teams[teamId].teamAnswers;
-                    return (
-                      <Grid
-                        key={`team-stats-grid-${index}`}
-                        item
-                        xs={12}
-                        md={6}
-                        xl={4}
-                      >
-                        <TeamStats
-                          key={`team-stats-${index}`}
-                          teamName={teams[teamId].name}
-                          bid={curr[qIndex]?.bid}
-                          ask={curr[qIndex]?.ask}
-                          balance={curr[qIndex].balance}
-                          contracts={curr[qIndex]?.contracts}
-                          isWinner={curr[qIndex]?.isWinner}
-                          trueValue={trueValue}
-                        />
-                      </Grid>
-                    );
-                  })}
-              </Grid>
+              Object.keys(markets).map((market, index) => (
+                <Box key={'box' + index}>
+                  <Typography
+                    key={'market' + index}
+                    sx={{ mt: 3, mb: 1, fontSize: 18 }}
+                  >
+                    {market}
+                  </Typography>
+                  <AdminSessionTradeArea
+                    key={'history' + index}
+                    teams={teams}
+                    position={qIndex}
+                    selectedMarketIndex={index}
+                    trueValue={parseInt(
+                      Object.values(trueValueMarkets)[index],
+                      10
+                    )}
+                  />
+                </Box>
+              ))
             )}
           </AccordionDetails>
         )}
