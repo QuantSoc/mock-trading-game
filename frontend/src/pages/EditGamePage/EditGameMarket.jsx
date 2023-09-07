@@ -13,10 +13,6 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ROUND_PAYLOAD = {
-  hint: '',
-};
-
 const EditGameMarket = ({
   name,
   rounds,
@@ -121,7 +117,9 @@ const EditGameMarket = ({
                 placeholder={round?.hint}
                 disabled={isDisabled}
                 onChange={(event) => {
-                  round.hint = event.target.value;
+                  markets.forEach(
+                    (market) => (market.rounds[index].hint = event.target.value)
+                  );
                   setMarkets([...markets]);
                 }}
               />
@@ -156,8 +154,10 @@ const EditGameMarket = ({
         sx={{ ml: 4, mt: 2 }}
         disabled={isDisabled}
         onClick={() => {
-          markets[selectedMarketIndex].rounds.push({ ...ROUND_PAYLOAD });
-          // markets.forEach((market) => market.rounds.push({ ...ROUND_PAYLOAD }));
+          // markets[selectedMarketIndex].rounds.push({ ...ROUND_PAYLOAD });
+          markets.forEach((market) => {
+            market.rounds.push({ hint: '' });
+          });
           setMarkets([...markets]);
         }}
       >

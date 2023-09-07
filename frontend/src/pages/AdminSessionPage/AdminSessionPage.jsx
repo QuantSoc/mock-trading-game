@@ -15,10 +15,10 @@ import { useParams } from 'react-router-dom';
 import AdvanceGameBtn from '../../components/AdvanceGameBtn';
 import TeamStats from '../GameHistoryPage/TeamStats';
 import { AlertContext } from '../../contexts/NotificationContext';
-import { EditGameSection } from '../EditGamePage';
 import AdminSessionQuestionCard from './AdminSessionQuestionCard';
 import AdminSessionTradeArea from './AdminSessionTradeArea';
 import { GameTransition } from '../../components';
+import EditGameSection from '../EditGamePage/EditGameSection';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -210,6 +210,7 @@ const AdminSessionPage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
