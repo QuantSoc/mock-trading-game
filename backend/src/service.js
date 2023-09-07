@@ -579,7 +579,6 @@ export const trade = (sessionId, marketPos) =>
       const marketsLength =
         teams[teamIds[0]].teamAnswers[session.position].markets.length;
       setTimeout(() => {
-        console.log('TRADING');
         for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
           teamIds.forEach((teamId) => {
             const buyerId = teamId;
