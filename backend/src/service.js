@@ -597,6 +597,7 @@ export const trade = (sessionId, marketPos) =>
             });
           });
         }
+        session.questions[session.position].tradeFinished = true;
       }, 7000);
       resolve();
     }
@@ -609,6 +610,19 @@ export const calculateResults = (gameId, sessionId) =>
       return reject(new InputError('Game not started'));
     }
 
+    resolve(session.position);
+  });
+
+export const updateTrueValues = (sessionId, trueValues) =>
+  gameLock((resolve, reject) => {
+    const session = getActiveGameSessionFromSessionId(sessionId);
+    if (!session.active) {
+      return reject(new InputError('Game not started'));
+    }
+    session.questions[session.position].round = {
+      ...session.questions[session.position].round,
+      ...trueValues,
+    };
     resolve(session.position);
   });
 

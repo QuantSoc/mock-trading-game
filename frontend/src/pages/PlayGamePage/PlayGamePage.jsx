@@ -395,8 +395,11 @@ const PlayGamePage = () => {
                               color="text.secondary"
                               sx={{ fontSize: 14, ml: 2 }}
                             >
-                              True Value $
-                              {Object.values(question.round)[marketIndex]}
+                              True Value is
+                              {Object.values(question.round)[marketIndex] !== -1
+                                ? ' $' +
+                                  Object.values(question.round)[marketIndex]
+                                : ' not set'}
                             </Typography>
                           </Box>
                           <Grid container columns={12} spacing={1}>
