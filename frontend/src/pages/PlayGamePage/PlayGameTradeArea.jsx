@@ -27,6 +27,7 @@ const PlayGameTradeArea = ({
         teams[myTeamId]?.teamAnswers[position].markets[selectedMarketIndex].ask
       }
       marketIndex={selectedMarketIndex}
+      hasTraded={current.hasTraded}
     />
   );
 };

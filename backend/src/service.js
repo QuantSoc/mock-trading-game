@@ -575,26 +575,29 @@ export const trade = (sessionId, marketPos) =>
       if (teamIds.length <= 0) {
         resolve();
       }
+      session.questions[session.position].hasTraded = true;
       const marketsLength =
         teams[teamIds[0]].teamAnswers[session.position].markets.length;
+      setTimeout(() => {
+        console.log('TRADING');
+        for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
+          teamIds.forEach((teamId) => {
+            const buyerId = teamId;
+            const sellerIds = teamIds.filter((id) => id !== teamId);
 
-      for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
-        teamIds.forEach((teamId) => {
-          const buyerId = teamId;
-          const sellerIds = teamIds.filter((id) => id !== teamId);
-
-          sellerIds.forEach((sellerId) => {
-            initiateTrade(
-              teams,
-              session.position,
-              marketPos,
-              buyerId,
-              sellerId,
-              marketIndex
-            );
+            sellerIds.forEach((sellerId) => {
+              initiateTrade(
+                teams,
+                session.position,
+                marketPos,
+                buyerId,
+                sellerId,
+                marketIndex
+              );
+            });
           });
-        });
-      }
+        }
+      }, 7000);
       resolve();
     }
   });
