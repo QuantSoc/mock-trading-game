@@ -6,11 +6,12 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { fetchAPIRequest } from '../helpers';
 import GroupIcon from '@mui/icons-material/Group';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import RequestPageOutlinedIcon from '@mui/icons-material/RequestPageOutlined';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const BidAskPanel = ({
   teamId,
@@ -28,6 +29,7 @@ const BidAskPanel = ({
   const [timeRemaining, setTimeRemaining] = useState(5);
   const [bid, setBid] = useState('');
   const [ask, setAsk] = useState('');
+  const alertCtx = useContext(AlertContext);
 
   useEffect(() => {
     setIsTradeSuccess(false);
@@ -51,6 +53,10 @@ const BidAskPanel = ({
   }, [hasTraded]);
 
   const submitSpread = async () => {
+    if (!bid || !ask) {
+      alertCtx.warning('Please set a bid and ask price.');
+      return;
+    }
     await fetchAPIRequest(`/game/${teamId}/submit`, 'PUT', {
       bid,
       ask,
@@ -133,7 +139,7 @@ const BidAskPanel = ({
           autoFocus
           onChange={(event) => setBid(event.target.value)}
           disabled={isSubmitSuccess}
-          placeholder={'↶  ' + lastBid}
+          placeholder={'↶  ' + (lastBid ? lastBid : '0')}
           value={bid}
         />
         <TextField
@@ -143,7 +149,7 @@ const BidAskPanel = ({
           sx={{ ml: 1 }}
           onChange={(event) => setAsk(event.target.value)}
           disabled={isSubmitSuccess}
-          placeholder={'↶  ' + lastAsk}
+          placeholder={'↶  ' + (lastAsk ? lastAsk : '0')}
           value={ask}
         />
       </Box>
