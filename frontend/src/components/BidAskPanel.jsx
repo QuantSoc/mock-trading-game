@@ -11,6 +11,7 @@ import { fetchAPIRequest } from '../helpers';
 import GroupIcon from '@mui/icons-material/Group';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import RequestPageOutlinedIcon from '@mui/icons-material/RequestPageOutlined';
+import UndoIcon from '@mui/icons-material/Undo';
 
 const BidAskPanel = ({
   teamId,
@@ -133,7 +134,8 @@ const BidAskPanel = ({
           autoFocus
           onChange={(event) => setBid(event.target.value)}
           disabled={isSubmitSuccess}
-          value={lastBid ? lastBid : bid}
+          placeholder={'↶  ' + lastBid}
+          value={bid}
         />
         <TextField
           color="success"
@@ -142,7 +144,8 @@ const BidAskPanel = ({
           sx={{ ml: 1 }}
           onChange={(event) => setAsk(event.target.value)}
           disabled={isSubmitSuccess}
-          value={lastAsk ? lastAsk : ask}
+          placeholder={'↶  ' + lastAsk}
+          value={ask}
         />
       </Box>
       <Button
