@@ -98,7 +98,10 @@ const PlayGamePage = () => {
 
     const winningTotal = teamResults[0]?.total;
     return teamResults.map((result) => {
-      return { ...result, isWinner: result.total === winningTotal };
+      return {
+        ...result,
+        isWinner: result.total > 0 && result.total === winningTotal,
+      };
     });
   };
 
@@ -138,6 +141,7 @@ const PlayGamePage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
