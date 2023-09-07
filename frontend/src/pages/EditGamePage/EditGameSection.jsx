@@ -94,8 +94,13 @@ const EditGameSection = ({
 
               const newMarket =
                 markets.length <= 0
-                  ? { rounds: [] }
-                  : { rounds: markets[0].rounds };
+                  ? { rounds: Array(0) }
+                  : {
+                      rounds: Array.from(
+                        markets[selectedMarketIndex].rounds,
+                        (x) => x
+                      ),
+                    };
               newMarket.name = `New Market ${markets.length + 1}`;
               newMarket.trueValue = 0;
               markets.push(newMarket);
