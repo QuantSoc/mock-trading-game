@@ -7,6 +7,7 @@ import {
   Skeleton,
   LinearProgress,
   FormControl,
+  Button,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useEffect, useState, useContext } from 'react';
@@ -15,10 +16,10 @@ import { useParams } from 'react-router-dom';
 import AdvanceGameBtn from '../../components/AdvanceGameBtn';
 import TeamStats from '../GameHistoryPage/TeamStats';
 import { AlertContext } from '../../contexts/NotificationContext';
-import { EditGameSection } from '../EditGamePage';
 import AdminSessionQuestionCard from './AdminSessionQuestionCard';
 import AdminSessionTradeArea from './AdminSessionTradeArea';
 import { GameTransition } from '../../components';
+import EditGameSection from '../EditGamePage/EditGameSection';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
@@ -28,12 +29,14 @@ const AdminSessionPage = () => {
   const [position, setPosition] = useState(0);
   // const [isActive, setIsActive] = useState(false);
   const [hasTraded, setHasTraded] = useState(false);
+  const [canAdvance, setCanAdvance] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSessionStart, setIsSessionStart] = useState(false);
   const [current, setCurrent] = useState({});
   const alertCtx = useContext(AlertContext);
   const [gameData, setGameData] = useState({});
   const [isTransition, setIsTransition] = useState(false);
+  const [trueValues, setTrueValues] = useState({});
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -46,6 +49,19 @@ const AdminSessionPage = () => {
   useEffect(() => {
     setIsTransition(false);
   }, [position]);
+
+  const handleTrueValueChange = (e) => {
+    setTrueValues((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const submitTrueValues = async () => {
+    await fetchAPIRequest(`/session/${sessionId}/truevalue`, 'POST', {
+      trueValues,
+    });
+  };
 
   const processResults = (teams, marketIndex) => {
     const teamResults = Object.keys(teams)
@@ -121,6 +137,10 @@ const AdminSessionPage = () => {
         setMarketPosition(status.status.position);
       }
       setPosition(status.status.position);
+      setCanAdvance(false);
+      if (status.status.questions[status.status.position]?.tradeFinished) {
+        setCanAdvance(true);
+      }
       setCurrent(status.status.questions[status.status.position]);
     };
     const gameInterval = setInterval(() => {
@@ -210,6 +230,7 @@ const AdminSessionPage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
@@ -277,7 +298,10 @@ const AdminSessionPage = () => {
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
                   isEnd={session.position === session.questions.length - 1}
-                  isDisabled={current?.type === 'round' && !hasTraded}
+                  isDisabled={
+                    (current?.type === 'round' && !canAdvance) ||
+                    (current?.type === 'round' && !hasTraded)
+                  }
                   unsetTradeBtn={() => setHasTraded(false)}
                   callback={() => setIsTransition(true)}
                 />
@@ -289,6 +313,7 @@ const AdminSessionPage = () => {
                 initiateTrade={initiateTrade}
                 setHasTraded={setHasTraded}
                 selectedMarketIndex={0}
+                setCanAdvance={setCanAdvance}
               />
               {/* {current?.type !== 'section' && (
                 <AdminSessionMarketSelector
@@ -340,7 +365,25 @@ const AdminSessionPage = () => {
                     );
                   })}
               </Grid>
-
+              {current?.type === 'result' && (
+                <Box
+                  sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      submitTrueValues();
+                      alertCtx.success('Successfully set True Market Values');
+                    }}
+                  >
+                    Submit True Values
+                  </Button>
+                </Box>
+              )}
               <Grid
                 container
                 columns={24}
@@ -363,9 +406,35 @@ const AdminSessionPage = () => {
                           mb: 7,
                         }}
                       >
-                        <Typography sx={{ mb: 1, fontSize: 18 }}>
-                          {market}
-                        </Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            // justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2,
+                          }}
+                        >
+                          <Typography sx={{ mr: 2, fontSize: 18 }}>
+                            {market}
+                          </Typography>
+                          <TextField
+                            size="small"
+                            label="True Value"
+                            type="number"
+                            sx={{
+                              maxWidth: 125,
+                            }}
+                            color={current.round[market] === -1 && 'error'}
+                            focused={current.round[market] === -1}
+                            defaultValue={
+                              current.round[market] === -1
+                                ? ''
+                                : current.round[market]
+                            }
+                            name={market}
+                            onChange={handleTrueValueChange}
+                          />
+                        </Box>
                         <Grid container columns={12} spacing={1}>
                           {processResults(session.teams, marketIndex).map(
                             (team, index) => {
@@ -456,6 +525,7 @@ const AdminSessionPage = () => {
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
                   callback={() => {}}
+                  isDisabled={Object.keys(session.teams).length <= 0}
                 />
               </Box>
               <Typography variant="h5" sx={{ fontSize: { xs: 16, md: 24 } }}>

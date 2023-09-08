@@ -440,6 +440,12 @@ const flattenQuestions = (sections) => {
     });
 
     const marketRounds = {};
+    if (section.markets.length <= 0) {
+      throw new InputError('Please create at least one market');
+    }
+    if (section.markets[0].rounds.length <= 0) {
+      throw new InputError('Please create at least one round');
+    }
     section.markets[0].rounds.map((round, index) => {
       section.markets.forEach((market) => {
         marketRounds[market.name] = market.rounds[index].hint;
@@ -569,26 +575,29 @@ export const trade = (sessionId, marketPos) =>
       if (teamIds.length <= 0) {
         resolve();
       }
+      session.questions[session.position].hasTraded = true;
       const marketsLength =
         teams[teamIds[0]].teamAnswers[session.position].markets.length;
+      setTimeout(() => {
+        for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
+          teamIds.forEach((teamId) => {
+            const buyerId = teamId;
+            const sellerIds = teamIds.filter((id) => id !== teamId);
 
-      for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
-        teamIds.forEach((teamId) => {
-          const buyerId = teamId;
-          const sellerIds = teamIds.filter((id) => id !== teamId);
-
-          sellerIds.forEach((sellerId) => {
-            initiateTrade(
-              teams,
-              session.position,
-              marketPos,
-              buyerId,
-              sellerId,
-              marketIndex
-            );
+            sellerIds.forEach((sellerId) => {
+              initiateTrade(
+                teams,
+                session.position,
+                marketPos,
+                buyerId,
+                sellerId,
+                marketIndex
+              );
+            });
           });
-        });
-      }
+        }
+        session.questions[session.position].tradeFinished = true;
+      }, 7000);
       resolve();
     }
   });
@@ -600,6 +609,19 @@ export const calculateResults = (gameId, sessionId) =>
       return reject(new InputError('Game not started'));
     }
 
+    resolve(session.position);
+  });
+
+export const updateTrueValues = (sessionId, trueValues) =>
+  gameLock((resolve, reject) => {
+    const session = getActiveGameSessionFromSessionId(sessionId);
+    if (!session.active) {
+      return reject(new InputError('Game not started'));
+    }
+    session.questions[session.position].round = {
+      ...session.questions[session.position].round,
+      ...trueValues,
+    };
     resolve(session.position);
   });
 

@@ -98,7 +98,10 @@ const PlayGamePage = () => {
 
     const winningTotal = teamResults[0]?.total;
     return teamResults.map((result) => {
-      return { ...result, isWinner: result.total === winningTotal };
+      return {
+        ...result,
+        isWinner: result.total > 0 && result.total === winningTotal,
+      };
     });
   };
 
@@ -138,6 +141,7 @@ const PlayGamePage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
@@ -391,8 +395,11 @@ const PlayGamePage = () => {
                               color="text.secondary"
                               sx={{ fontSize: 14, ml: 2 }}
                             >
-                              True Value $
-                              {Object.values(question.round)[marketIndex]}
+                              True Value is
+                              {Object.values(question.round)[marketIndex] !== -1
+                                ? ' $' +
+                                  Object.values(question.round)[marketIndex]
+                                : ' not set'}
                             </Typography>
                           </Box>
                           <Grid container columns={12} spacing={1}>

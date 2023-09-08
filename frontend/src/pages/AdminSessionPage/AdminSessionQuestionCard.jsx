@@ -1,4 +1,13 @@
-import { Box, Typography, Button, Divider } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Button,
+  Divider,
+  LinearProgress,
+} from '@mui/material';
+import { useState, useEffect } from 'react';
+
+const TIMER_LIMIT = 7;
 
 const AdminSessionQuestionCard = ({
   current,
@@ -8,6 +17,27 @@ const AdminSessionQuestionCard = ({
   setHasTraded,
   selectedMarketIndex,
 }) => {
+  const [timeRemaining, setTimeRemaining] = useState(7);
+  const [isTradeSuccess, setIsTradeSuccess] = useState(false);
+  useEffect(() => {
+    setIsTradeSuccess(false);
+  }, [position]);
+
+  useEffect(() => {
+    if (hasTraded) {
+      setIsTradeSuccess(true);
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => prev - 1);
+      }, 1000);
+
+      setTimeout(() => {
+        setIsTradeSuccess(false);
+        clearInterval(timer);
+        setTimeRemaining(TIMER_LIMIT);
+      }, TIMER_LIMIT * 1000);
+    }
+  }, [hasTraded]);
+
   return (
     <Box
       sx={{
@@ -52,9 +82,24 @@ const AdminSessionQuestionCard = ({
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'column',
+            mt: 1,
           }}
         >
-          <Typography>Click the button to begin trading</Typography>
+          {isTradeSuccess && (
+            <>
+              <Typography color="text.secondary" textAlign="right">
+                Seconds left to trade: {timeRemaining}
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={((TIMER_LIMIT - timeRemaining) / TIMER_LIMIT) * 100}
+                sx={{ my: 1, width: '100%', height: TIMER_LIMIT }}
+              />
+            </>
+          )}
+          {!isTradeSuccess && (
+            <Typography>Click the button to begin trading</Typography>
+          )}
           <Button
             variant="contained"
             disabled={hasTraded}

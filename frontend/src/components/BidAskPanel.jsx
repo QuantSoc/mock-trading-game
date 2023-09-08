@@ -6,11 +6,12 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { fetchAPIRequest } from '../helpers';
 import GroupIcon from '@mui/icons-material/Group';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import RequestPageOutlinedIcon from '@mui/icons-material/RequestPageOutlined';
+import { AlertContext } from '../contexts/NotificationContext';
 
 const BidAskPanel = ({
   teamId,
@@ -21,21 +22,51 @@ const BidAskPanel = ({
   marketIndex,
   lastBid,
   lastAsk,
+  hasTraded,
 }) => {
   const [isTradeSuccess, setIsTradeSuccess] = useState(false);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(5);
   const [bid, setBid] = useState('');
   const [ask, setAsk] = useState('');
+  const alertCtx = useContext(AlertContext);
 
   useEffect(() => {
     setIsTradeSuccess(false);
+    setIsSubmitSuccess(false);
   }, [position]);
 
+  useEffect(() => {
+    if (hasTraded) {
+      setIsTradeSuccess(true);
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => prev - 1);
+      }, 1000);
+
+      setTimeout(() => {
+        setIsTradeSuccess(false);
+        setIsSubmitSuccess(true);
+        clearInterval(timer);
+        setTimeRemaining(5);
+      }, 5000);
+    }
+  }, [hasTraded]);
+
   const submitSpread = async () => {
+    if (!bid || !ask) {
+      alertCtx.warning('Please set a bid and ask price.');
+      return;
+    }
     await fetchAPIRequest(`/game/${teamId}/submit`, 'PUT', {
       bid,
       ask,
       marketIndex,
     });
+
+    setIsSubmitSuccess(true);
+    setTimeout(() => {
+      setIsSubmitSuccess(false);
+    }, 1000);
 
     // res.status === 200 && setIsTradeSuccess(true);
   };
@@ -71,10 +102,16 @@ const BidAskPanel = ({
       </Box>
       {isTradeSuccess && (
         <Typography color="text.secondary" textAlign="right">
-          Awaiting next round
+          Seconds left to trade: {timeRemaining}
         </Typography>
       )}
-      {isTradeSuccess && <LinearProgress sx={{ my: 1 }} />}
+      {isTradeSuccess && (
+        <LinearProgress
+          variant="determinate"
+          value={((5 - timeRemaining) / 5) * 100}
+          sx={{ my: 1 }}
+        />
+      )}
       <Divider sx={{ my: 2 }} />
       <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
         <Typography sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -101,8 +138,9 @@ const BidAskPanel = ({
           sx={{ mr: 1 }}
           autoFocus
           onChange={(event) => setBid(event.target.value)}
-          disabled={lastBid !== 0 || lastAsk !== 0}
-          value={lastBid ? lastBid : bid}
+          disabled={isSubmitSuccess}
+          placeholder={'↶  ' + (lastBid ? lastBid : '0')}
+          value={bid}
         />
         <TextField
           color="success"
@@ -110,13 +148,14 @@ const BidAskPanel = ({
           type="number"
           sx={{ ml: 1 }}
           onChange={(event) => setAsk(event.target.value)}
-          disabled={lastBid !== 0 || lastAsk !== 0}
-          value={lastAsk ? lastAsk : ask}
+          disabled={isSubmitSuccess}
+          placeholder={'↶  ' + (lastAsk ? lastAsk : '0')}
+          value={ask}
         />
       </Box>
       <Button
         variant="contained"
-        disabled={lastBid !== 0 || lastAsk !== 0}
+        disabled={isSubmitSuccess}
         onClick={submitSpread}
         sx={{ mx: 'auto', px: 5, mt: 2 }}
       >

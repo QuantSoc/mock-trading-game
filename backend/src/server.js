@@ -26,6 +26,7 @@ import {
   calculateResults,
   fetchSessionHistory,
   setWinningTeams,
+  updateTrueValues,
 } from './service';
 import { BACKEND_PORT } from '../../frontend/src/constants';
 
@@ -246,6 +247,16 @@ app.post(
     const { sessionId } = req.params;
     const { marketPos } = req.body;
     await trade(sessionId, marketPos);
+    return res.status(200).json({});
+  })
+);
+
+app.post(
+  '/session/:sessionId/truevalue',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    const { trueValues } = req.body;
+    await updateTrueValues(sessionId, trueValues);
     return res.status(200).json({});
   })
 );
