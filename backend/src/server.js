@@ -26,6 +26,7 @@ import {
   calculateResults,
   fetchSessionHistory,
   setWinningTeams,
+  updateTrueValues,
 } from './service';
 import { BACKEND_PORT } from '../../frontend/src/constants';
 
@@ -129,9 +130,9 @@ app.put(
   handleErrors(
     checkAuth(async (req, res, email) => {
       const { gameId } = req.params;
-      const { markets, name, desc, media } = req.body;
+      const { sections, name, desc, media } = req.body;
       await assertGameOwner(email, gameId);
-      await updateGame(gameId, markets, name, desc, media);
+      await updateGame(gameId, sections, name, desc, media);
       return res.status(200).send({});
     })
   )
@@ -226,8 +227,8 @@ app.put(
   '/game/:teamId/submit',
   handleErrors(async (req, res) => {
     const { teamId } = req.params;
-    const { bid, ask } = req.body;
-    await setTeamBidAsk(teamId, bid, ask);
+    const { bid, ask, marketIndex } = req.body;
+    await setTeamBidAsk(teamId, bid, ask, marketIndex);
     return res.status(200).send({ status: 200 });
   })
 );
@@ -250,6 +251,16 @@ app.post(
   })
 );
 
+app.post(
+  '/session/:sessionId/truevalue',
+  handleErrors(async (req, res) => {
+    const { sessionId } = req.params;
+    const { trueValues } = req.body;
+    await updateTrueValues(sessionId, trueValues);
+    return res.status(200).json({});
+  })
+);
+
 /**************************************************************************
                                   HISTORY
 **************************************************************************/
@@ -265,8 +276,8 @@ app.post(
   '/session/:sessionId/result',
   handleErrors(async (req, res) => {
     const { sessionId } = req.params;
-    const { position, teamId, isWinner } = req.body;
-    await setWinningTeams(position, sessionId, teamId, isWinner);
+    const { position, teamId, marketIndex, isWinner } = req.body;
+    await setWinningTeams(position, sessionId, teamId, marketIndex, isWinner);
     return res.status(200).json({});
   })
 );

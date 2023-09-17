@@ -24,6 +24,7 @@ const TeamStats = ({
         p: 2,
         border: '0.5px solid',
         borderColor: isWinner ? 'limegreen' : '#E0E0E0',
+        minWidth: 260,
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -41,7 +42,6 @@ const TeamStats = ({
           {teamName}
         </Typography>
         <EmojiEventsIcon
-          // fontSize="large"
           sx={{
             color: 'gold',
             mb: 1,
@@ -67,11 +67,11 @@ const TeamStats = ({
           </Typography>
         </Typography>
       </Box>
-      {!trueValue && (
+      {isNaN(trueValue) ? (
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           <Typography
             color={bid && 'error'}
-            sx={{ display: 'flex', alignItems: 'center' }}
+            sx={{ display: 'flex', alignItems: 'center', textWrap: 'nowrap' }}
           >
             <ArrowDropDownOutlinedIcon color="error" fontSize="large" />
             Bid {bid ? bid.toFixed(2) : '--'}
@@ -81,14 +81,14 @@ const TeamStats = ({
               display: 'flex',
               alignItems: 'center',
               color: ask && '#2e7d32',
+              textWrap: 'nowrap',
             }}
           >
             <ArrowDropUpOutlinedIcon color="success" fontSize="large" />
             Ask {ask ? ask.toFixed(2) : '--'}
           </Typography>
         </Box>
-      )}
-      {!!trueValue && (
+      ) : (
         <Typography
           variant="h6"
           fontSize={16}

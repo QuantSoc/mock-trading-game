@@ -73,96 +73,86 @@ const ResponsiveAppBar = () => {
           >
             QuantSoc
           </Typography>
-          {localStorage.getItem('token') && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton size="large" onClick={handleOpenNavMenu} color="#000">
-                <MenuIcon color="#000" />
-              </IconButton>
 
-              {/* HERE --> NavBar SHRUNK Menu Items */}
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'block', md: 'none' },
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton size="large" onClick={handleOpenNavMenu} color="#000">
+              <MenuIcon color="#000" />
+            </IconButton>
+
+            {/* HERE --> NavBar SHRUNK Menu Items */}
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {localStorage.getItem('token') && (
+                <div key={localStorage.getItem('token')}>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/');
+                    }}
+                  >
+                    <Typography textAlign="center" textDecoration="none">
+                      Dashboard
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('history');
+                    }}
+                  >
+                    <Typography textAlign="center">Game History</Typography>
+                  </MenuItem>
+                </div>
+              )}
+              {!localStorage.getItem('token') && (
+                <div key={localStorage.getItem('token')}>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/login');
+                    }}
+                  >
+                    <Typography textAlign="center">Login</Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate('/register');
+                    }}
+                  >
+                    <Typography textAlign="center">Register</Typography>
+                  </MenuItem>
+                </div>
+              )}
+              <MenuItem
+                onClick={() => {
+                  handleCloseNavMenu();
+                  navigate('/join');
                 }}
               >
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/');
-                  }}
-                >
-                  <Typography textAlign="center" textDecoration="none">
-                    Dashboard
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('history');
-                  }}
-                >
-                  <Typography textAlign="center">Game History</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-          )}
-          {!localStorage.getItem('token') && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton size="large" onClick={handleOpenNavMenu} color="#000">
-                <MenuIcon color="#000" />
-              </IconButton>
-
-              {/* HERE --> NavBar SHRUNK Menu Items */}
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'block', md: 'none' },
-                }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/login');
-                  }}
-                >
-                  <Typography textAlign="center">Login</Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate('/register');
-                  }}
-                >
-                  <Typography textAlign="center">Register</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-          )}
+                <Typography textAlign="center" textDecoration="none">
+                  Play
+                </Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+          
           {/* HERE -->  NavBar EXPANDED Buttons */}
           <SvgIcon
             sx={{
@@ -190,14 +180,15 @@ const ResponsiveAppBar = () => {
           >
             QuantSoc
           </Typography>
-          {!localStorage.getItem('token') && (
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: { xs: 'none', md: 'flex' },
-                justifyContent: 'flex-end',
-              }}
-            >
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: 'none', md: 'flex' },
+              justifyContent: 'flex-end',
+            }}
+          >
+            {!localStorage.getItem('token') && (
+              <>
               <Typography
                 sx={{
                   mx: 2,
@@ -237,16 +228,10 @@ const ResponsiveAppBar = () => {
               >
                 Register
               </Typography>
-            </Box>
-          )}
-          {localStorage.getItem('token') && (
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: { xs: 'none', md: 'flex' },
-                justifyContent: 'flex-end',
-              }}
-            >
+              </>
+            )}
+            {localStorage.getItem('token') && (
+              <>
               <Typography
                 sx={{
                   mx: 2,
@@ -286,8 +271,29 @@ const ResponsiveAppBar = () => {
               >
                 Game History
               </Typography>
-            </Box>
-          )}
+              </>
+            )}
+            <Typography
+              sx={{
+                mx: 2,
+                my: 'auto',
+                color: '#000',
+                fontSize: 18,
+                fontWeight: 300,
+                '&:hover': {
+                  cursor: 'pointer',
+                  opacity: 0.6,
+                  transition: 'opacity 0.3s ease',
+                },
+              }}
+              onClick={() => {
+                handleCloseNavMenu();
+                navigate('/join');
+              }}
+            >
+              Play
+            </Typography>
+          </Box>
 
           {/* HERE --> NavBar User Menu */}
           {localStorage.getItem('token') && (

@@ -78,6 +78,7 @@ const RegisterPage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         height: '92.5vh',
         width: '100%',

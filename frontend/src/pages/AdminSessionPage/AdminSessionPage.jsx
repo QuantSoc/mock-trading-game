@@ -3,68 +3,76 @@ import {
   Typography,
   Grid,
   TextField,
-  Button,
   CircularProgress,
-  Divider,
   Skeleton,
   LinearProgress,
   FormControl,
+  Button,
 } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useEffect, useState, useContext } from 'react';
-import { fetchAPIRequest } from '../helpers';
+import { fetchAPIRequest } from '../../helpers';
 import { useParams } from 'react-router-dom';
-import AdvanceGameBtn from '../components/AdvanceGameBtn';
-import TeamStats from './GameHistoryPage/TeamStats';
-import { AlertContext } from '../contexts/NotificationContext';
+import AdvanceGameBtn from '../../components/AdvanceGameBtn';
+import TeamStats from '../GameHistoryPage/TeamStats';
+import { AlertContext } from '../../contexts/NotificationContext';
+import AdminSessionQuestionCard from './AdminSessionQuestionCard';
+import AdminSessionTradeArea from './AdminSessionTradeArea';
+import { GameTransition } from '../../components';
+import EditGameSection from '../EditGamePage/EditGameSection';
 
 const AdminSessionPage = () => {
   const { gameId } = useParams();
   const { sessionId } = useParams();
   const [session, setSession] = useState({});
   const [marketPosition, setMarketPosition] = useState(0);
+  const [position, setPosition] = useState(0);
   // const [isActive, setIsActive] = useState(false);
   const [hasTraded, setHasTraded] = useState(false);
+  const [canAdvance, setCanAdvance] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSessionStart, setIsSessionStart] = useState(false);
   const [current, setCurrent] = useState({});
   const alertCtx = useContext(AlertContext);
+  const [gameData, setGameData] = useState({});
+  const [isTransition, setIsTransition] = useState(false);
+  const [trueValues, setTrueValues] = useState({});
 
-  const processTeams = () => {
-    return Object.keys(session.teams).map((teamId) => {
-      return (
-        <Grid
-          item={true}
-          xs={12}
-          md={6}
-          lg={4}
-          key={teamId + 'item'}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          <FormControl sx={{ width: '100%' }}>
-            <TeamStats
-              key={`team-stats-${teamId}`}
-              teamName={session.teams[teamId].name}
-              balance={
-                session.teams[teamId].teamAnswers[marketPosition].balance
-              }
-              contracts={
-                session.teams[teamId].teamAnswers[marketPosition].contracts
-              }
-              bid={session.teams[teamId].teamAnswers[session.position]?.bid}
-              ask={session.teams[teamId].teamAnswers[session.position]?.ask}
-            />
-          </FormControl>
-        </Grid>
-      );
+  useEffect(() => {
+    const fetchGameData = async () => {
+      const data = await fetchAPIRequest(`/games/${gameId}`, 'GET');
+      setGameData(data);
+    };
+    fetchGameData();
+  }, [gameId]);
+
+  useEffect(() => {
+    setIsTransition(false);
+  }, [position]);
+
+  const handleTrueValueChange = (e) => {
+    setTrueValues((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const submitTrueValues = async () => {
+    await fetchAPIRequest(`/session/${sessionId}/truevalue`, 'POST', {
+      trueValues,
     });
   };
-  const processResults = (teams) => {
+
+  const processResults = (teams, marketIndex) => {
     const teamResults = Object.keys(teams)
       .map((teamId, index) => {
-        const trueValue = session.questions[session.position]?.trueValue;
-        const balance = teams[teamId].teamAnswers[marketPosition].balance;
-        const contracts = teams[teamId].teamAnswers[marketPosition].contracts;
+        const trueValue = Object.values(
+          session.questions[session.position].round
+        )[marketIndex];
+        const balance =
+          teams[teamId].teamAnswers[position].markets[marketIndex].balance;
+        const contracts =
+          teams[teamId].teamAnswers[position].markets[marketIndex].contracts;
         const total =
           parseInt(contracts, 10) * parseFloat(trueValue, 10) +
           parseFloat(balance, 10);
@@ -84,15 +92,20 @@ const AdminSessionPage = () => {
       await fetchAPIRequest(`/session/${sessionId}/result`, 'POST', {
         position: session.position,
         teamId: winnerRes.teamId,
-        isWinner: winnerRes.total === winningTotal,
+        marketIndex,
+        isWinner: winnerRes.total > 0 && winnerRes.total === winningTotal,
       });
     };
 
     return teamResults.map((result) => {
       session.active && saveWinner(result);
-      return { ...result, isWinner: result.total === winningTotal };
+      return {
+        ...result,
+        isWinner: result.total > 0 && result.total === winningTotal,
+      };
     });
   };
+
   const initiateTrade = async () => {
     await fetchAPIRequest(`/session/${sessionId}/trade`, 'POST', {
       marketPos: marketPosition,
@@ -123,12 +136,17 @@ const AdminSessionPage = () => {
       ) {
         setMarketPosition(status.status.position);
       }
+      setPosition(status.status.position);
+      setCanAdvance(false);
+      if (status.status.questions[status.status.position]?.tradeFinished) {
+        setCanAdvance(true);
+      }
       setCurrent(status.status.questions[status.status.position]);
     };
     const gameInterval = setInterval(() => {
       getGameStatus(gameInterval);
     }, 1000);
-    return () => clearTimeout(gameInterval);
+    return () => clearInterval(gameInterval);
   }, [sessionId, alertCtx]);
 
   const renderQuestions = (questions) => {
@@ -194,13 +212,25 @@ const AdminSessionPage = () => {
             <Skeleton width="100%" height={100} />
           </>
         )}
-        {markets}
+        {gameData.sections?.map((section, index) => {
+          return (
+            <EditGameSection
+              key={index}
+              section={section}
+              setGameSections={() => {}}
+              setIsSaved={() => {}}
+              isDisabled
+              index={index}
+            />
+          );
+        })}
       </Box>
     );
   };
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
@@ -212,6 +242,7 @@ const AdminSessionPage = () => {
         pt: 10,
       }}
     >
+      <GameTransition isTransition={isTransition} />
       <Box
         sx={{
           backgroundColor: '#fff',
@@ -219,7 +250,7 @@ const AdminSessionPage = () => {
           borderRadius: '10px 10px 0px 0px',
           boxShadow: 1,
           width: '100%',
-          px: { xs: 2, sm: 5 },
+          px: { xs: 2, sm: 2, lg: 2, xl: 5 },
           py: 7,
         }}
       >
@@ -267,71 +298,180 @@ const AdminSessionPage = () => {
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
                   isEnd={session.position === session.questions.length - 1}
+                  isDisabled={
+                    (current?.type === 'round' && !canAdvance) ||
+                    (current?.type === 'round' && !hasTraded)
+                  }
                   unsetTradeBtn={() => setHasTraded(false)}
+                  callback={() => setIsTransition(true)}
                 />
               </Box>
-              <Box
-                sx={{
-                  boxShadow: 2,
-                  borderRadius: '10px',
-                  width: { xs: '70%', md: '50%' },
-                  height: 'fit-content',
-                  py: 4,
-                  px: 4,
-                  mx: 'auto',
-                  border: current?.type === 'result' && '1px solid gold',
-                }}
+              <AdminSessionQuestionCard
+                current={current}
+                position={position}
+                hasTraded={hasTraded}
+                initiateTrade={initiateTrade}
+                setHasTraded={setHasTraded}
+                selectedMarketIndex={0}
+                setCanAdvance={setCanAdvance}
+              />
+              {/* {current?.type !== 'section' && (
+                <AdminSessionMarketSelector
+                  current={current}
+                  setSelectedMarketIndex={setSelectedMarketIndex}
+                />
+              )} */}
+              {/* {current?.type === 'round' && (
+                <AdminSessionTradeArea
+                  teams={session.teams}
+                  position={position}
+                  selectedMarketIndex={selectedMarketIndex}
+                />
+              )} */}
+
+              <Grid
+                container
+                columns={24}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ mt: 4 }}
               >
-                <Typography
-                  variant="h6"
-                  color="text.secondary"
-                  sx={{ float: 'right' }}
+                {current?.type === 'round' &&
+                  Object.keys(current.round).map((market, index) => {
+                    return (
+                      <Grid
+                        item
+                        xs={24}
+                        md={24}
+                        lg={12}
+                        xl={12}
+                        key={index}
+                        sx={{
+                          // border: '0.5px solid #41414111',
+                          borderRadius: '10px',
+                          mb: 7,
+                        }}
+                      >
+                        <Typography sx={{ mb: 1, fontSize: 18 }}>
+                          {market}
+                        </Typography>
+                        <AdminSessionTradeArea
+                          key={index}
+                          teams={session.teams}
+                          position={position}
+                          marketName={market}
+                          selectedMarketIndex={index}
+                        />
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+              {current?.type === 'result' && (
+                <Box
+                  sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
                 >
-                  {session.position.toString()}
-                </Typography>
-                <Typography variant="h5">
-                  {current?.type[0].toUpperCase() + current?.type.slice(1)}
-                </Typography>
-                <Typography color="text.secondary">{current?.name}</Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography color="text.secondary">
-                  {current?.hint ? current?.hint : 'No hint given'}
-                </Typography>
-                <Typography fontSize={18}>
-                  {current?.type === 'result' &&
-                    'Please view the results below.'}
-                </Typography>
-                {current?.type === 'round' && (
-                  <Box
-                    sx={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexDirection: 'column',
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      submitTrueValues();
+                      alertCtx.success('Successfully set True Market Values');
                     }}
                   >
-                    <Typography>Click the button to begin trading</Typography>
-                    <Button
-                      variant="contained"
-                      disabled={hasTraded}
-                      onClick={() => {
-                        initiateTrade();
-                        setHasTraded(true);
-                      }}
-                      size="large"
-                      sx={{ maxWidth: '30%', mt: 2 }}
-                    >
-                      Trade
-                    </Button>
-                  </Box>
-                )}
-              </Box>
-              {current?.type !== 'result' && (
-                <Grid container columns={12} spacing={3} sx={{ p: 5 }}>
-                  {processTeams()}
-                </Grid>
+                    Submit True Values
+                  </Button>
+                </Box>
               )}
-              <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
+              <Grid
+                container
+                columns={24}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ mt: 4 }}
+              >
+                {current?.type === 'result' &&
+                  Object.keys(current.round).map((market, marketIndex) => {
+                    return (
+                      <Grid
+                        item
+                        xs={24}
+                        md={24}
+                        lg={12}
+                        xl={12}
+                        key={marketIndex}
+                        sx={{
+                          // border: '0.5px solid #41414111',
+                          borderRadius: '10px',
+                          mb: 7,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            // justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2,
+                          }}
+                        >
+                          <Typography sx={{ mr: 2, fontSize: 18 }}>
+                            {market}
+                          </Typography>
+                          <TextField
+                            size="small"
+                            label="True Value"
+                            type="number"
+                            sx={{
+                              maxWidth: 125,
+                            }}
+                            color={current.round[market] === -1 && 'error'}
+                            focused={current.round[market] === -1}
+                            defaultValue={
+                              current.round[market] === -1
+                                ? ''
+                                : current.round[market]
+                            }
+                            name={market}
+                            onChange={handleTrueValueChange}
+                          />
+                        </Box>
+                        <Grid container columns={12} spacing={1}>
+                          {processResults(session.teams, marketIndex).map(
+                            (team, index) => {
+                              return (
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sm={6}
+                                  md={6}
+                                  lg={6}
+                                  key={index}
+                                  sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <FormControl sx={{ width: '100%' }}>
+                                    <TeamStats
+                                      key={`team-stats-${index}`}
+                                      teamName={team.teamName}
+                                      balance={team.balance}
+                                      contracts={team.contracts}
+                                      isWinner={team.isWinner}
+                                      trueValue={team.trueValue}
+                                    />
+                                  </FormControl>
+                                </Grid>
+                              );
+                            }
+                          )}
+                        </Grid>
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+
+              {/* <Grid container columns={12} spacing={3} sx={{ py: 3 }}>
                 {current?.type === 'result' &&
                   processResults(session.teams).map((team, index) => {
                     return (
@@ -356,7 +496,7 @@ const AdminSessionPage = () => {
                       </Grid>
                     );
                   })}
-              </Grid>
+              </Grid> */}
             </Box>
           ) : (
             <>
@@ -384,6 +524,8 @@ const AdminSessionPage = () => {
                   gameId={gameId}
                   isSessionStart={isSessionStart}
                   setIsSessionStart={setIsSessionStart}
+                  callback={() => {}}
+                  isDisabled={Object.keys(session.teams).length <= 0}
                 />
               </Box>
               <Typography variant="h5" sx={{ fontSize: { xs: 16, md: 24 } }}>

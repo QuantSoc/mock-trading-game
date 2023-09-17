@@ -5,6 +5,7 @@ import {
   LoginPage,
   RegisterPage,
   EditGamePage,
+  JoinGamePage,
   PlayGamePage,
   AdminSessionPage,
 } from './pages/index.js';
@@ -36,6 +37,15 @@ const theme = createTheme({
       darker: '#513b7a',
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 650,
+      md: 900,
+      lg: 1300,
+      xl: 1536,
+    },
+  },
 });
 
 const App = () => {
@@ -55,6 +65,7 @@ const App = () => {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/join" element={<JoinGamePage />} />
               <Route path="/join/:sessionId" element={<PlayGamePage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Dashboard />} />

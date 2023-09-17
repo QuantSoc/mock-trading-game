@@ -148,7 +148,7 @@ const newGamePayload = (name, desc, owner) => ({
   name,
   desc,
   owner,
-  markets: [],
+  sections: [],
   questions: [],
   active: null,
   createdAt: new Date().toISOString(),
@@ -201,10 +201,10 @@ export const getGame = (gameId) =>
     });
   });
 
-export const updateGame = (gameId, markets, name, desc, media) =>
+export const updateGame = (gameId, sections, name, desc, media) =>
   gameLock((resolve, reject) => {
-    markets && (games[gameId].markets = markets);
-    markets && (games[gameId].questions = flattenQuestions(markets));
+    sections && (games[gameId].sections = sections);
+    sections && (games[gameId].questions = flattenQuestions(sections));
     name && (games[gameId].name = name);
     desc && (games[gameId].desc = desc);
     media && (games[gameId].media = media);
@@ -264,42 +264,50 @@ const newSessionPayload = (gameId) => ({
   answerAvailable: false,
 });
 
-const newTeamPayload = (name, questions) => {
+const newTeamPayload = (teamName, questions) => {
   const teamAnswers = [];
-  let latestMarketIndex = 0;
+  let latestSectionIndex = 0;
   questions.map((question, index) => {
-    if (question.type === 'market') {
+    if (question.type === 'section') {
       teamAnswers.push({
-        type: 'market',
-        market: question.name,
-        balance: 0,
-        contracts: 0,
+        type: 'section',
+        name: question.name,
         resultsIndex: 0,
       });
 
-      latestMarketIndex = index;
+      latestSectionIndex = index;
     }
-    // question.type === 'round' && teamAnswers.push({ type: 'round' });
-    question.type === 'round' &&
+    if (question.type === 'round') {
       teamAnswers.push({
         type: 'round',
-        bid: 0,
-        ask: 0,
-        balance: 0,
-        contracts: 0,
+        markets: Object.keys(question.round).map((marketName) => {
+          return {
+            market: marketName,
+            bid: 0,
+            ask: 0,
+            balance: 0,
+            contracts: 0,
+          };
+        }),
       });
+    }
     if (question.type === 'result') {
-      teamAnswers[latestMarketIndex].resultsIndex = index;
+      teamAnswers[latestSectionIndex].resultsIndex = index;
       teamAnswers.push({
         type: 'result',
-        balance: 0,
-        contracts: 0,
+        markets: Object.keys(question.round).map((marketName) => {
+          return {
+            market: marketName,
+            balance: 0,
+            contracts: 0,
+          };
+        }),
       });
     }
   });
 
   return {
-    name,
+    name: teamName,
     teamAnswers,
   };
 };
@@ -309,6 +317,9 @@ export const assertSessionOwner = async (email, sessionId) => {
 };
 
 export const sessionStatus = (sessionId, isTeam = false) => {
+  if (!(sessionId in sessions)) {
+    throw new InputError('Invalid session id');
+  }
   const session = sessions[sessionId];
   return {
     active: session.active,
@@ -418,24 +429,43 @@ export const teamJoin = (name, sessionId) =>
     }
   });
 
-const flattenQuestions = (markets) => {
+const flattenQuestions = (sections) => {
   const flatpack = [];
 
-  markets.map((market) => {
-    flatpack.push({ type: 'market', name: market.name });
-    market.rounds.map((round, index) => {
-      flatpack.push({ type: 'round', round: index + 1, hint: round.hint });
-      // flatpack.push({ type: 'trade' });
+  sections.map((section, index) => {
+    flatpack.push({
+      type: 'section',
+      name: `Section ${index + 1}`,
+      marketsLength: section.markets.length,
     });
-    flatpack.push({ type: 'result', trueValue: market.trueValue });
+
+    const marketRounds = {};
+    if (section.markets.length <= 0) {
+      throw new InputError('Please create at least one market');
+    }
+    if (section.markets[0].rounds.length <= 0) {
+      throw new InputError('Please create at least one round');
+    }
+    section.markets[0].rounds.map((round, index) => {
+      section.markets.forEach((market) => {
+        marketRounds[market.name] = market.rounds[index].hint;
+      });
+      flatpack.push({ type: 'round', round: { ...marketRounds } });
+    });
+
+    const marketResults = {};
+    section.markets.map((market, index) => {
+      marketResults[market.name] = market.trueValue;
+    });
+    flatpack.push({ type: 'result', round: marketResults });
   });
 
   return flatpack;
 };
 
-const getGameRound = (markets, position) => {
+const getGameRound = (sections, position) => {
   let counter = -1;
-  for (const market of markets) {
+  for (const market of sections) {
     counter += 1;
 
     for (const round of market.rounds) {
@@ -447,7 +477,7 @@ const getGameRound = (markets, position) => {
   }
 };
 
-export const setTeamBidAsk = (teamId, bid, ask) =>
+export const setTeamBidAsk = (teamId, bid, ask, marketIndex) =>
   sessionLock((resolve, reject) => {
     if (bid === undefined || ask === undefined) {
       return reject(new InputError('Must provide a bid and ask price'));
@@ -460,10 +490,13 @@ export const setTeamBidAsk = (teamId, bid, ask) =>
       } else if (session.answerAvailable) {
         return reject(new InputError('Trading has already begun.'));
       } else {
-        const round = session.teams[teamId].teamAnswers[session.position];
+        const roundMarket =
+          session.teams[teamId].teamAnswers[session.position].markets[
+            marketIndex
+          ];
 
-        round.bid = parseFloat(bid, 10);
-        round.ask = parseFloat(ask, 10);
+        roundMarket.bid = parseFloat(bid, 10);
+        roundMarket.ask = parseFloat(ask, 10);
         // const nextRound =
         //   session.teams[teamId].teamAnswers[session.position + 1];
         // nextRound.bid = parseFloat(bid, 10);
@@ -480,34 +513,54 @@ const checkValidTrade = (teams, position, buyerId, sellerId) => {
   );
 };
 
-const initiateTrade = (teams, position, marketPos, buyerId, sellerId) => {
-  const sellPrice = teams[sellerId].teamAnswers[position].ask;
-  const buyPrice = teams[buyerId].teamAnswers[position].bid;
+const initiateTrade = (
+  teams,
+  position,
+  marketPos,
+  buyerId,
+  sellerId,
+  marketIndex
+) => {
+  const sellPrice =
+    teams[sellerId].teamAnswers[position].markets[marketIndex].ask;
+  const buyPrice =
+    teams[buyerId].teamAnswers[position].markets[marketIndex].bid;
 
   if (sellPrice <= buyPrice) {
     const tradePrice =
       buyPrice === sellPrice ? buyPrice : (sellPrice + buyPrice) / 2;
-    teams[buyerId].teamAnswers[marketPos].balance -= tradePrice;
-    teams[buyerId].teamAnswers[marketPos].contracts += 1;
-    const buyerBal = teams[buyerId].teamAnswers[marketPos].balance;
-    const buyerCon = teams[buyerId].teamAnswers[marketPos].contracts;
-    teams[buyerId].teamAnswers[position].balance = buyerBal;
-    teams[buyerId].teamAnswers[position].contracts = buyerCon;
 
-    teams[sellerId].teamAnswers[marketPos].balance += tradePrice;
-    teams[sellerId].teamAnswers[marketPos].contracts -= 1;
-    const sellerBal = teams[sellerId].teamAnswers[marketPos].balance;
-    const sellerCon = teams[sellerId].teamAnswers[marketPos].contracts;
-    teams[sellerId].teamAnswers[position].balance = sellerBal;
-    teams[sellerId].teamAnswers[position].contracts = sellerCon;
+    teams[buyerId].teamAnswers[position].markets[marketIndex].balance -=
+      tradePrice;
+    teams[buyerId].teamAnswers[position].markets[marketIndex].contracts += 1;
+    const buyerBal =
+      teams[buyerId].teamAnswers[position].markets[marketIndex].balance;
+    const buyerCon =
+      teams[buyerId].teamAnswers[position].markets[marketIndex].contracts;
+    teams[buyerId].teamAnswers[position + 1].markets[marketIndex].balance =
+      buyerBal;
+    teams[buyerId].teamAnswers[position + 1].markets[marketIndex].contracts =
+      buyerCon;
 
-    const buyerResIdx = teams[buyerId].teamAnswers[marketPos].resultsIndex;
-    teams[buyerId].teamAnswers[buyerResIdx].balance = buyerBal;
-    teams[buyerId].teamAnswers[buyerResIdx].contracts = buyerCon;
+    teams[sellerId].teamAnswers[position].markets[marketIndex].balance +=
+      tradePrice;
+    teams[sellerId].teamAnswers[position].markets[marketIndex].contracts -= 1;
+    const sellerBal =
+      teams[sellerId].teamAnswers[position].markets[marketIndex].balance;
+    const sellerCon =
+      teams[sellerId].teamAnswers[position].markets[marketIndex].contracts;
+    teams[sellerId].teamAnswers[position + 1].markets[marketIndex].balance =
+      sellerBal;
+    teams[sellerId].teamAnswers[position + 1].markets[marketIndex].contracts =
+      sellerCon;
 
-    const sellerResIdx = teams[sellerId].teamAnswers[marketPos].resultsIndex;
-    teams[sellerId].teamAnswers[sellerResIdx].balance = sellerBal;
-    teams[sellerId].teamAnswers[sellerResIdx].contracts = sellerCon;
+    // const buyerResIdx = teams[buyerId].teamAnswers[marketPos].resultsIndex;
+    // teams[buyerId].teamAnswers[buyerResIdx].balance = buyerBal;
+    // teams[buyerId].teamAnswers[buyerResIdx].contracts = buyerCon;
+
+    // const sellerResIdx = teams[sellerId].teamAnswers[marketPos].resultsIndex;
+    // teams[sellerId].teamAnswers[sellerResIdx].balance = sellerBal;
+    // teams[sellerId].teamAnswers[sellerResIdx].contracts = sellerCon;
   }
 };
 
@@ -519,14 +572,32 @@ export const trade = (sessionId, marketPos) =>
       return reject(new InputError('Game session has not begun'));
     } else {
       const teamIds = Object.keys(teams);
-      teamIds.forEach((teamId) => {
-        const buyerId = teamId;
-        const sellerIds = teamIds.filter((id) => id !== teamId);
+      if (teamIds.length <= 0) {
+        resolve();
+      }
+      session.questions[session.position].hasTraded = true;
+      const marketsLength =
+        teams[teamIds[0]].teamAnswers[session.position].markets.length;
+      setTimeout(() => {
+        for (let marketIndex = 0; marketIndex < marketsLength; marketIndex++) {
+          teamIds.forEach((teamId) => {
+            const buyerId = teamId;
+            const sellerIds = teamIds.filter((id) => id !== teamId);
 
-        sellerIds.forEach((sellerId) => {
-          initiateTrade(teams, session.position, marketPos, buyerId, sellerId);
-        });
-      });
+            sellerIds.forEach((sellerId) => {
+              initiateTrade(
+                teams,
+                session.position,
+                marketPos,
+                buyerId,
+                sellerId,
+                marketIndex
+              );
+            });
+          });
+        }
+        session.questions[session.position].tradeFinished = true;
+      }, 7000);
       resolve();
     }
   });
@@ -541,6 +612,19 @@ export const calculateResults = (gameId, sessionId) =>
     resolve(session.position);
   });
 
+export const updateTrueValues = (sessionId, trueValues) =>
+  gameLock((resolve, reject) => {
+    const session = getActiveGameSessionFromSessionId(sessionId);
+    if (!session.active) {
+      return reject(new InputError('Game not started'));
+    }
+    session.questions[session.position].round = {
+      ...session.questions[session.position].round,
+      ...trueValues,
+    };
+    resolve(session.position);
+  });
+
 /**************************************************************************
                                   HISTORY
 **************************************************************************/
@@ -550,13 +634,20 @@ export const fetchSessionHistory = (sessionId) =>
     resolve(session);
   });
 
-export const setWinningTeams = (position, sessionId, teamId, isWinner) =>
+export const setWinningTeams = (
+  position,
+  sessionId,
+  teamId,
+  marketIndex,
+  isWinner
+) =>
   gameLock((resolve, reject) => {
     const session = getActiveGameSessionFromSessionId(sessionId);
     if (!session.active) {
       return reject(new InputError('Game not started'));
     }
-    const team = session.teams[teamId].teamAnswers[position];
+    const team =
+      session.teams[teamId].teamAnswers[position].markets[marketIndex];
     team.isWinner = isWinner;
     resolve();
   });

@@ -22,6 +22,7 @@ const SessionHistoryPage = () => {
 
   return (
     <Box
+      className="responsive-pad"
       sx={{
         width: '100%',
         minHeight: '92.5vh',
@@ -84,9 +85,9 @@ const SessionHistoryPage = () => {
               marketName={question?.name}
               type={question.type[0].toUpperCase() + question.type.slice(1)}
               hint={question?.hint}
-              round={question?.round}
+              markets={question?.round}
               teams={sessionData?.teams}
-              trueValue={question?.trueValue}
+              trueValueMarkets={question?.round}
             />
           );
         })}
