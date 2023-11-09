@@ -1,0 +1,10 @@
+.devcontainer
+backend/node_modules
+backend/database.json
+frontend/node_modules
+database.json
+.DS_Store
+README.md
+.gitignore
+.git
+keys
