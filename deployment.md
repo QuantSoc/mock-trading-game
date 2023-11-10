@@ -10,12 +10,12 @@ Manual deployment of changes to the frontend should be checked using the followi
 2. Under "Workers and Pages", select "mock-trading-game". This is a Cloudflare Page that was created by importing an existing GitHub repository: Quantsoc/mock-trading-game.
 
 3. Go to "Settings" -> "Builds & deployments" -> "Configure Production deployments" and ensure the production branch is set to "digitalocean". This should be a duplicate of 
-"main" albeit with frontend/src/constants.js modified to have ```BACKEND_ROUTE = process.env.DIGITALOCEAN_DROPLET_SSH_HOST```, the DigitalOcean droplet's IPv4 address rather
+"main" albeit with frontend/src/constants.js modified to have ```BACKEND_ROUTE = mtg_backend_hostname.quantsoc.org```, the DigitalOcean droplet's IPv4 address rather
 than the localhost server used in development.
 
 4. Ensure automatic deployments of the production branch is enabled.
 
-5. Under build commands:
+5. Under "Build configurations":
 - Build command: ```npm run build```
 - Build output directory: /build
 - Root directory: /frontend 
@@ -59,12 +59,36 @@ Manual deployment is as follows. Once CI/CD is set up, this should not be necess
 
         docker image rm shmu9/mtg:0.0 --force
 
+### HTTPS (SSL) and DNS for Backend
+By default, DigitalOcean will serve data with HTTP. We want HTTPS for security and because our Cloudflare frontend page is
+loaded over HTTPS, which means it will not allow itself to request an insecure HTTP resource.
+
+8. In the Cloudflare DNS, create an A record that maps mtg_backend_hostname.quantsoc.org -> the Droplet's IPv4 address.
+
+9. (Wait for DNS record propagation).
+
+10. Modify frontend/src/constants.js to have ```BACKEND_ROUTE = https://mtg_backend_hostname.quantsoc.org```. Note that Cloudflare should 
+have issued this host an SSL certificate; and the connection should be secure.
+
+11. Push changes to "digitalocean" branch.
+
+12. Check steps under "Cloudflare Frontend" and wait for latest changes to deploy.
+
+
+IGNORE (testing DigitalOcean DNS and SSL):
+    Add ns1.digitalocean.com (and ns2, ns3) to the list of name servers on quantsoc.org namecheap. 
+    Add a domain to the Droplet. 
+    Add an A record that maps something.quantsoc.org -> the Droplet's IPv4 address.
+    Under setting -> security on DigitalOcean, generate new SSL certificate using Let's Encrypt for the something.quantsoc.org subdomain?
+    Nginx + certbot?
+
+
 
 # CI/CD
 NOT YET IMPLEMENTED
 
 ## Frontend
-- .git/hooks/pre-push and .git/hooks/post-merge (post-update??) keep frontend/src/constants.js to have ```BACKEND_ROUTE = process.env.DIGITALOCEAN_DROPLET_SSH_HOST```
+- .git/hooks/pre-push and .git/hooks/post-merge (post-update??) keep frontend/src/constants.js to have ```BACKEND_ROUTE = https://mtg_backend_hostname.quantsoc.org```
 at remote for production/deployment ```BACKEND_ROUTE = 'http://localhost:5005'``` and on local branches during development.
 
 
