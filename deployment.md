@@ -82,6 +82,21 @@ IGNORE (testing DigitalOcean DNS and SSL):
     Under setting -> security on DigitalOcean, generate new SSL certificate using Let's Encrypt for the something.quantsoc.org subdomain?
     Nginx + certbot?
 
+# Reading and Writing to Database Manually on DigitalOcean Droplet
+The server (within the droplet) exists as a running Docker container, so accessing the database.json file requires some steps:
+1. SSH into Droplet
+
+        ssh -i path/to/private/key root@public_IPv4_address_of_Droplet
+
+2. Get list of containers to find the MTG's container name
+
+        docker ps
+
+3. Access the docker container by attaching a shell
+
+        docker exec -it <container-name> sh
+
+
 
 
 # CI/CD
