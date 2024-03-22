@@ -10,6 +10,10 @@ RUN mkdir backend
 
 COPY ./backend/package*.json ./backend/
 
+# If you want to manually update the database for the image, modify database.json then uncomment this line and build
+# You will need to comment out "backend/database.json" in .dockerignore for this to work.
+# COPY ./backend/database.json ./backend/
+
 WORKDIR /mtg/backend
 
 RUN mkdir src

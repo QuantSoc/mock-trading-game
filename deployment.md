@@ -33,6 +33,8 @@ Manual deployment is as follows. Once CI/CD is set up, this should not be necess
 
         docker run -p local_host_port:5005 shmu9/mtg:0.0
 
+	local_host_port should be 5005 as well for local testing. You will need to change the BACKEND_ROUTE in frontend/src/constantsj.js to 'http://localhost:local_host_port'. Change back to 'https://backmtg.quantsoc.org' before pushing for frontend changes.
+
 4. Login to docker via CLI:
 
         docker login -u "username" -p "password"
@@ -82,7 +84,9 @@ IGNORE (testing DigitalOcean DNS and SSL):
     Under setting -> security on DigitalOcean, generate new SSL certificate using Let's Encrypt for the something.quantsoc.org subdomain?
     Nginx + certbot?
 
-# Reading and Writing to Database Manually on DigitalOcean Droplet
+# Reading and Writing to Database Manually on DigitalOcean Droplet (unsure)
+WARNING: I'm pretty sure if the server receives a request while you are editing a container, it will overwrite your changes. It also seems that a container must be stopped and restarted for manual changes to be saved. For this reason it is safer to do the alternative below 5. Horrendous ik I'm sorry - please set up CI/CD and easy database modification someday.
+
 The server (within the droplet) exists as a running Docker container, so accessing the database.json file requires some steps:
 1. SSH into Droplet
 
@@ -95,6 +99,21 @@ The server (within the droplet) exists as a running Docker container, so accessi
 3. Access the docker container by attaching a shell
 
         docker exec -it <container-name> sh
+
+4. Make changes?
+
+5. Stop container and restart? or Save current state of to new image and run that instead?
+
+		docker commit <container-id> shmu9/mtg:0.0.1
+
+Alternatively, after 1.
+
+2. Go to /var/lib/docker/overlay2/most-recent-layer/diff/mtg/backend/database.json. Copy file to local environment. Make changes
+
+3. Re-build image and upload to droplet (refer to DigitalOcean Backend).
+
+4. Remove old image and run new image.
+
 
 
 
