@@ -283,8 +283,8 @@ const newTeamPayload = (teamName, questions) => {
         markets: Object.keys(question.round).map((marketName) => {
           return {
             market: marketName,
-            bid: 0,
-            ask: 0,
+            bid: null,
+            ask: null,
             balance: 0,
             contracts: 0,
           };
@@ -521,38 +521,17 @@ const initiateTrade = (
   sellerId,
   marketIndex
 ) => {
-  const sellPrice =
-    teams[sellerId].teamAnswers[position].markets[marketIndex].ask;
-  const buyPrice =
-    teams[buyerId].teamAnswers[position].markets[marketIndex].bid;
+  const sellPrice = teams[sellerId].teamAnswers[position].markets[marketIndex].ask;
+  const buyPrice = teams[buyerId].teamAnswers[position].markets[marketIndex].bid;
 
-  if (sellPrice <= buyPrice) {
-    const tradePrice =
-      buyPrice === sellPrice ? buyPrice : (sellPrice + buyPrice) / 2;
-
-    teams[buyerId].teamAnswers[position].markets[marketIndex].balance -=
-      tradePrice;
+  if (sellPrice !== null && buyPrice !== null && sellPrice <= buyPrice && sellPrice) {
+    const tradePrice = buyPrice === sellPrice ? buyPrice : (sellPrice + buyPrice) / 2;
+    // update current answers
+    teams[buyerId].teamAnswers[position].markets[marketIndex].balance -= tradePrice;
     teams[buyerId].teamAnswers[position].markets[marketIndex].contracts += 1;
-    const buyerBal =
-      teams[buyerId].teamAnswers[position].markets[marketIndex].balance;
-    const buyerCon =
-      teams[buyerId].teamAnswers[position].markets[marketIndex].contracts;
-    teams[buyerId].teamAnswers[position + 1].markets[marketIndex].balance =
-      buyerBal;
-    teams[buyerId].teamAnswers[position + 1].markets[marketIndex].contracts =
-      buyerCon;
 
-    teams[sellerId].teamAnswers[position].markets[marketIndex].balance +=
-      tradePrice;
+    teams[sellerId].teamAnswers[position].markets[marketIndex].balance += tradePrice;
     teams[sellerId].teamAnswers[position].markets[marketIndex].contracts -= 1;
-    const sellerBal =
-      teams[sellerId].teamAnswers[position].markets[marketIndex].balance;
-    const sellerCon =
-      teams[sellerId].teamAnswers[position].markets[marketIndex].contracts;
-    teams[sellerId].teamAnswers[position + 1].markets[marketIndex].balance =
-      sellerBal;
-    teams[sellerId].teamAnswers[position + 1].markets[marketIndex].contracts =
-      sellerCon;
 
     // const buyerResIdx = teams[buyerId].teamAnswers[marketPos].resultsIndex;
     // teams[buyerId].teamAnswers[buyerResIdx].balance = buyerBal;
@@ -562,6 +541,17 @@ const initiateTrade = (
     // teams[sellerId].teamAnswers[sellerResIdx].balance = sellerBal;
     // teams[sellerId].teamAnswers[sellerResIdx].contracts = sellerCon;
   }
+
+  // update the teams' balance/contracts for the next round (this will propagate into results round)
+  const buyerBal = teams[buyerId].teamAnswers[position].markets[marketIndex].balance;
+  const buyerCon = teams[buyerId].teamAnswers[position].markets[marketIndex].contracts;
+  teams[buyerId].teamAnswers[position + 1].markets[marketIndex].balance = buyerBal;
+  teams[buyerId].teamAnswers[position + 1].markets[marketIndex].contracts = buyerCon;
+
+  const sellerBal = teams[sellerId].teamAnswers[position].markets[marketIndex].balance;
+  const sellerCon = teams[sellerId].teamAnswers[position].markets[marketIndex].contracts;
+  teams[sellerId].teamAnswers[position + 1].markets[marketIndex].balance = sellerBal;
+  teams[sellerId].teamAnswers[position + 1].markets[marketIndex].contracts = sellerCon;
 };
 
 export const trade = (sessionId, marketPos) =>

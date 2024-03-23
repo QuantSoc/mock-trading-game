@@ -74,7 +74,7 @@ const TeamStats = ({
             sx={{ display: 'flex', alignItems: 'center', textWrap: 'nowrap' }}
           >
             <ArrowDropDownOutlinedIcon color="error" fontSize="large" />
-            Bid {bid ? bid.toFixed(2) : '--'}
+            Bid {bid !== null ? bid.toFixed(2) : '--'}
           </Typography>
           <Typography
             sx={{
@@ -85,7 +85,7 @@ const TeamStats = ({
             }}
           >
             <ArrowDropUpOutlinedIcon color="success" fontSize="large" />
-            Ask {ask ? ask.toFixed(2) : '--'}
+            Ask {ask !== null ? ask.toFixed(2) : '--'}
           </Typography>
         </Box>
       ) : (

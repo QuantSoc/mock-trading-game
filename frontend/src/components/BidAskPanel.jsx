@@ -139,7 +139,7 @@ const BidAskPanel = ({
           autoFocus
           onChange={(event) => setBid(event.target.value)}
           disabled={isSubmitSuccess}
-          placeholder={'↶  ' + (lastBid ? lastBid : '0')}
+          placeholder={'↶  ' + (lastBid ? lastBid : 'None')}
           value={bid}
         />
         <TextField
@@ -149,7 +149,7 @@ const BidAskPanel = ({
           sx={{ ml: 1 }}
           onChange={(event) => setAsk(event.target.value)}
           disabled={isSubmitSuccess}
-          placeholder={'↶  ' + (lastAsk ? lastAsk : '0')}
+          placeholder={'↶  ' + (lastAsk ? lastAsk : 'None')}
           value={ask}
         />
       </Box>
