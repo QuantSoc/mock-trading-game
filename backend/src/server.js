@@ -36,6 +36,13 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '50mb' }));
 
+// // debugging
+// app.use((req, res, next) => {
+//   console.log(req.originalUrl);
+//   // console.log(res)
+//   next();
+// });
+
 const handleErrors = (fn) => async (req, res) => {
   try {
     await fn(req, res);
