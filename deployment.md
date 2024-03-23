@@ -61,6 +61,8 @@ Manual deployment is as follows. Once CI/CD is set up, this should not be necess
 
         docker image rm shmu9/mtg:0.0 --force
 
+8. You should private your DockerHub repository or remove the image from the repository for security reasons.
+
 ### HTTPS (SSL) and DNS for Backend
 By default, DigitalOcean will serve data with HTTP. We want HTTPS for security and because our Cloudflare frontend page is
 loaded over HTTPS, which means it will not allow itself to request an insecure HTTP resource.
