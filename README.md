@@ -1,5 +1,5 @@
 # QuantSoc Mock Trading Game
-
+![](mock-trading-dashboard.png)
 Welcome to the QuantSoc Mock Trading Game repository! This project was developed to provide students with a practical tool to understand trading fundamentals dynamically and engagingly. The game offers a hands-on, team-based competitive experience within a simulated trading environment, aimed at fostering understanding and confidence in trading concepts.
 
 ## About
