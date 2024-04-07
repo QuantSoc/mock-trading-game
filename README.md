@@ -18,7 +18,6 @@ The QuantSoc Mock Trading Game is designed to simulate basic trading scenarios w
 - **Access Game History:** Review past trading sessions and analyze performance to improve strategies.
 - **Reusable Game Templates:** Utilize pre-defined game setups or create custom templates for various learning scenarios.
 - **Leaderboards:** Track your progress and compare performance with other participants.
-- **Leaderboards:** Track your progress and compare performance with other participants.
 
 ## Getting Started
 
