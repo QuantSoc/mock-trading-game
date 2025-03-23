@@ -63,7 +63,7 @@ const App = () => {
           <NavBar />
           <AlertProvider>
             <Routes>
-            <Route path="/" element={<JoinGamePage />} />
+              <Route path="/" element={<JoinGamePage />} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
